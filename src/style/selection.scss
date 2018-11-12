@@ -1,0 +1,92 @@
+div.selection-list{
+  .title{
+    margin-bottom: 20px;
+    border-bottom: 4px solid #00a0e9;
+    font-size: 14px;
+    span.left{
+      display: inline-block;
+      width: 140px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      background: #00a0e9;
+      color: #fff;
+    }
+    a.right{
+      float: right;
+      margin: 7px;
+      color: #00a0e9;
+      text-decoration: none;
+      &:hover{
+        color:  #393939;
+      }
+    }
+  }
+  .operation{
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    text-align: right;
+    span{margin-right: 10px}
+    .delete,b{color: #f44f4f;}
+    .delete{
+      float: left;
+      margin-top: 8px;
+      &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
+  thead>tr th:nth-child(2) .cell{
+    padding: 0;
+    padding-left: 5px;
+  }
+  .el-button{
+    border-radius: 0;
+  }
+  .el-table--border td,.el-table--border th{
+    border-right: none;
+  }
+  .el-table__row td:nth-child(3) .cell{
+    padding-left: 0;
+    margin-left: 0px
+  }
+  .el-table__row td:last-child{
+    text-align: center;
+  }
+  .el-table--border th{
+    color: #333;
+    font-size: 15px;
+    text-align: center;
+  }
+  .el-table td, .el-table th.is-leaf{
+    border-bottom: 1px solid #ccc;
+  }
+  .el-table--border, .el-table--group{
+    border: 1px solid #ccc;
+  }
+  .el-table .cell{
+    padding-left: 20px;
+    text-align: center;
+  }
+}
+// 我的申请：模态框
+.selection-list{
+  .el-dialog{max-width: 75%;}
+  .el-dialog__header{
+    border-bottom: none!important;
+    margin-bottom: -20px;
+  }
+  .el-dialog__header{border-bottom: 3px solid #00a0e9}
+  .el-dialog__footer{
+    padding: 0;
+    .el-button{
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      border: none;
+    }
+  }
+}
+.selection-list.edit .el-dialog{width: 95%;max-height: 90%;overflow-y: scroll}
