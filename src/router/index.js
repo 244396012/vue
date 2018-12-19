@@ -49,35 +49,27 @@ const router = new Router({
       component: resolve => require(['@/page/404'],resolve),
       meta:{title:'404 页面不存在'}
     },
-    {
+	{
       path: '/',
       name: 'index',
-      component: Main,
-      redirect:'/login',
-      /*
-      * login： 登录
-      * register： 注册
-      * forget： 忘记密码
-      * */
-      children: [
-        {
-          path: '/login',
-          name:'login',
-          component: resolve => require(['@/page/Login'],resolve),
-          meta: {title: '登录帐号'}
-        },
-        {
-          path: '/register',
-          component: resolve => require(['@/page/Register'],resolve),
-          meta: {title: '注册帐号'}
-        },
-        {
-          path: '/forget',
-          component: resolve => require(['@/page/Forget'],resolve),
-          meta: {title: '忘记密码'}
-        }
-      ]
+      redirect:'/login'
     },
+	{
+	  path: '/login',
+	  name:'login',
+	  component: resolve => require(['@/page/Login'],resolve),
+	  meta: {title: '登录帐号'}
+	},
+	{
+	  path: '/register',
+	  component: resolve => require(['@/page/Register'],resolve),
+	  meta: {title: '注册帐号'}
+	},
+	{
+	  path: '/forget',
+	  component: resolve => require(['@/page/Forget'],resolve),
+	  meta: {title: '忘记密码'}
+	},
     {
       path: '/search',
       name: 'search',
@@ -220,3 +212,4 @@ const router = new Router({
 })
 
 export default router
+
