@@ -33,14 +33,14 @@
         <el-table-column
           prop="col1"
           label="收支类型">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.row.col1 | getType}}
           </template>
         </el-table-column>
         <el-table-column
           prop="col2"
           label="积分数量">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.row.col2 | getNum}}
           </template>
         </el-table-column>
@@ -51,14 +51,14 @@
         <el-table-column
           prop="col4"
           label="收支事宜">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.row.col4 | getMark}}
           </template>
         </el-table-column>
         <el-table-column
           prop="col5"
           label="时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{scope.row.col5 | getTime}}
           </template>
         </el-table-column>
