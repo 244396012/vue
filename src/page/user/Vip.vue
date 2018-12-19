@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column
           label="获取会员权益">
-          <template scope="scope">
+          <template slot-scope="scope">
             <img src="../../../static/image/vip.png" width="24"/>
           </template>
         </el-table-column>
