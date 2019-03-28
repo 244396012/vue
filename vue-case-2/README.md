@@ -1,7 +1,6 @@
-# vue单页应用实例
+# zss-admin
 
-## vue-case
-vue + vue-router + vuex + axios + element-ui全家桶搭建单页web，包含登录注册等完整流程。
+> A Vue.js project
 
 ## Build Setup
 

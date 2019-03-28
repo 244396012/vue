@@ -1,7 +1,6 @@
-# vue单页应用实例
+# chinca-project
 
-## vue-case
-vue + vue-router + vuex + axios + element-ui全家桶搭建单页web，包含登录注册等完整流程。
+> 承包商会项目前端页面
 
 ## Build Setup
 
