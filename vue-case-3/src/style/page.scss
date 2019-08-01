@@ -1,0 +1,577 @@
+$baseColor: #41CCA6;
+.el-menu-item.is-active{
+  border-bottom-color: $baseColor!important;
+}
+.el-select-dropdown__item.selected{
+  color: $baseColor;
+  font-weight: 400;
+}
+.el-dropdown-menu__item{
+  &:hover{
+    color: $baseColor!important;
+  }
+}
+.filterRow{
+  position: relative;
+  .el-button{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .el-button+.el-button{
+    margin-top: 15px;
+  }
+  .el-form-item__content{
+    width: 70%;
+  }
+  .filterForm {
+    .el-form-item{
+      width: 320px;
+      margin-bottom: 5px;
+      margin-right: 5px;
+    }
+    .el-input__inner{
+      padding-right: 0;
+    }
+  }
+  .el-col.el-col-3{
+    text-align: center;
+    &>div{
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      flex-direction: column;
+    }
+  }
+}
+.sy-line{
+  line-height: 1.6;
+}
+.sy-bold{
+  font-weight: bold;
+  color: #555;
+}
+.sy-bold.sy-title{
+  font-size: 16px;
+}
+.rm-cg,.rm-info{
+  .el-dialog--center .el-dialog__body{
+    padding-bottom: 12px;
+    padding-top: 12px;
+  }
+}
+.rm-cg{
+  .el-form-item{
+    margin-bottom: 10px;
+  }
+  .el-input{
+    width: 65%;
+  }
+  .el-input__inner{
+    height: 32px;
+    line-height: 32px;
+    border-radius: 2px;
+    border-color: #BFBFBF;
+    &:focus{
+      border-color: #409EFF;
+    }
+  }
+  .el-form-item__label{
+    width: 100px;
+  }
+}
+.rm-info{
+  .el-form-item{
+    margin-bottom: 0;
+  }
+}
+
+.el-button--default,
+.el-button--success{
+  min-width: 100px;
+  padding: 8px 20px;
+  border-radius: 2px;
+  border-color: $baseColor;
+}
+.el-button--default{
+  color: $baseColor;
+  &:hover{
+    background: $baseColor;
+    border-color: $baseColor;
+    color: #fff;
+  }
+  &:focus{
+    background: #fff;
+    border-color: $baseColor;
+    color: $baseColor;
+  }
+}
+.el-button--success{
+  background-color: $baseColor;
+  border-color: $baseColor;
+  color: #fff;
+  &:hover{
+    opacity: .8;
+  }
+  &:hover,&:focus{
+    background-color: $baseColor;
+    border-color: $baseColor;
+  }
+}
+.el-button--text{
+  color: $baseColor;
+  &:hover{
+    color: $baseColor;
+    opacity: .8;
+  }
+  &.del{
+     color: #EC6941;
+  }
+  &.del2{
+    color: red;
+  }
+}
+.page{
+  .el-date-editor .el-range-separator{
+    line-height: 26px;
+  }
+  .el-range-input{
+    text-align: left;
+  }
+  .el-pagination{
+    margin-top: 3rem;
+    .el-pager li{
+      margin-left: 5px;
+      font-weight: 400;
+      border-radius: 3px;
+      border: 1px solid #BFBFBF;
+      &.active{
+        border-color: $baseColor;
+        background: $baseColor;
+        color: #fff;
+      }
+      &:not(.active):hover{
+        color: $baseColor;
+        border-color: $baseColor;
+      }
+      &:nth-child(1){
+        margin-left: 0;
+      }
+    }
+    .el-input__inner{
+      height: 28px;
+      line-height: 27px;
+    }
+  }
+  .el-table th{
+    padding: 10px 0;
+    background: #eee;
+    color: #333;
+  }
+  .el-table td{
+    padding: 5px 0;
+    .el-button{
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+  }
+  .el-table td, .el-table th.is-leaf{
+    border-bottom: 1px solid #EBEBEB;
+  }
+  .el-table--border td, .el-table--border th, .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed{
+    border-right: 1px solid #EBEBEB;
+  }
+
+  .rm-right{
+    text-align: right;
+  }
+  .rm-center{
+    text-align: center;
+  }
+  .pd-r-50{
+    padding-right: 50px;
+  }
+  .mg-b-20{
+    margin-bottom: 20px;
+  }
+  .download{
+    color: $baseColor;
+    font-size: 14px;
+    text-decoration: none;
+    &.mg-r{
+      margin-right: 10px;
+    }
+    &.mg-l{
+      margin-left: 10px;
+    }
+    &:hover{
+      opacity: .8;
+    }
+  }
+  .default-form{
+    .el-col{
+      padding-right: 20px;
+    }
+    .el-date-editor--daterange,
+    .el-date-editor--date,
+    .el-select{
+      width: 100%;
+    }
+  }
+  .default-style{
+    margin-bottom: 10px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 4px;
+    .dotted-border-lf{
+      border-left: 1px dotted #BFBFBF;
+    }
+    .dotted-border-rg{
+      border-right: 1px dotted #bfbfbf;
+    }
+  }
+  .el-textarea__inner{
+    height: 120px;
+    border-color: #BFBFBF;
+    border-radius: 2px;
+    font-family: inherit;
+    &:focus{
+      border-color: #409EFF;
+    }
+  }
+  .el-input__inner{
+    height: 32px;
+    line-height: 32px;
+    border-color: #BFBFBF;
+    border-radius: 2px;
+    &:focus{
+      border-color: #409EFF;
+    }
+  }
+  .el-input__icon{
+    line-height: 26px;
+  }
+
+}
+.detail{
+  padding: 25px;
+  background: #F7F8FA;
+  color: #555555;
+  font-size: 14px;
+  .el-row{
+    margin-bottom: 25px;
+    &.exact{
+      b{
+        width: auto;
+      }
+    }
+    .el-col-24{
+      margin-bottom: 15px;
+    }
+    b{
+      display: inline-block;
+      width: 75px;
+      color: #333;
+    }
+  }
+}
+//模态框上传样式修改
+.el-dialog--center .el-dialog__body{
+  padding: 20px 25px 0px;
+}
+.el-upload-dragger .el-icon-upload{
+  font-size: 50px;
+  margin: 20px 0 10px;
+}
+.el-upload-dragger{
+  height: 135px;
+  width: 250px;
+}
+.el-upload__tip{
+  margin-top: 0;
+  text-align: center;
+}
+.el-dialog__header{
+  padding: 15px 20px 15px;
+  border-bottom: 1px solid #F8F8F8;
+  text-align: left;
+  .el-dialog__title{
+    font-size: 16px;
+  }
+}
+.el-dialog__footer{
+  padding: 15px 20px 15px;
+  border-top: 1px solid #F8F8F8;
+}
+.el-message-box__btns{
+  .el-button--primary{
+    color: #fff;
+    background: $baseColor;
+    border-color: $baseColor;
+    &:hover{
+      opacity: .8;
+    }
+  }
+}
+//表单样式修改
+.el-radio__input.is-checked+.el-radio__label,
+.el-checkbox__input.is-checked+.el-checkbox__label{
+  color: $baseColor;
+}
+.el-radio__input.is-checked .el-radio__inner,
+.el-checkbox__input.is-checked .el-checkbox__inner,
+.el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background: $baseColor;
+  border-color: $baseColor;
+}
+.el-radio__inner,
+.el-checkbox__inner {
+  border-color: #BFBFBF;
+}
+td .el-button+.el-button{
+  margin-left: 5px;
+}
+.detail.form{
+  position: relative;
+  .el-form{
+    width: 730px;
+  }
+  .el-form-item{
+    margin-bottom: 15px;
+    &.exact{
+      .el-form-item__label{
+        line-height: 26px;
+      }
+      .el-form-item__content{
+        line-height: 24px;
+      }
+    }
+  }
+  .el-form-item__label{
+    font-weight: 700;
+  }
+  .wd-50, .el-select{
+    width: 49.5%;
+    &.exact{
+      width: 99%;
+    }
+  }
+  .el-form-item__error{
+    top: auto;
+    bottom: -15px;
+  }
+}
+.el-form-item.exact{
+  margin-bottom: 30px!important;
+}
+.el-form-item.extra{
+  margin-bottom: 30px!important;
+  .el-form-item__content{
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+  }
+  .el-row{
+    margin-bottom: 0px;
+    background: #fff;
+    &.exact{
+      background: #F7F8FA;
+    }
+    .el-col{
+      height: 40px;
+      line-height: 40px;
+      padding: 0px 15px;
+      vertical-align: middle;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+    .el-select{
+      width: 108%;
+      margin-left: -12px;
+    }
+  }
+}
+.el-tooltip__popper{
+  max-width: 50%;
+}
+.el-radio-group.exact{
+  .el-radio{
+    width: 140px;
+    margin-bottom: 15px;
+    margin-right: 5px;
+  }
+  .el-radio__label{
+    padding-left: 5px;
+  }
+}
+.assign-detail{
+  padding: 10px;
+  border: 1px dashed #ccc;
+}
+.verify-detail{
+  .el-form-item {
+    margin-bottom: 0;
+  }
+  .el-select{
+    width: 70%;
+  }
+  .el-textarea {
+    width: 95%;
+  }
+  .el-col-3,
+  .el-col-12,
+  .el-textarea,
+  .el-textarea__inner,
+  .el-button.exact{
+    height: 116px;
+  }
+}
+.el-tabs__active-bar{
+  background: $baseColor;
+}
+.el-tabs__item:hover{
+  color: $baseColor;
+}
+.el-tabs__item.is-active{
+  color: $baseColor;
+}
+.el-tab-pane{
+  padding-top: 25px;
+  h3{
+    margin: 25px 0;
+  }
+  .skill-img{
+    .item{
+      display: inline-block;
+      width: 120px;
+      margin-right: 10px;
+      text-align: center;
+    }
+    img{
+      width: 120px;
+      height: 90px;
+      border: 1px solid #ccc;
+    }
+    p{
+      margin: 5px 0;
+    }
+  }
+  .el-row{
+    margin-bottom: 15px;
+  }
+  .el-col {
+    margin-bottom: 20px;
+    b{
+      width: 75px!important;
+    }
+  }
+  .el-tag{
+    margin-right: 5px;
+    color: $baseColor;
+    border-color: $baseColor;
+    background: #fff;
+  }
+  .page{
+    .el-row{
+      margin-bottom: 0;
+      &.last{
+        .el-col{
+          margin-bottom: 0;
+        }
+      }
+    }
+    .default-form{
+      padding-bottom: 0;
+    }
+  }
+}
+.activity{
+  .el-select,
+  .el-input__inner{
+    width: 100%!important;
+  }
+}
+img.thumb{
+  width: 80px;
+  height: 60px;
+  border: 1px solid #eee;
+}
+img.thumb-lg{
+  width: 150px;
+  height: 100px;
+  border: 1px solid #eee;
+}
+.previewImg{
+  width: 250px;
+  height: 135px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border: 1px solid #eee;
+}
+.business-table,
+.parttime-table{
+  width: 100%;
+  background: #fff;
+  border-collapse: collapse;
+  font-size: 14px;
+  td{
+    padding: 8px 10px;
+    color: #606266;
+    border: 1px solid #EBEBEB;
+  }
+  input[type=number],
+  input[type=text]{
+    box-sizing: border-box;
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    outline: none;
+    color: #606266;
+    border: 1px solid #41CCA6;
+    &[disabled]{
+      background: none;
+      border: none;
+    }
+  }
+}
+.business-table{
+  td{
+    width: 15%;
+  }
+}
+.parttime-table{
+  .el-input--prefix .el-input__inner{
+    padding-left: 35px!important;
+  }
+  td{
+    width: 12%;
+    &:not(td.name){
+      min-width: 100px;
+    }
+    span{
+      padding: 0 10px;
+    }
+    .el-select{
+      width: 100%;
+    }
+  }
+  td.name{
+    width: 100px;
+  }
+  td.name[colspan],
+  td.name[rowspan]{
+    font-size: 16px;
+  }
+  .td-item{
+    display: table-cell;
+    padding-right: 15px;
+    img{
+      display: inline-block;
+      width: 120px;
+      height: 90px;
+      border: 1px solid #ccc;
+    }
+    p{
+      margin: 3px 0;
+      text-align: center;
+    }
+  }
+}
