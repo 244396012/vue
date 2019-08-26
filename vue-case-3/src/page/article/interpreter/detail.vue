@@ -14,7 +14,7 @@
                 <el-col :span="8"><div class="grid-content bg-purple-light"><b>发布作者：</b>{{detail.publishUser}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple"></div><b>提交时间：</b>{{detail.submissionTime}}</el-col>
               </el-row>
-              <el-row class="exact">
+              <el-row style="margin-bottom: 0px;">
                 <el-col :span="8"><div class="grid-content bg-purple">
                   <b style="display: inline-block;height: 100px;vertical-align: 88px;">文章封面：</b>
                   <img class="thumb-lg" :src="detail.coverId" alt=""></div></el-col>
@@ -22,7 +22,8 @@
                 <el-col :span="8"><div class="grid-content bg-purple"></div><b>发布时间：</b>{{detail.publishTime}}</el-col>
               </el-row>
               <el-row class="exact">
-                <el-col :span="20"><div class="grid-content bg-purple sy-line"><b style="display: table-cell;vertical-align: top">正文内容：</b>
+                <el-col :span="20"><div class="grid-content bg-purple sy-line">
+                  <b style="display: table-cell;vertical-align: top;padding-top: 13px">正文内容：</b>
                   <div style="display: table-cell;" v-html="detail.contentHtml"></div>
                 </div></el-col>
               </el-row>
@@ -174,14 +175,12 @@
   </div>
 </template>
 <script>
-  import paginationLog from '@/components/pagination';
-  import paginationComment from '@/components/pagination';
-  import paginationClick from '@/components/pagination';
+  import pagination from '@/components/pagination';
   export default {
     components: {
-      'pagination-log': paginationLog,
-      'pagination-comment': paginationComment,
-      'pagination-click': paginationClick
+      'pagination-log': pagination,
+      'pagination-comment': pagination,
+      'pagination-click': pagination
     },
     data() {
       return {

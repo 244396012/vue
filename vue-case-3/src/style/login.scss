@@ -79,7 +79,7 @@ $baseColor: #41CCA6;
   position: absolute;
   background: #78d7bc;
 }
-#btn {
+#slide_btn {
   float: right;
   cursor: pointer;
   width: 50px;
@@ -88,8 +88,8 @@ $baseColor: #41CCA6;
   color: #8a8c97;
   outline: 1px solid #eee;
 }
-#btn:hover{color: #000;}
-#btn>i.el-icon-circle-check-outline {
+#slide_btn:hover{color: #000;}
+#slide_btn>i.el-icon-circle-check-outline {
   color: $baseColor;
   font-size: 22px;
   vertical-align: middle; }

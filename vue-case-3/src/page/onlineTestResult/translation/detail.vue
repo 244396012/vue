@@ -160,7 +160,7 @@
                 this.cuTransAnswers[prop] = `
                         准确性（${weight['grammarRatio']}）
                         专业性（${weight['temporalTatio']}）
-                        可读性（${weight['vocabularyRatio']}）`
+                        可读性（${weight['vocabularyRatio']}）`;
                 this.weight = {...weight}
               }else if(prop === 'questionFields'){
                 const field = JSON.parse(res.data.data.cuTransAnswers[0][prop])

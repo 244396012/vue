@@ -110,7 +110,7 @@
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
             <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -224,7 +224,6 @@
       return {
         loading: false,
         totalTableList: 0,
-        showTableUrl:'/exam/admin/listTransResult',
         form: {
           transId: '',
           level: '',
@@ -249,7 +248,7 @@
       }
     },
     created (){
-      this.showTableList()
+      this.showTableList();
       this.getFirstField().then(res => {
         this.formSelect.fieldOptions = res
       })
@@ -257,11 +256,11 @@
     methods: {
       //展示表格数据
       showTableList (config){
-        config = config || {}
-        config.pageNo = config.pageNo || 1
-        config.pageSize = config.pageSize || 10
-        this.loading = true
-        this.$http.get(this.showTableUrl, {
+        config = config || {};
+        config.pageNo = config.pageNo || 1;
+        config.pageSize = config.pageSize || 10;
+        this.loading = true;
+        this.$http.get('/exam/admin/listTransResult', {
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
@@ -279,11 +278,11 @@
           }
         }).then(res => {
           if(res.data.code === '200' && res.data.data.content.length >= 0){
-            this.tableData = []
+            this.tableData = [];
             res.data.data.content.forEach((item, index) => {
-              item.num = (index + 1) + (config.pageNo-1)*config.pageSize
+              item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
-            })
+            });
             this.totalTableList = res.data.data.totalElements
           }
           this.loading = false
@@ -291,7 +290,7 @@
       },
       //分配、修改
       showModal (...arg){
-        this.toParams = arg
+        this.toParams = arg;
         this.$store.commit('showModal')
       },
 

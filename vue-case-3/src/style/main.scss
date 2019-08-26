@@ -14,12 +14,15 @@ html,body,#app{
   background-position: top center;
   background-size: 24px 24px;
 }
+
 //header
 .el-header{
   margin-bottom: 10px;
   background-color: #fff;
+  .el-row,.el-col,.grid-content{
+    height: inherit;
+  }
   .el-col>.grid-content{
-    height: 70px;
     display: flex;
     align-items: center;
     &.bg-purple-light{
@@ -122,6 +125,7 @@ html,body,#app{
     }
   }
 }
+
 //main
 .el-main{
   padding: 0;

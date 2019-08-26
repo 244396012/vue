@@ -10,7 +10,7 @@
                 <el-col :span="8"><div class="grid-content bg-purple-light"><b>活动名称：</b>{{detail.name}}</div></el-col>
               </el-row>
               <el-row class="exact">
-                <el-col :span="8"><div class="grid-content bg-purple"><b>活动时间：</b>{{detail.startTime.slice(0,10)}} - {{detail.endTime.slice(0,10)}}</div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple"><b>活动时间：</b>{{detail.startTime.split(' ')[0]}} - {{detail.endTime.split(' ')[0]}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple-light"><b>活动类型：</b>{{detail.type}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple"></div><b>活动状态：</b>{{detail.state}}</el-col>
               </el-row>
@@ -101,62 +101,64 @@
             <div class="detail">
               <div class="page">
                 <div class="default-style default-form">
-                  <el-row>
-                    <el-col :span="21"><div class="grid-content bg-purple pd-r-50 dotted-border-rg">
-                      <el-row>
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-input v-model="form.name" placeholder="请输入抽奖人姓名"></el-input>
-                        </div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-input v-model="form.rewardAccount" placeholder="请输入抽奖人帐号"></el-input>
-                        </div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-select
-                            v-model="form.rewardLevel"
-                            placeholder="请选择奖品等级">
-                            <el-option
-                              v-for="item in formSelect.levelOptions"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-select
-                            v-model="form.rewardType"
-                            placeholder="请选择奖品类型">
-                            <el-option
-                              v-for="item in formSelect.typeOptions"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </div></el-col>
-                      </el-row>
-                      <el-row class="last">
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-input v-model="form.rewardName" placeholder="请输入奖品名称"></el-input>
-                        </div></el-col>
-                        <el-col :span="6"><div class="grid-content bg-purple">
-                          <el-select
-                            v-model="form.rewardState"
-                            placeholder="请选择发放状态">
-                            <el-option
-                              v-for="item in formSelect.stateOptions"
-                              :key="item.value"
-                              :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </div></el-col>
-                      </el-row>
-                    </div></el-col>
-                    <el-col :span="3"><div class="grid-content bg-purple-light rm-center">
-                      <div class="mg-b-20"><el-button type="success" icon="el-icon-search" @click="showRecordTableList">查 询</el-button></div>
-                      <div><el-button @click="resetSearch(form, showRecordTableList)">重 置</el-button></div>
-                    </div></el-col>
+                  <el-row class="filterRow">
+                    <el-col :span="21" style="margin-bottom: 12px;">
+                      <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+                        <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
+                          <el-form-item label="抽奖人姓名">
+                            <el-input v-model="form.name" placeholder="请输入抽奖人姓名"></el-input>
+                          </el-form-item>
+                          <el-form-item label="抽奖人帐号">
+                            <el-input v-model="form.rewardAccount" placeholder="请输入抽奖人帐号"></el-input>
+                          </el-form-item>
+                          <el-form-item label="奖品等级">
+                            <el-select
+                              v-model="form.rewardLevel"
+                              placeholder="请选择奖品等级">
+                              <el-option
+                                v-for="item in formSelect.levelOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="奖品类型">
+                            <el-select
+                              v-model="form.rewardType"
+                              placeholder="请选择奖品类型">
+                              <el-option
+                                v-for="item in formSelect.typeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="奖品名称">
+                            <el-input v-model="form.rewardName" placeholder="请输入奖品名称"></el-input>
+                          </el-form-item>
+                          <el-form-item label="发放状态">
+                            <el-select
+                              v-model="form.rewardState"
+                              placeholder="请选择发放状态">
+                              <el-option
+                                v-for="item in formSelect.stateOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-form>
+                      </div>
+                    </el-col>
+                    <el-col :span="3" style="margin-bottom: 12px;">
+                      <div class="grid-content bg-purple-light">
+                        <el-button type="success" icon="el-icon-search" @click="showRecordTableList">查 询</el-button>
+                        <el-button icon="el-icon-refresh" @click="resetSearch(form,showRecordTableList)">重 置</el-button>
+                      </div>
+                    </el-col>
                   </el-row>
                 </div>
               </div>
@@ -239,7 +241,7 @@
                 </el-table-column>
               </el-table>
               <template v-if="record.totalTableList > 0">
-                <pagination-record :callback="showRecordTableList" :total="record.totalTableList"></pagination-record>
+                <pagination :callback="showRecordTableList" :total="record.totalTableList"></pagination>
               </template>
             </div>
           </el-tab-pane>
@@ -251,11 +253,11 @@
 </template>
 <script>
   import addReward from './modal_detail_add';
-  import paginationRecord from '@/components/pagination';
+  import pagination from '@/components/pagination';
   export default {
     components: {
       'add-reward': addReward,
-      'pagination-record': paginationRecord
+      pagination
     },
     data (){
       return {

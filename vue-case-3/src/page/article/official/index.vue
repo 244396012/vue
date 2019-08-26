@@ -24,7 +24,7 @@
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
             <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
       </el-row>

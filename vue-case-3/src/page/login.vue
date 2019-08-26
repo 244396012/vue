@@ -10,12 +10,12 @@
               <el-input v-model="form.account" clearable placeholder="请输入帐号"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-input type="password" v-model="form.password" clearable placeholder="请输入密码"></el-input>
+              <el-input v-model="form.password" type="password" clearable placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item>
               <div id="slide_box">
                 <div id="slide_xbox">
-                  <div id="btn">
+                  <div id="slide_btn">
                     <i class="el-icon-d-arrow-right"></i>
                   </div>
                 </div>
@@ -47,23 +47,27 @@ export default {
       }
     }
   },
-  mounted (){
-    utils.slide()
+  created (){
+    //DOM渲染后执行
+	this.$nextTick(() => {
+		utils.slide()
+	})
   },
   methods: {
     login (){
+	  const _this = this;
       if(this.form.account === '' && this.form.password === ''){
         this.$message({
           type: 'warning',
           message: '请输入账号和密码'
-        })
+        });
         return false
       }
-      if(!document.getElementById('btn').getAttribute('data-code')){
+      if(!document.getElementById('slide_btn').getAttribute('data-code')){
         this.$message({
           type: 'warning',
           message: '请先拖动滑块进行安全验证'
-        })
+        });
         return false
       }
       this.btn.disabled = true;
@@ -81,27 +85,27 @@ export default {
             message: '登录成功'
           });
           setTimeout(() => {
-            this.$route.query.url
-              ? this.$router.push(this.$route.query.url)
-              : this.$router.push('/');
+            _this.$route.query.url
+              ? _this.$router.push(_this.$route.query.url)
+              : _this.$router.push('/');
             localStorage.setItem('sy_rm_admin_access_token', res.data.access_token)
           }, 1000)
         }else{
           this.$message({
             type: 'error',
-            message: '账号或密码错误'
+            message: res.message
           })
         }
         this.btn.disabled = false;
-        this.btn.txt = '登 录'
+        this.btn.txt = '登 录';
       }).catch(err => {
-        if(err.response.status === 400 && err.response.data.error === 'invalid_grant'){
+        if(err.response.data.error === 'invalid_grant'){
           this.$message({
             type: 'error',
             message: '账号或密码错误，请重试'
           });
           this.btn.disabled = false;
-          this.btn.txt = '登 录'
+          this.btn.txt = '登 录';
         }
       })
     }

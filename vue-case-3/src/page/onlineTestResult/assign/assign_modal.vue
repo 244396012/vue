@@ -70,16 +70,16 @@
           newVal[0].domains.forEach(item => {
             this.form.fields.push(item.id)
           });
-          this.form.originLanguageCode = newVal[0].originLanguageCode
-          this.form.targetLanguageCode = newVal[0].targetLanguageCode
+          this.form.originLanguageCode = newVal[0].originLanguageCode;
+          this.form.targetLanguageCode = newVal[0].targetLanguageCode;
           if(Array.isArray(newVal) && newVal[newVal.length-1] === 'update'){
-            this.title = '修改审核人'
-            this.isUpdate = true
+            this.title = '修改审核人';
+            this.isUpdate = true;
             this.getAssignList().then(res => {
               // console.log(res);
             })
           }else{
-            this.title = '分配审核人'
+            this.title = '分配审核人';
             this.getAssignList()
           }
         }

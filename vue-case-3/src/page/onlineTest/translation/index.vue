@@ -37,7 +37,7 @@
                   v-model="form.level"
                   placeholder="请选择难度">
                   <el-option
-                    v-for="item in formSelect.levelOtions"
+                    v-for="item in $store.state.mod1.level"
                     :key="item"
                     :label="item"
                     :value="item">
@@ -72,7 +72,7 @@
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
             <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -209,8 +209,7 @@
           rangeTime: ''
         },
         formSelect: {
-          stateOtions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}],
-          levelOtions: [1,2,3,4,5,6,7,8,9,10]
+          stateOtions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}]
         },
         tableData: [],
         multipleSelection: []

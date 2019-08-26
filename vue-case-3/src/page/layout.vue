@@ -1,8 +1,12 @@
 <template>
   <el-container class="wrap">
-    <el-header height="70px">
+    <el-header height="60px">
       <el-row>
-        <el-col :span="12"><div class="grid-content bg-purple">LOGO</div></el-col>
+        <el-col :span="12">
+          <div class="grid-content bg-purple">
+            <img src="../../static/image/logo.png" alt="">
+          </div>
+        </el-col>
         <el-col :span="12"><div class="grid-content bg-purple-light">
           <span class="rm-icon-two work" @click="goPlatFrom">工作台</span>
           <span class="rm-icon-two message" @click="">消息通知</span>
@@ -23,7 +27,7 @@
         <el-aside width="200px">
             <el-menu
               router
-              :default-active="$route.path"
+              :default-active="this.activeIndex"
               text-color="#333">
               <template v-for="(menu, index) in asideMenu">
                   <el-submenu v-if="menu.path !== '/'" :key="index" :index="String(index)">
@@ -46,7 +50,7 @@
           <el-breadcrumb-item v-if="breadcrumb.firstItem">{{breadcrumb.firstItem}}</el-breadcrumb-item>
           <el-breadcrumb-item v-if="breadcrumb.secondItem">{{breadcrumb.secondItem}}</el-breadcrumb-item>
         </el-breadcrumb>
-        <router-view id="webView" :key="key"></router-view>
+        <router-view id="webView" :key="breadKey"></router-view>
       </el-main>
     </el-container>
     <el-footer>&copy; 数译科技 版权所有 {{new Date().getFullYear()>2019 ? '2019-'+new Date().getFullYear() : new Date().getFullYear()}}</el-footer>
@@ -55,7 +59,6 @@
   </el-container>
 </template>
 <script>
-  import {mapMutations} from 'vuex'
   import personalInfo from '@/components/personalInfo'
   import changePwd from '@/components/changePwd'
   import utils from '@/utils'
@@ -68,28 +71,29 @@
     data (){
       return {
         asideMenu: this.$router.options.routes.slice(2),
+        activeIndex: '',
         breadcrumb: ''
       }
+    },
+    updated (){
+      this.activeIndex = this.$route.matched[1].path;
     },
     created (){
       this.getLanguageList()
     },
     computed: {
       //为 router-view 添加唯一的标识‘key’，用来监听路由变化设置面包屑
-      key (){
+      breadKey (){
         this.breadcrumb = utils.breadcrumb(this.$route)
       }
     },
     methods: {
-      ...mapMutations([
-        'languageList'
-       ]),
       //获取语言
       getLanguageList (){
         this.$http.get('/language/listAll')
           .then(res => {
             if(res.data.code === '200' && res.data.data.length > 0){
-              this.languageList(res.data.data)
+              this.$store.commit('languageList', res.data.data);
             }
           })
       },

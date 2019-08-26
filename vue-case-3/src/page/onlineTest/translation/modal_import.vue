@@ -13,7 +13,7 @@
           <el-upload
             class="upload-demo rm-center"
             drag
-            action="/translationQuestion/batchAddTranslationQuestions"
+            action="/"
             :before-upload="beforeUpload"
             :auto-upload="false"
             ref="newupload"

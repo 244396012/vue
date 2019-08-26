@@ -180,13 +180,12 @@
 <script>
   import { quillEditor } from 'vue-quill-editor';
   import quillConfig from '@/common/quill-config';
-  import paginationComment from '@/components/pagination';
-  import paginationClick from '@/components/pagination';
+  import pagination from '@/components/pagination';
   export default {
     components: {
-      quillEditor,
-      'pagination-comment': paginationComment,
-      'pagination-click': paginationClick
+      'quill-editor': quillEditor,
+      'pagination-comment': pagination,
+      'pagination-click': pagination
     },
     data() {
       return {

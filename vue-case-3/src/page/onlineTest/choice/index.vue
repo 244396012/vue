@@ -12,7 +12,7 @@
               <el-select
                 v-model="form.language" placeholder="请选择语言">
                 <el-option
-                  v-for="item in $store.state.languageList"
+                  v-for="item in languageList"
                   :key="item.id"
                   :label="item.chineseName"
                   :value="item.englishName">
@@ -27,7 +27,7 @@
                 v-model="form.level"
                 placeholder="请选择难度">
                 <el-option
-                  v-for="item in formSelect.levelOptions"
+                  v-for="item in $store.state.mod1.level"
                   :key="item"
                   :label="item"
                   :value="item">
@@ -62,7 +62,7 @@
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
             <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -201,6 +201,7 @@
 <script>
   import pagination from '@/components/pagination'
   import modal_import from './modal_import'
+  import { mapGetters } from 'vuex';
   export default {
     components: {
       pagination,
@@ -210,7 +211,6 @@
       return {
         loading: false,
         downloadUrl: '/choiceQuestion/downloadChoiceQuestionModel',
-        showTableUrl:'/choiceQuestion/listChoiceQuestions',
         totalTableList: 0,
         form: {
           questionNo: '',
@@ -221,8 +221,7 @@
           level: ''
         },
         formSelect: {
-          stateOptions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}],
-          levelOptions: [1,2,3,4,5,6,7,8,9,10]
+          stateOptions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}]
         },
         tableData: [],
         multipleSelection: []
@@ -230,6 +229,11 @@
     },
     created (){
       this.showTableList()
+    },
+    computed: {
+      ...mapGetters([
+        'languageList'
+      ])
     },
     methods: {
       handleSelectionChange(val) {
@@ -241,7 +245,7 @@
         config.pageNo = config.pageNo || 1;
         config.pageSize = config.pageSize || 10;
         this.loading = true;
-        this.$http.get(this.showTableUrl, {
+        this.$http.get('/choiceQuestion/listChoiceQuestions', {
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,

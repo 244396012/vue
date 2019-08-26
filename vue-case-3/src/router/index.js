@@ -156,54 +156,125 @@ const routes = new Router({
         },
       ]
     },
-    //译员管理
+    //兼职个人管理
     {
-      path: '/interpreter',
-      name: '译员管理',
+      path: '/parttimeUser',
+      name: '兼职个人管理',
       component: layout,
       children: [
         {
-          path: '/interpreter/fullTime',
-          name: '专职译员管理',
-          component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/entry')), 'interpreter'),
+          path: '/parttimeUser/translate',
+          name: '兼职笔译列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
           children: [
             {
-              path: '/interpreter/fullTime',
-              meta: { title: '专职译员管理' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/fullTime/index')), 'interpreter')
+              path: '/parttimeUser/translate',
+              meta: { title: '译员列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/translate/index')), 'parttimeUser')
             },
             {
-              path: '/interpreter/fullTime/detail/:id',
+              path: '/parttimeUser/preTranslate',
+              meta: { title: '准译员列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/translate/preIndex')), 'parttimeUser')
+            },
+            {
+              path: '/parttimeUser/translate/create/',
+              meta: { title: '绿色通道译员添加' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/translate/create')), 'parttimeUser')
+            },
+            {
+              path: '/parttimeUser/translate/detail/:id',
               meta: { title: '详情' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/fullTime/detail')), 'interpreter')
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/translate/detail')), 'parttimeUser')
             }
           ]
         },
         {
-          path: '/interpreter/partTime',
-          name: '兼职译员管理',
-          component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/entry')), 'interpreter'),
+          path: '/parttimeUser/dtp',
+          name: '兼职DTP列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
           children: [
             {
-              path: '/interpreter/partTime',
-              meta: { title: '译员列表' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/partTime/index')), 'interpreter')
+              path: '/parttimeUser/dtp',
+              meta: { title: '资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/dtp/index')), 'parttimeUser')
             },
             {
-              path: '/interpreter/prePartTime',
-              meta: { title: '准译员列表' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/partTime/preIndex')), 'interpreter')
+              path: '/parttimeUser/preDtp',
+              meta: { title: '准资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/dtp/preIndex')), 'parttimeUser')
+            },
+          ]
+        },
+        {
+          path: '/parttimeUser/meeting',
+          name: '兼职会展列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
+          children: [
+            {
+              path: '/parttimeUser/meeting',
+              meta: { title: '资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/meeting/index')), 'parttimeUser')
             },
             {
-              path: '/interpreter/partTime/create/',
-              meta: { title: '绿色通道译员添加' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/partTime/create')), 'interpreter')
+              path: '/parttimeUser/preMeeting',
+              meta: { title: '准资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/meeting/preIndex')), 'parttimeUser')
+            },
+          ]
+        },
+        {
+          path: '/parttimeUser/expatriate',
+          name: '兼职外派列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
+          children: [
+            {
+              path: '/parttimeUser/expatriate',
+              meta: { title: '资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/expatriate/index')), 'parttimeUser')
             },
             {
-              path: '/interpreter/partTime/detail/:id',
-              meta: { title: '详情' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/interpreter/partTime/detail')), 'interpreter')
-            }
+              path: '/parttimeUser/preExpatriate',
+              meta: { title: '准资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/expatriate/preIndex')), 'parttimeUser')
+            },
+          ]
+        },
+        {
+          path: '/parttimeUser/train',
+          name: '兼职培训列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
+          children: [
+            {
+              path: '/parttimeUser/train',
+              meta: { title: '资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/train/index')), 'parttimeUser')
+            },
+            {
+              path: '/parttimeUser/preTrain',
+              meta: { title: '准资源列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/train/preIndex')), 'parttimeUser')
+            },
+          ]
+        }
+      ]
+    },
+    //兼职团队管理
+    {
+      path: '/parttimeTeam',
+      name: '兼职团队管理',
+      component: layout,
+      children: [
+        {
+          path: '/parttimeTeam/team',
+          name: '兼职团队列表',
+          component: resolve => require.ensure([], () => resolve(require('@/page/parttimeTeam/entry')), 'parttimeTeam'),
+          children: [
+            {
+              path: '/parttimeTeam/team',
+              meta: { title: '兼职团队列表' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/parttimeTeam/team/index')), 'parttimeTeam')
+            },
           ]
         }
       ]
@@ -284,23 +355,65 @@ const routes = new Router({
             {
               path: '/operation/activity',
               meta: { title: '活动管理' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/index')), 'article')
+              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/index')), 'operation')
             },
             {
               path: '/operation/activity/create',
               meta: { title: '创建活动' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/create')), 'article')
+              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/create')), 'operation')
             },
             {
               path: '/operation/activity/detail/:id',
               meta: { title: '活动详情' },
-              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/detail')), 'article')
+              component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/detail')), 'operation')
+            }
+          ]
+        },
+        {
+          path: '/operation/advice',
+          name: '意见反馈',
+          component: resolve => require.ensure([], () => resolve(require('@/page/operation/entry')), 'operation'),
+          children: [
+            {
+              path: '/operation/advice',
+              meta: { title: '意见反馈' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/operation/advice/index')), 'operation')
+            },
+            {
+              path: '/operation/advice/detail/:id',
+              meta: { title: '反馈详情' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/operation/advice/detail')), 'operation')
+            }
+          ]
+        }
+      ]
+    },
+    //财务管理
+    {
+      path: '/finance',
+      name: '财务管理',
+      component: layout,
+      children: [
+        {
+          path: '/finance/interpreter',
+          name: '译员结算管理',
+          component: resolve => require.ensure([], () => resolve(require('@/page/finance/entry')), 'finance'),
+          children: [
+            {
+              path: '/finance/interpreter',
+              meta: { title: '译员结算管理' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/index')), 'finance')
+            },
+            {
+              path: '/finance/interpreter/detail/:id',
+              meta: { title: '结算详情' },
+              component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/detail')), 'finance')
             }
           ]
         }
       ]
     }
   ]
-})
+});
 
 export default routes

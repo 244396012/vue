@@ -1,5 +1,8 @@
+
 'use strict';
+
 const utils = {
+
   //设置面包屑
   breadcrumb: function (route) {
     const arr = [];
@@ -27,7 +30,7 @@ const utils = {
   slide: function () {
     const slideBox = document.querySelector('#slide_box');
     const slideXbox = document.querySelector('#slide_xbox');
-    const btn = document.querySelector('#btn');
+    const btn = document.querySelector('#slide_btn');
     const slideBoxWidth = slideBox.offsetWidth;
     const btnWidth = btn.offsetWidth;
     //pc端
@@ -55,7 +58,7 @@ const utils = {
           objX = btnWidth;
         } else {
           objX = slideBoxWidth;
-          slideXbox.innerHTML = '验证通过<div id="btn" data-code="true"><i class="el-icon-circle-check-outline"></i></div>';
+          slideXbox.innerHTML = '验证通过<div id="slide_btn" data-code="true"><i class="el-icon-circle-check-outline"></i></div>';
         }
         slideXbox.style.width = objX + 'px';
         document.onmousemove = null;
@@ -72,6 +75,8 @@ const utils = {
           return false;
         }
       }
+    }else{
+      return 'Not Object';
     }
     return flag;
   }
