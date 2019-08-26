@@ -1,7 +1,5 @@
 # vue单页应用实例
-
-## vue-case
-vue + vue-router + vuex + axios + element-ui全家桶搭建单页web，包含登录注册等完整流程。
+vue + vue-router + vuex + axios + element-ui全家桶搭建单页web。
 
 ## Build Setup
 
@@ -9,7 +7,7 @@ vue + vue-router + vuex + axios + element-ui全家桶搭建单页web，包含登
 # install dependencies
 npm install
 
-# serve with hot reload at localhost:8080
+# serve with hot reload at localhost:3002
 npm run dev
 
 # build for production with minification
