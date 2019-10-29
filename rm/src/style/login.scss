@@ -21,7 +21,7 @@ $baseColor: #41CCA6;
     margin: -300px 0 0 -450px;
     background: #fff;
     border-radius: 8px;
-    box-shadow: 5px 5px 20px 5px #CFD8DB;
+    box-shadow: 5px 5px 10px 0px rgba(0,0,0,.15);
     &>div{
       display: table-cell;
       &:nth-child(1){
@@ -78,6 +78,7 @@ $baseColor: #41CCA6;
   color: #fff;
   position: absolute;
   background: #78d7bc;
+  user-select: none;
 }
 #slide_btn {
   float: right;
@@ -89,7 +90,11 @@ $baseColor: #41CCA6;
   outline: 1px solid #eee;
 }
 #slide_btn:hover{color: #000;}
-#slide_btn>i.el-icon-circle-check-outline {
+#slide_btn>i.el-icon-check {
   color: $baseColor;
-  font-size: 22px;
+  font-size: 20px;
   vertical-align: middle; }
+
+a.beian{
+  text-decoration: none;
+}

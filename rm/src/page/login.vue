@@ -10,7 +10,7 @@
               <el-input v-model="form.account" clearable placeholder="请输入帐号"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="form.password" type="password" clearable placeholder="请输入密码"></el-input>
+              <el-input v-model="form.password" clearable type="password" placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item>
               <div id="slide_box">
@@ -23,94 +23,113 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" @click="login" :disabled="btn.disabled">{{btn.txt}}</el-button>
+              <el-button type="success"
+                         @click="login"
+                         v-loading.fullscreen.lock="fullscreenLoading"
+                         :disabled="btn.disabled"
+                         :icon="btn.icon">登 录</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
     </el-main>
-    <el-footer>&copy; 数译科技 版权所有</el-footer>
+    <el-footer>
+      &copy; 数译科技 {{new Date().getFullYear()>2019 ? '2019-'+new Date().getFullYear() : new Date().getFullYear()}}
+      <a class="beian" href="http://www.beian.miit.gov.cn" target="_blank" rel="nofollow"> 蜀ICP备14015776号</a>
+    </el-footer>
   </el-container>
 </template>
 <script>
-import utils from '../utils'
-export default {
-  data (){
-    return {
-      form: {
-        account: 'shuyi',
-        password: '1'
-      },
-      btn: {
-        txt: '登 录',
-        disabled: false
-      }
-    }
-  },
-  created (){
-    //DOM渲染后执行
-	this.$nextTick(() => {
-		utils.slide()
-	})
-  },
-  methods: {
-    login (){
-	  const _this = this;
-      if(this.form.account === '' && this.form.password === ''){
-        this.$message({
-          type: 'warning',
-          message: '请输入账号和密码'
-        });
-        return false
-      }
-      if(!document.getElementById('slide_btn').getAttribute('data-code')){
-        this.$message({
-          type: 'warning',
-          message: '请先拖动滑块进行安全验证'
-        });
-        return false
-      }
-      this.btn.disabled = true;
-      this.btn.txt = '登录中';
-      this.$http.post('/auth/oauth/token', this.$qs.stringify({
-        client_id: '1',
-        client_secret: 'server',
-        grant_type: 'password',
-        username: this.form.account,
-        password: this.form.password
-      })).then(res => {
-        if(res.status === 200 && res.data.access_token){
-          this.$message({
-            type: 'success',
-            message: '登录成功'
-          });
-          setTimeout(() => {
-            _this.$route.query.url
-              ? _this.$router.push(_this.$route.query.url)
-              : _this.$router.push('/');
-            localStorage.setItem('sy_rm_admin_access_token', res.data.access_token)
-          }, 1000)
-        }else{
-          this.$message({
-            type: 'error',
-            message: res.message
-          })
+  import dynamicRoutes from '@/router/routes';
+  import initRoutes from '@/router/initRoutes';
+  import utils from '../utils';
+  export default {
+    data (){
+      return {
+        fullscreenLoading: false,
+        form: {
+          account: 'Q00596',
+          password: '111111'
+        },
+        btn: {
+          icon: '',
+          disabled: false
         }
-        this.btn.disabled = false;
-        this.btn.txt = '登 录';
-      }).catch(err => {
-        if(err.response.data.error === 'invalid_grant'){
-          this.$message({
-            type: 'error',
-            message: '账号或密码错误，请重试'
-          });
-          this.btn.disabled = false;
-          this.btn.txt = '登 录';
-        }
+      }
+    },
+    mounted (){
+      //DOM渲染后执行
+      this.$nextTick(() => {
+        utils.slide()
       })
+    },
+    methods: {
+      //发起登录请求
+      login (){
+        const _this = this;
+        if(!this.form.account.trim() || !this.form.password.trim()){
+          this.$message({
+            type: 'warning',
+            message: '请输入账号和密码'
+          });
+          return false
+        }
+        if(!document.getElementById('slide_btn').getAttribute('data-code')){
+          this.$message({
+            type: 'warning',
+            message: '请先拖动滑块进行安全验证'
+          });
+          return false
+        }
+        this.btn.disabled = true;
+        this.btn.icon = 'el-icon-loading';
+        this.$http.post('/auth/oauth/token', this.$qs.stringify({
+          client_id: '1',
+          client_secret: 'server',
+          grant_type: 'password',
+          usertype: '1',
+          username: this.form.account,
+          password: this.form.password
+        })).then(res => {
+          if(res.data.access_token){
+            sessionStorage.setItem('sy_rm_admin_access_token', res.data.access_token);
+            const loading = this.$loading({
+              lock: true,
+              text: '请稍等，正在获取权限',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.8)'
+            });
+            this.getPermission().then(permission => {
+              if(permission.data.message === 'success'){
+                this.$router.options.routes = initRoutes;
+                const matchedRoutes = this.matchPermission(dynamicRoutes, permission.data.data.flatMenue) || [];
+                this.$router.options.routes = this.$router.options.routes.concat(matchedRoutes);
+                this.$router.$addRoutes(this.$router.options.routes);
+                sessionStorage.setItem('sy_rm_admin_permission', JSON.stringify(permission.data.data.flatMenue));
+                setTimeout(() => {
+                  _this.$route.query.url
+                    ? _this.$router.push(_this.$route.query.url)
+                    : _this.$router.push('/');
+                }, 1000)
+              }else{
+                loading.text = permission.data.message
+              }
+              setTimeout(() => {
+                loading.close()
+              }, 1500)
+            })
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.message
+            })
+          }
+          this.btn.disabled = false;
+          this.btn.icon = ''
+        })
+      }
     }
   }
-}
 </script>
 <style lang="scss">
   @import "../style/login";

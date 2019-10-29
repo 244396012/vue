@@ -1,0 +1,206 @@
+<template>
+  <div class="page">
+    <div class="default-style default-form">
+      <el-row class="filterRow">
+        <el-col :span="21">
+          <div class="grid-content bg-purple dotted-border-rg">
+            <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
+              <el-form-item label="译员姓名">
+                <el-input v-model="form.name" placeholder="请输入译员姓名"></el-input>
+              </el-form-item>
+              <el-form-item label="币种">
+                <el-select v-model="form.moneyType" placeholder="请选择币种">
+                  <el-option
+                    v-for="item in formSelect.moneyType"
+                    :key="item.value"
+                    :value="item.value"
+                    :label="item.label"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="所属公司">
+                <el-select v-model="form.company" placeholder="请选择所属公司">
+                  <el-option
+                    v-for="item in formSelect.companyOptions"
+                    :key="item.Value"
+                    :label="item.Text"
+                    :value="item.Value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="申请时间">
+                <el-date-picker
+                  v-model="form.rangeTime"
+                  type="daterange"
+                  value-format="yyyy-MM-dd"
+                  range-separator="-"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间">
+                </el-date-picker>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-col>
+        <el-col :span="3">
+          <div class="grid-content bg-purple-light">
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
+            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="default-style"
+         v-if="totalCountStr && totalCountStr !== '兼职费用总额'">
+      <el-row>
+        <el-col :span="14" style="line-height: 32px;font-size: 13px;">{{totalCountStr}}</el-col>
+      </el-row>
+    </div>
+    <div class="default-style">
+      <el-table
+        border
+        stripe
+        :max-height="$store.state.tableHeight"
+        v-loading="loading"
+        :data="tableData">
+        <el-table-column
+          prop="num"
+          label="#"
+          width="40">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="100"
+          prop="userCode"
+          label="兼职编号">
+        </el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="userRealName"
+          label="姓名">
+        </el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="orgName"
+          label="所属公司">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="120"
+          prop=""
+          label="统计时间">
+        </el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="settleAmount"
+          label="兼职金额">
+        </el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="currencyName"
+          label="币种">
+        </el-table-column>
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="150">
+          <template slot-scope="scope">
+            <el-button type="text" @click="$router.push('/finance/expenses/detail/'+scope.row.userCode)">查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template v-if="totalTableList > 0">
+        <pagination :callback="showTableList" :total="totalTableList"></pagination>
+      </template>
+    </div>
+  </div>
+</template>
+<script>
+  import domain from '@/api/index';
+  import pagination from '@/components/pagination';
+  import { formatMoneyType$ } from '@/common/filter';
+  export default {
+    components: {
+      pagination
+    },
+    data (){
+      return {
+        form: {
+          name: '',
+          company: '',
+          moneyType: '',
+          rangeTime: ''
+        },
+        formSelect: {
+          moneyType: [
+            {label: '人民币', value: '人民币'},
+            {label: '美元', value: '美元'},
+            {label: '欧元', value: '欧元'},
+            {label: '英镑', value: '英镑'}
+          ],
+          companyOptions: [],
+        },
+        loading: false,
+        totalTableList: 0,
+        tableData: [],
+        totalCountStr: ''
+      }
+    },
+    created (){
+      this.$http.defaults.baseURL = domain.baseReportURL_r1;
+      this.$http.get('/pangu/GetFreelancerFeeOrg')
+        .then(res => {
+          res.data.Success && (this.formSelect.companyOptions = res.data.Data);
+        });
+      this.$http.defaults.baseURL = domain.baseRMURL;
+    },
+    mounted (){
+      this.showTableList()
+    },
+    methods: {
+      formatMoneyType$ (moneyName){
+        switch (moneyName){
+          case '人民币': return '￥';
+          case '美元': return '＄';
+          case '欧元': return '€';
+          case '英镑': return '￡';
+        }
+      },
+      //展示表格数据
+      showTableList (config){
+        config = config || {};
+        config.pageNo = config.pageNo || 1;
+        config.pageSize = config.pageSize || 10;
+        this.loading = true;
+        this.$http.get('/financeTask/listFinaceOverview', {
+          params: {
+            pageNo: config.pageNo-1,
+            pageSize: config.pageSize,
+            userName: this.form.name,
+            currencyName: this.form.moneyType,
+            orgName: this.form.company,
+            startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
+            endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
+          }
+        }).then(res => {
+          if(res.data.message === 'success'){
+            this.tableData = [];
+            const list = res.data.data.perPage.results;
+            list.forEach((item, index) => {
+              item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
+              this.tableData.push(item)
+            });
+            this.totalTableList = res.data.data.perPage.totalCount;
+            const totalList = res.data.data.total;
+            this.totalCountStr = '兼职费用总额：';
+            totalList.forEach(item => {
+              if(item.currencyName && item.settleAmount){
+                this.totalCountStr += this.formatMoneyType$(item.currencyName) + item.settleAmount+ '，';
+              }
+            });
+            this.totalCountStr = this.totalCountStr.slice(0, -1);
+          }
+          this.loading = false;
+        })
+      }
+    }
+  }
+
+</script>

@@ -19,7 +19,7 @@
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">将图片拖到此处，或<em>点击上传</em></div>
               <div class="el-upload__tip" slot="tip" style="margin: -20px 0;color: #888;text-align: left">
-                请尽量选择200*200的图片，否则展示时可能导致图片不清晰或变形
+                图片格式仅限JPG、PNG两种格式，大小不超过3M。
               </div>
             </el-upload>
           </el-form-item>
@@ -108,14 +108,14 @@
         const isLt3M = file.size / 1024 / 1024 < 3;
         if (!extension && !extension2) {
           this.$message({
-            message: '只能上传png、jpg格式的图片',
+            message: '图片格式不符合',
             type: 'warning'
           });
           return false
         }
         if (!isLt3M) {
           this.$message({
-            message: '上传文件大小不能超过3MB',
+            message: '图片大小超过3MB',
             type: 'warning'
           });
           return false
@@ -166,7 +166,7 @@
             }
             this.btn.disabled = true;
             this.btn.txt = '发布中';
-			let partTxt = document.getElementsByClassName('ql-editor')[0].innerText.slice(0, 100);
+			      let partTxt = document.querySelector('.ql-editor').innerText.slice(0, 100);
             this.$http.post('/officialArticle/addOfficialArticle', this.$qs.stringify({
               articleId: '',
               status: '',

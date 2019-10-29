@@ -3,8 +3,31 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
+              <el-form-item label="语言对" class="width620">
+                <el-select
+                  v-model="form.languageOrigin"
+                  placeholder="请选择原文语言">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.englishName">
+                  </el-option>
+                </el-select>
+                <label class="sep">-</label>
+                <el-select
+                  v-model="form.languageTarget"
+                  placeholder="请选择译文语言">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.englishName">
+                  </el-option>
+                </el-select>
+              </el-form-item>
               <el-form-item label="译员ID">
                 <el-input v-model="form.transId" placeholder="请输入译员ID"></el-input>
               </el-form-item>
@@ -20,39 +43,25 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="试题等级">
+              <el-form-item label="试题领域" class="width620">
                 <el-select
-                  v-model="form.level"
-                  placeholder="请选择试题等级">
+                  @change="selectSecondField"
+                  v-model="form.field" placeholder="请选择一级领域">
                   <el-option
-                    v-for="item in formSelect.levelOptions"
-                    :key="item"
-                    :label="item"
-                    :value="item">
+                    v-for="item in $store.state.fieldOptions"
+                    :key="item.id"
+                    :label="item.fullSpecialtyName"
+                    :value="item.id">
                   </el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item label="原文语言">
+                <label class="sep">-</label>
                 <el-select
-                  v-model="form.languageOrigin"
-                  placeholder="请选择原文语言">
+                  v-model="form.secondField" placeholder="请选择二级领域">
                   <el-option
-                    v-for="item in $store.state.languageList"
+                    v-for="item in formSelect.secondOptions"
                     :key="item.id"
-                    :label="item.chineseName"
-                    :value="item.englishName">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="译文语言">
-                <el-select
-                  v-model="form.languageTarget"
-                  placeholder="请选择译文语言">
-                  <el-option
-                    v-for="item in $store.state.languageList"
-                    :key="item.id"
-                    :label="item.chineseName"
-                    :value="item.englishName">
+                    :label="item.fullSpecialtyName"
+                    :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -66,16 +75,8 @@
                   end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
-              <el-form-item label="试题领域">
-                <el-select
-                  v-model="form.field"
-                  placeholder="请选择试题领域">
-                  <el-option
-                    v-for="item in formSelect.fieldOptions"
-                    :key="item.id"
-                    :label="item.fullSpecialtyName"
-                    :value="item.id"></el-option>
-                </el-select>
+              <el-form-item label="审核人">
+                <el-input v-model="form.assign" placeholder="请输入审核人"></el-input>
               </el-form-item>
               <el-form-item label="审核结果">
                 <el-select
@@ -88,9 +89,6 @@
                     :value="item">
                   </el-option>
                 </el-select>
-              </el-form-item>
-              <el-form-item label="审核人">
-                <el-input v-model="form.assign" placeholder="请输入审核人"></el-input>
               </el-form-item>
               <el-form-item label="审核人类型">
                 <el-select
@@ -109,8 +107,8 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
+            <el-button icon="el-icon-refresh" @click="doExtraSearch">重 置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -127,32 +125,32 @@
           width="40">
         </el-table-column>
         <el-table-column
-          width="70"
+          min-width="70"
           prop="auditState"
           label="状态">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="translatorCode"
           label="译员ID">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="auditUserName"
           label="审核人">
         </el-table-column>
         <el-table-column
           prop="auditPositionType"
           label="审核人类型"
-          width="100">
+          min-width="100">
         </el-table-column>
         <el-table-column
-          width="90"
-          prop="translatorLevel"
+          min-width="90"
           label="译员等级">
+          <template slot-scope="scope">{{'P'+scope.row.translatorLevel}}</template>
         </el-table-column>
         <el-table-column
-          width="90"
+          min-width="90"
           prop="questionLevel"
           label="试题等级">
         </el-table-column>
@@ -160,17 +158,13 @@
           show-overflow-tooltip
           min-width="90"
           label="语言对">
-          <template slot-scope="scope">
-            {{scope.row.originLanguageName +'-'+scope.row.targetLanguageName}}
-          </template>
+          <template slot-scope="scope">{{scope.row.originLanguageName +'-'+scope.row.targetLanguageName}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
           min-width="120"
           label="试题领域">
-          <template slot-scope="scope">
-            <template v-for="item in scope.row.domains">{{item.fullSpecialtyName+' '}}</template>
-          </template>
+          <template slot-scope="scope">{{scope.row.subDomains | formatDomain}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -179,14 +173,14 @@
           label="测试开始时间">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="auditResult"
           label="审核结果">
         </el-table-column>
         <el-table-column
-          width="100"
-          prop="setLevel"
+          min-width="100"
           label="测试后等级">
+          <template slot-scope="scope">{{scope.row.setLevel?'P'+scope.row.setLevel:''}}</template>
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -195,7 +189,7 @@
           <template slot-scope="scope">
             <el-button type="text"
                        v-if="scope.row.auditState === '已审'"
-                       @click="$router.push('/onlineTestResult/trans/detail/'+scope.row.id)">查看</el-button>
+                       @click="$router.push('/onlineTestResult/assign/detail/'+scope.row.id)">查看</el-button>
             <el-button type="text"
                        v-if="scope.row.auditState === '未分'"
                        @click="showModal(scope.row)">分配</el-button>
@@ -213,8 +207,9 @@
   </div>
 </template>
 <script>
-  import pagination from '@/components/pagination'
-  import assign_modal from './assign_modal'
+  import pagination from '@/components/pagination';
+  import assign_modal from './assign_modal';
+  import { formatDomainsStr } from '@/common/filter';
   export default {
     components: {
       pagination,
@@ -222,38 +217,54 @@
     },
     data (){
       return {
-        loading: false,
-        totalTableList: 0,
         form: {
           transId: '',
-          level: '',
           languageOrigin: '',
           languageTarget: '',
           field: '',
-          rangeTime: '',
+          secondField: '',
           assignState: '',
           assign: '',
           assignType: '',
-          result: ''
+          result: '',
+          rangeTime: ''
         },
         formSelect: {
-          fieldOptions: [],
-          assignStateOptions: ['未分','待审','已审'],
+          secondOptions: [],
+          assignStateOptions: ['已审核','待审核'],
           assignTypeOptions: ['专职','兼职'],
           resultOptions: ['未通过','已通过'],
           levelOptions: ['初级','中级','高级']
         },
+        loading: false,
+        totalTableList: 0,
         tableData: [],
         toParams: ''
       }
     },
+    filters: {
+      formatDomain: formatDomainsStr
+    },
     created (){
-      this.showTableList();
-      this.getFirstField().then(res => {
-        this.formSelect.fieldOptions = res
-      })
+      this.showTableList()
     },
     methods: {
+      doExtraSearch (){
+        this.formSelect.secondOptions = [];
+        this.resetSearch(this.form, this.showTableList)
+      },
+      //获取二级领域
+      selectSecondField (id){
+        const result = this.$store.state.fieldOptions.find(item => {
+          return item.id === id;
+        });
+        const sid = result.specialtyId || '';
+        this.form.secondField = '';
+        this.formSelect.secondOptions = [];
+        this.getSecondField(sid).then(res => {
+          this.formSelect.secondOptions = res;
+        });
+      },
       //展示表格数据
       showTableList (config){
         config = config || {};
@@ -265,10 +276,10 @@
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
             translatorCode: this.form.transId,
-            questionLevel: this.form.level,
             originLanguageCode: this.form.languageOrigin,
             targetLanguageCode: this.form.languageTarget,
             domainIds: this.form.field,
+            subDomainIds: this.form.secondField,
             auditState: this.form.assignState,
             auditUserName: this.form.assign,
             auditPositionType: this.form.assignType,
@@ -277,9 +288,10 @@
             endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });
@@ -292,8 +304,7 @@
       showModal (...arg){
         this.toParams = arg;
         this.$store.commit('showModal')
-      },
-
+      }
     }
   }
 

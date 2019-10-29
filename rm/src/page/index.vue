@@ -1,6 +1,6 @@
 <template>
   <div>
-    首页
+    <p style="text-align: center;line-height: 200px">欢迎使用啄语后台管理系统！</p>
   </div>
 </template>
 <script>

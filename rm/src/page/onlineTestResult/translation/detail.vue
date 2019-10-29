@@ -14,21 +14,22 @@
           <el-col :span="12"><div class="grid-content bg-purple"></div><b>侧重点及权重：</b>{{cuTransAnswers.questionWeight}}</el-col>
         </el-row>
         <el-row class="exact">
-          <el-col :span="12"><div class="grid-content bg-purple-light"><b>译员领域：</b>{{adTransResult.domains}}</div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple"><b>试题领域：</b>{{cuTransAnswers.questionFields}}</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple-light"><b>译员领域：</b>{{adTransResult.subDomains}}</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple"><b>试题领域：</b>{{cuTransAnswers.questionSubDomain}}</div></el-col>
         </el-row>
         <el-row style="margin-bottom: 10px">
           <el-col :span="24"><div class="grid-content bg-purple sy-line"><b style="display: table-cell;vertical-align: top">原文：</b>
-            <div style="display: table-cell;">
-              {{cuTransAnswers.question}}
-            </div>
+            <div style="display: table-cell;">{{cuTransAnswers.question}}</div>
+          </div></el-col>
+        </el-row>
+        <el-row style="margin-bottom: 0px">
+          <el-col :span="24"><div class="grid-content bg-purple sy-line"><b style="display: table-cell;vertical-align: top">译文：</b>
+            <div style="display: table-cell;">{{cuTransAnswers.answer}}</div>
           </div></el-col>
         </el-row>
         <el-row style="margin-bottom: 0px">
           <el-col :span="24"><div class="grid-content bg-purple sy-line"><b style="display: table-cell;vertical-align: top">参考译文：</b>
-            <div style="display: table-cell;">
-              {{cuTransAnswers.correctAnswer}}
-            </div>
+            <div style="display: table-cell;">{{cuTransAnswers.correctAnswer}}</div>
           </div></el-col>
         </el-row>
       </div>
@@ -111,7 +112,7 @@
           translatorLevel: '--',
           questionLevel: '--',
           examStartTime: '--',
-          domains: '--',
+          subDomains: '--',
           grade: '--',
           comment: '--',
           auditResult: '--',
@@ -119,9 +120,10 @@
         },
         cuTransAnswers:{
           questionLevel: '--',
-          questionFields: '--',
+          questionSubDomain: '--',
           questionWeight: '--',
           question: '--',
+          answer: '--',
           correctAnswer: '--'
         }
       }
@@ -137,36 +139,36 @@
             resultId: this.$route.params.id
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.message === 'success'){
-            for(let prop in res.data.data.adTransResult){
-              if(prop === 'domains'){
+          if(res.data.message === 'success'){
+            const domainItem = res.data.data.adTransResult;
+            for(let prop in domainItem){
+              if(prop === 'subDomains'){
                 this.adTransResult[prop] = '';
-                const domain = res.data.data.adTransResult[prop]
-                domain.forEach(item => {
-                  this.adTransResult[prop] += item.fullSpecialtyName + ' '
-                })
+                const domain = domainItem[prop] && JSON.parse(domainItem[prop]) || [];
+                this.adTransResult[prop] = domain.toString();
               }else if(prop === 'setLevel'){
-                this.adTransResult[prop] = 'P'+res.data.data.adTransResult[prop]
+                this.adTransResult[prop] = 'P'+ domainItem[prop]
               }else if(prop === 'gradePartition'){
-                const gradePartition = JSON.parse(res.data.data.adTransResult[prop])
+                const gradePartition = domainItem[prop] && JSON.parse(domainItem[prop]) || {};
                 this.gradePartition = {...gradePartition}
               }else {
-                this.adTransResult[prop] = res.data.data.adTransResult[prop]
+                this.adTransResult[prop] = domainItem[prop]
               }
             }
-            for(let prop in res.data.data.cuTransAnswers[0]){
+            const anwserItem = res.data.data.cuTransAnswers;
+            for(let prop in anwserItem[0]){
               if(prop === 'questionWeight'){
-                const weight = JSON.parse(res.data.data.cuTransAnswers[0][prop])
+                const weight = JSON.parse(anwserItem[0][prop]);
                 this.cuTransAnswers[prop] = `
                         准确性（${weight['grammarRatio']}）
                         专业性（${weight['temporalTatio']}）
                         可读性（${weight['vocabularyRatio']}）`;
                 this.weight = {...weight}
-              }else if(prop === 'questionFields'){
-                const field = JSON.parse(res.data.data.cuTransAnswers[0][prop])
+              }else if(prop === 'questionSubDomain'){
+                const field = JSON.parse(anwserItem[0][prop]);
                 this.cuTransAnswers[prop] = field.join(' ')
               }else{
-                this.cuTransAnswers[prop] = res.data.data.cuTransAnswers[0][prop]
+                this.cuTransAnswers[prop] = anwserItem[0][prop]
               }
             }
           }

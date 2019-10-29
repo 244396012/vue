@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+  import { mapMutations } from 'vuex'
   export default {
     name: 'personal-info',
     props: ['callback'],
@@ -40,14 +41,19 @@
       this.getUserInfo()
     },
     methods: {
+      ...mapMutations(['setUserCode', 'setUserInfo']),
       getUserInfo (){
-        this.$http.get('/userExtension/getCurrentInfo')
+        this.$http.get('/userExtension/getCurrentInfoAndRoles')
           .then(res => {
             if(res.data.message === 'success'){
-              this.form.name = res.data.data.userName;
-              this.form.jobNo = res.data.data.userCode;
-              this.form.department = res.data.data.department;
-              this.form.station = res.data.data.userExtension.station;
+              const _data = res.data.data;
+              this.form.name = _data.userName;
+              this.form.jobNo = _data.userCode;
+              this.form.department = _data.department;
+              this.form.station = _data.userExtension.station;
+              this.form.roles = _data.roleCodeList || [];
+              this.setUserCode(_data.userCode);
+              this.setUserInfo(this.form)
             }
           })
       }

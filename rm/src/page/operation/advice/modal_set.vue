@@ -51,6 +51,7 @@
     watch: {
       formid (newVal, oldVal){
         this.form.id = newVal;
+        this.form.feedbackLevel = ''
       }
     },
     methods: {
@@ -75,7 +76,7 @@
             });
             this.$store.commit('showModal', false);
             this.form.feedbackLevel = '';
-            this.callback();
+            this.doSearch(this.callback);
           }else {
             this.$message({
               type: 'error',

@@ -3,7 +3,7 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
               <el-form-item label="发布者名称">
                 <el-input v-model="form.title" placeholder="请输入发布者名称"></el-input>
@@ -60,7 +60,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
             <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
@@ -81,9 +81,12 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
-          prop="num"
           label="#"
-          width="40">
+          width="60">
+          <template slot-scope="scope">
+            <el-badge v-if="scope.row.isFeatured" value="精选" class="item">{{scope.row.num}}</el-badge>
+            <el-badge v-else class="item">{{scope.row.num}}</el-badge>
+          </template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -228,7 +231,7 @@
             pageSize: config.pageSize,
             publishUserId: this.form.releaser,
             articleTitle: this.form.title,
-            label: this.form.label, //
+            label: this.form.label,
             status: this.form.status,
             publishStartTime: this.form.releaseTime.length>0 ? this.form.releaseTime[0]+' 00:00:00' : '',
             publishEndTime: this.form.releaseTime.length>0 ? this.form.releaseTime[1]+' 23:55:55' : '',
@@ -236,9 +239,10 @@
             submitEndTime: this.form.confirmTime.length>0 ? this.form.confirmTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.data.content.length >= 0){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item);
             });
@@ -302,5 +306,4 @@
       }
     }
   }
-
 </script>

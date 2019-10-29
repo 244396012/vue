@@ -2,8 +2,8 @@
 
 ## entry.vue 入口模版
 
-## interpreterSettlement - 译员结算
+## settlement - 译员结算
   ### index 列表
   ### detail 详情
 
-
+## cost - 兼职费用

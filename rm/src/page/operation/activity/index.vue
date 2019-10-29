@@ -3,7 +3,7 @@
     <div class="default-style">
       <el-row>
         <el-col :span="12">
-          <el-button type="success" icon="el-icon-plus" @click="$router.push('/operation/activity/create')">创建活动</el-button>
+          <el-button type="success" icon="el-icon-circle-plus-outline" @click="$router.push('/operation/activity/create')">创建活动</el-button>
         </el-col>
       </el-row>
     </div>
@@ -34,7 +34,7 @@
         <el-table-column
           prop="type"
           label="活动类型"
-          width="100">
+          min-width="100">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -49,7 +49,7 @@
           label="创建时间">
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           prop="state"
           label="活动状态">
         </el-table-column>
@@ -103,7 +103,7 @@
             pageSize: config.pageSize
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
             res.data.data.content.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
@@ -130,9 +130,7 @@
                 type: 'success',
                 message: '操作成功'
               });
-              this.showTableList({
-                pageNo: sessionStorage.getItem('sy_rm_current_page')
-              });
+              this.showTableList();
             } else {
               this.$message({
                 type: 'error',

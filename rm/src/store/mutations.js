@@ -17,10 +17,19 @@ const mutations = {
     state.showModal = !state.showModal
   },
   languageList: (state, data) => {
-    state.languageList = data;
+    state.languageList = data
+  },
+  fieldList: (state, data) => {
+    state.fieldOptions = data
+  },
+  setUserCode: (state, data) => {
+    state.userCode = data
+  },
+  setUserInfo: (state, data) => {
+    state.userInfo = data
   },
   updateData: (state, data) => {
-    state.updateData = data;
+    state.updateData = data
   }
 };
 

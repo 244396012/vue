@@ -10,7 +10,7 @@
                 <el-col :span="8"><div class="grid-content bg-purple-light"><b>活动名称：</b>{{detail.name}}</div></el-col>
               </el-row>
               <el-row class="exact">
-                <el-col :span="8"><div class="grid-content bg-purple"><b>活动时间：</b>{{detail.startTime.split(' ')[0]}} - {{detail.endTime.split(' ')[0]}}</div></el-col>
+                <el-col :span="8"><div class="grid-content bg-purple"><b>活动时间：</b>{{detail.startTime && detail.startTime.split(' ')[0]}} - {{detail.endTime && detail.endTime.split(' ')[0]}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple-light"><b>活动类型：</b>{{detail.type}}</div></el-col>
                 <el-col :span="8"><div class="grid-content bg-purple"></div><b>活动状态：</b>{{detail.state}}</el-col>
               </el-row>
@@ -19,7 +19,7 @@
                   <div style="display: inline-block;margin-top: -14px">{{detail.rule}}</div>
                 </div></el-col>
               </el-row>
-              <div style="padding-left: 75px;padding-top: 20px">
+              <div v-if="detail.state === '待开始'" style="padding-left: 75px;padding-top: 20px">
                 <el-button type="success" icon="el-icon-edit"
                            @click="$router.push('/operation/activity/create?id='+$route.params.id)">编辑</el-button>
               </div>
@@ -28,7 +28,7 @@
           <el-tab-pane label="奖品列表" name="second">
             <div class="detail">
               <el-row>
-                <el-button type="success" icon="el-icon-plus" @click="addReward">添加奖品</el-button>
+                <el-button type="success" icon="el-icon-circle-plus-outline" @click="addReward">添加奖品</el-button>
               </el-row>
               <el-table
                 border
@@ -37,9 +37,8 @@
                 v-loading="reward.loading"
                 :data="reward.tableData">
                 <el-table-column
-                  label="#"
-                  prop="num"
-                  width="40">
+                  label="奖品序号"
+                  prop="prizeNo">
                 </el-table-column>
                 <el-table-column
                   min-width="100"
@@ -103,7 +102,7 @@
                 <div class="default-style default-form">
                   <el-row class="filterRow">
                     <el-col :span="21" style="margin-bottom: 12px;">
-                      <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+                      <div class="grid-content bg-purple dotted-border-rg">
                         <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
                           <el-form-item label="抽奖人姓名">
                             <el-input v-model="form.name" placeholder="请输入抽奖人姓名"></el-input>
@@ -155,7 +154,7 @@
                     </el-col>
                     <el-col :span="3" style="margin-bottom: 12px;">
                       <div class="grid-content bg-purple-light">
-                        <el-button type="success" icon="el-icon-search" @click="showRecordTableList">查 询</el-button>
+                        <el-button type="success" icon="el-icon-search" @click="doSearch(showRecordTableList)">查 询</el-button>
                         <el-button icon="el-icon-refresh" @click="resetSearch(form,showRecordTableList)">重 置</el-button>
                       </div>
                     </el-col>

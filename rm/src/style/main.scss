@@ -3,7 +3,7 @@ $baseColor: #41CCA6;
 html,body,#app{
   margin: 0;
   padding: 0;
-  min-width: 1200px;
+  min-width: 1320px;
   height: 100%;
   background: #F2F3F7;
 }
@@ -13,6 +13,19 @@ html,body,#app{
   background-repeat: no-repeat;
   background-position: top center;
   background-size: 24px 24px;
+}
+//aside fixed
+.el-aside.fixed{
+  position: fixed;
+  top: 2px;
+  height: 99.5%;
+  padding-bottom: 20px;
+  &.btm{
+    height: calc(100% - 61px);
+  }
+}
+.el-main.fixed{
+  padding-left: 225px;
 }
 
 //header

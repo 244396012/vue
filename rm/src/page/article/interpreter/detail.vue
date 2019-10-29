@@ -18,13 +18,21 @@
                 <el-col :span="8"><div class="grid-content bg-purple">
                   <b style="display: inline-block;height: 100px;vertical-align: 88px;">文章封面：</b>
                   <img class="thumb-lg" :src="detail.coverId" alt=""></div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple-light"><b>文章标签：</b>{{detail.lable}}</div></el-col>
-                <el-col :span="8"><div class="grid-content bg-purple"></div><b>发布时间：</b>{{detail.publishTime}}</el-col>
+                <template v-if="+detail.status === 2">
+                  <el-col :span="16"><div class="grid-content bg-purple-light" style="color: red">审核未通过：{{detail.reviewDesc}}</div></el-col>
+                </template>
+                <template v-else-if="+detail.status === 4">
+                  <el-col :span="16"><div class="grid-content bg-purple-light" style="color: red">发布撤回：{{detail.reviewDesc}}</div></el-col>
+                </template>
+                <template v-else-if="+detail.status === 3">
+                  <el-col :span="8"><div class="grid-content bg-purple-light"><b>文章标签：</b>{{detail.lable}}</div></el-col>
+                  <el-col :span="8"><div class="grid-content bg-purple"></div><b>发布时间：</b>{{detail.publishTime}}</el-col>
+                </template>
               </el-row>
               <el-row class="exact">
                 <el-col :span="20"><div class="grid-content bg-purple sy-line">
                   <b style="display: table-cell;vertical-align: top;padding-top: 13px">正文内容：</b>
-                  <div style="display: table-cell;" v-html="detail.contentHtml"></div>
+                  <div style="display: table-cell;" v-html="detail.contentHtml && detail.contentHtml.replace(/\&lt\;/g,'<').replace(/\&gt\;/g,'>')"></div>
                 </div></el-col>
               </el-row>
               <el-row class="exact">
@@ -43,13 +51,13 @@
                     </el-table-column>
                     <el-table-column
                       show-overflow-tooltip
-                      min-width="160"
+                      min-width="120"
                       prop="operateUserId"
                       label="日志id">
                     </el-table-column>
                     <el-table-column
                       show-overflow-tooltip
-                      min-width="100"
+                      min-width="120"
                       prop="operateTime"
                       label="操作时间">
                     </el-table-column>
@@ -60,13 +68,13 @@
                     </el-table-column>
                     <el-table-column
                       show-overflow-tooltip
-                      min-width="100"
+                      min-width="150"
                       prop="content"
                       label="操作内容">
                     </el-table-column>
                   </el-table>
                   <template v-if="operation.totalTableList > 0">
-                    <pagination-click :callback="showLogTableList" :total="operation.totalTableList"></pagination-click>
+                    <pagination-log :callback="showLogTableList" :total="operation.totalTableList"></pagination-log>
                   </template>
                 </div></el-col>
               </el-row>
@@ -307,15 +315,15 @@
         })).then(res => {
           if(res.status === 200 && res.data.results.length >= 0){
             this.operation.tableData = [];
-            res.data.results.forEach((item, index) => {
+            const list = res.data.results;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.operation.tableData.push(item)
             });
             this.operation.totalTableList = res.data.totalCount
           }
-          this.loading = false;
+          this.operation.loading = false;
         })
-
       },
       //获取“评论”详情数据
       showCommentTableList (config){
@@ -330,7 +338,8 @@
         })).then(res => {
           if(res.status === 200 && res.data.results.length >= 0){
             this.comment.tableData = [];
-            res.data.results.forEach((item, index) => {
+            const list = res.data.results;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.comment.tableData.push(item);
             });
@@ -354,7 +363,8 @@
         }).then(res => {
           if(res.data.code === '200' && res.data.data.results.length >= 0){
             this.point.tableData = [];
-            res.data.data.results.forEach((item, index) => {
+            const list = res.data.data.results;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.point.tableData.push(item);
             });

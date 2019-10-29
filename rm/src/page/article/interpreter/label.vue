@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="default-style">
-      <el-button type="success" icon="el-icon-plus" @click="addNewLabel">新增标签</el-button>
+      <el-button type="success" icon="el-icon-circle-plus-outline" @click="addNewLabel">新增标签</el-button>
     </div>
     <div class="default-style">
       <el-table

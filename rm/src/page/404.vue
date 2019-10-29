@@ -17,10 +17,10 @@
     methods: {
       countDown (){
         let timer = setInterval(() => {
-          this.time --
+          this.time --;
           if(this.time === 0){
-            clearInterval(timer)
-            this.$router.push('/')
+            clearInterval(timer);
+            this.$router.push('/');
             return false
           }
         }, 1000)

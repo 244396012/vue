@@ -58,7 +58,7 @@ const utils = {
           objX = btnWidth;
         } else {
           objX = slideBoxWidth;
-          slideXbox.innerHTML = '验证通过<div id="slide_btn" data-code="true"><i class="el-icon-circle-check-outline"></i></div>';
+          slideXbox.innerHTML = '验证通过<div id="slide_btn" data-code="true"><i class="el-icon-check"></i></div>';
         }
         slideXbox.style.width = objX + 'px';
         document.onmousemove = null;
@@ -79,6 +79,17 @@ const utils = {
       return 'Not Object';
     }
     return flag;
+  },
+  //节流
+  throttle: function (fn, delay) {
+    let timer = null;
+    return function () {
+      const content = this;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fn.call(content);
+      }, delay);
+    }
   }
 };
 

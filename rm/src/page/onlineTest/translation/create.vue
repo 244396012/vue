@@ -3,10 +3,11 @@
     <div class="default-style">
       <div class="detail form">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
+
           <el-form-item label="语言对：" required style="margin-bottom: 0px">
             <el-col :span="12">
-              <el-form-item prop="languageOrigin">
-                <el-select class="exact"  v-model="ruleForm.languageOrigin" placeholder="请选择原文语言">
+              <el-form-item prop="origin">
+                <el-select v-model="ruleForm.origin" placeholder="请选择源语言" style="width: 99%">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -16,10 +17,9 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="1" style="text-align: center">-</el-col>
-            <el-col :span="11">
-              <el-form-item prop="languageTarget">
-                <el-select class="exact"  v-model="ruleForm.languageTarget" placeholder="请选择译文语言">
+            <el-col :span="12">
+              <el-form-item prop="target">
+                <el-select v-model="ruleForm.target" placeholder="请选择目标语言" style="width: 100%">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -47,7 +47,7 @@
                 <el-select placeholder="请选择权重"
                            @change="judgeWeight"
                            v-model="ruleForm.weight1">
-                  <el-option v-for="item in formSelect.levelOptions"
+                  <el-option v-for="item in levelOptions"
                              :key="item"
                              :label="item"
                              :value="item"></el-option>
@@ -60,7 +60,7 @@
                 <el-select placeholder="请选择权重"
                            @change="judgeWeight"
                            v-model="ruleForm.weight2">
-                  <el-option v-for="item in formSelect.levelOptions"
+                  <el-option v-for="item in levelOptions"
                              :key="item"
                              :label="item"
                              :value="item"></el-option>
@@ -73,7 +73,7 @@
                 <el-select placeholder="请选择权重"
                            @change="judgeWeight"
                            v-model="ruleForm.weight3">
-                  <el-option v-for="item in formSelect.levelOptions"
+                  <el-option v-for="item in levelOptions"
                              :key="item"
                              :label="item"
                              :value="item"></el-option>
@@ -82,21 +82,28 @@
             </el-row>
             <p style="position: absolute;bottom: -44px;font-size: 12px;color: #F56C6C">* 提示：该权重将直接影响评卷老师的打分占比；三项侧重点的权重相加为10</p>
           </el-form-item>
-          <el-form-item label="行业领域：" prop="field" class="exact">
-            <el-checkbox-group v-model="ruleForm.field" :min="1" :max="5">
-              <el-checkbox v-for="item in formSelect.fieldOptions"
-                           :key="item.id"
-                           :value="item.id"
-                           :label="item.id" name="field">{{item.fullSpecialtyName}}</el-checkbox>
-            </el-checkbox-group>
-            <p style="position: absolute;bottom: -32px;font-size: 12px;color: #F56C6C">* 至少选择1项，最多选择5项</p>
-          </el-form-item>
           <el-form-item label="难度等级：" prop="level">
             <el-select v-model="ruleForm.level">
-              <el-option v-for="item in formSelect.levelOptions"
+              <el-option v-for="item in levelOptions"
                         :key="item"
                         :label="item"
                         :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="行业领域：">
+            <el-select v-model="ruleForm.field"
+                       @change="getSecondFields"
+                       placeholder="请选择一级领域">
+              <el-option v-for="item in $store.state.fieldOptions"
+                         :key="item.id"
+                         :label="item.fullSpecialtyName"
+                         :value="item.specialtyId"></el-option>
+            </el-select>
+            <el-select v-model="ruleForm.secondField" placeholder="请选择二级领域" multiple :collapse-tags="true">
+              <el-option v-for="item in formSelect.secondOptions"
+                         :key="item.id"
+                         :label="item.fullSpecialtyName"
+                         :value="item.id"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item style="margin-top: 2rem">
@@ -114,15 +121,17 @@
   </div>
 </template>
 <script>
+  import { mapState } from 'vuex';
   export default {
     data() {
       return {
         ruleForm: {
-          languageOrigin: '',
-          languageTarget: '',
+          origin: '',
+          target: '',
           originTxt: '',
           targetTxt: '',
-          field: [],
+          field: '',
+          secondField: [],
           level: '',
           weight1: 4,
           weight2: 4,
@@ -130,14 +139,13 @@
         },
         formSelect: {
           totalWeight: 0,
-          fieldOptions: [],
-          levelOptions: [1,2,3,4,5,6,7,8,9,10]
+          secondOptions: []
         },
         rules: {
-          languageOrigin: [
+          origin: [
             { required: true, message: '请选择原文语言', trigger: 'change' }
           ],
-          languageTarget: [
+          target: [
             { required: true, message: '请选择译文语言', trigger: 'change' }
           ],
           originTxt: [
@@ -145,9 +153,6 @@
           ],
           targetTxt: [
             { required: true, message: '请输入参考译文', trigger: 'blur' }
-          ],
-          field: [
-            { type: 'array', required: true, message: ' ', trigger: 'change' }
           ],
           level: [
             { required: true, message: '请选择难度等级', trigger: 'change' }
@@ -163,13 +168,23 @@
         }
       };
     },
+    computed: {
+      ...mapState('select',{
+        levelOptions: state => state.level
+      })
+    },
     created (){
-      this.getFirstField().then(res => {
-        this.formSelect.fieldOptions = res
-      });
       this.$route.query.u && this.fillInForm()
     },
     methods: {
+      //获取二级领域
+      getSecondFields (id){
+        this.ruleForm.secondField = [];
+        this.formSelect.secondOptions = [];
+        this.getSecondField(id).then(res => {
+          this.formSelect.secondOptions = res;
+        })
+      },
       //判断权重总和为10
       judgeWeight (val){
         this.formSelect.totalWeight = this.ruleForm.weight1 + this.ruleForm.weight2 + this.ruleForm.weight3;
@@ -177,51 +192,63 @@
           this.$message({
             type: 'warning',
             message: '三项侧重点的权重相加为10'
-          })
+          });
           return false
         }
       },
       //保存、保存并添加下一条
-      submitForm(formName, type) {
+      submitForm(formName, btn) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if(this.ruleForm.languageOrigin === this.ruleForm.languageTarget){
+            if(this.ruleForm.origin === this.ruleForm.target){
               this.$message({
                 type: 'warning',
                 message: '原、译文语言对不能相同'
-              })
-              return false;
+              });
+              return false
             }
+            this.formSelect.totalWeight = this.ruleForm.weight1 + this.ruleForm.weight2 + this.ruleForm.weight3;
             if(this.formSelect.totalWeight !== 10){
               this.$message({
                 type: 'warning',
                 message: '三项侧重点的权重相加为10'
-              })
-              return false;
+              });
+              return false
             }
-            let type = 'post',
-                url = '/translationQuestion/addTranslationQuestion';
+            let domainId = '';
+            const firstDomain = this.$store.state.fieldOptions.find(item => {
+              return this.ruleForm.field === item.specialtyId
+            }) || {};
+            if(firstDomain.id && this.ruleForm.secondField.length < 1){
+              domainId = firstDomain.id
+            }else if(this.ruleForm.secondField.length > 0){
+              domainId = this.ruleForm.secondField
+            }
             const formData = {
-              orignLanguage: this.ruleForm.languageOrigin,
-              targetLanguage: this.ruleForm.languageTarget,
+              orignLanguage: this.ruleForm.origin,
+              targetLanguage: this.ruleForm.target,
               orignContent: this.ruleForm.originTxt,
               targetContent: this.ruleForm.targetTxt,
               grammarRatio: this.ruleForm.weight1,
               temporalTatio: this.ruleForm.weight2,
               vocabularyRatio: this.ruleForm.weight3,
               difficultLevel: this.ruleForm.level,
-              domainIds: this.ruleForm.field
-            }
+              domainIds: domainId
+            };
+            let type = '', url = '';
             if(this.$route.query.u){
               type = 'put';
               url = '/translationQuestion/updateTranslationQuestion';
               formData.id = this.$route.query.u;
+            }else{
+              type = 'post';
+              url = '/translationQuestion/addTranslationQuestion';
             }
-            if(type === 1){
-              this.btn1.disabled = true
+            if(btn){
+              this.btn1.disabled = true;
               this.btn1.txt = '保存中'
             }else {
-              this.btn.disabled = true
+              this.btn.disabled = true;
               this.btn.txt = '保存中'
             }
             this.$http({
@@ -229,17 +256,18 @@
               url: url,
               data: this.$qs.stringify(formData)
             }).then(res => {
-              if(res.data.code === '200' && res.data.message === 'success'){
+              if(res.data.message === 'success'){
                 this.$message({
                   type: 'success',
                   message: '保存成功'
-                })
-                window.setTimeout(() => {
-                  if(type === 1){
-                    this.$refs[formName].resetFields()
-                    this.ruleForm.field = []
+                });
+                setTimeout(() => {
+                  if(btn){
+                    this.$refs[formName].resetFields();
+                    this.ruleForm.field = '';
+                    this.ruleForm.secondField = [];
                   }else {
-                    this.$router.back(-1)
+                    this.$router.push('/onlineTest/trans')
                   }
                 }, 1000)
               }else{
@@ -248,11 +276,11 @@
                   message: res.data.message
                 })
               }
-              if(type === 1){
-                this.btn1.disabled = false
+              if(btn){
+                this.btn1.disabled = false;
                 this.btn1.txt = '保存并添加下一条'
               }else {
-                this.btn.disabled = false
+                this.btn.disabled = false;
                 this.btn.txt = '保存'
               }
             })
@@ -266,18 +294,28 @@
             id: this.$route.query.u
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.message === 'success'){
-            this.ruleForm.languageOrigin = res.data.data.orignLanguage
-            this.ruleForm.languageTarget = res.data.data.targetLanguage
-            this.ruleForm.originTxt = res.data.data.orignContent
-            this.ruleForm.targetTxt = res.data.data.targetContent
-            this.ruleForm.weight1 = res.data.data.grammarRatio
-            this.ruleForm.weight2 = res.data.data.temporalTatio
-            this.ruleForm.weight3 = res.data.data.vocabularyRatio
-            this.ruleForm.level = res.data.data.difficultLevel
-            res.data.data.domains.forEach(item => {
-              this.ruleForm.field.push(item.id)
-            })
+          if(res.data.message === 'success'){
+            const data = res.data.data;
+            this.ruleForm.origin = data.orignLanguage;
+            this.ruleForm.target = data.targetLanguage;
+            this.ruleForm.originTxt = data.orignContent;
+            this.ruleForm.targetTxt = data.targetContent;
+            this.ruleForm.weight1 = data.grammarRatio;
+            this.ruleForm.weight2 = data.temporalTatio;
+            this.ruleForm.weight3 = data.vocabularyRatio;
+            this.ruleForm.level = data.difficultLevel;
+            const domains = data.domains || [];
+            if(domains.length > 0){
+              this.ruleForm.field = domains[0].pSpecialtyId;
+              setTimeout(() => {
+                this.getSecondField(this.ruleForm.field).then(res => {
+                  this.formSelect.secondOptions = res;
+                  this.ruleForm.secondField = domains.map(item => {
+                    return item.id
+                  })
+                })
+              }, 10)
+            }
           }
         })
       }

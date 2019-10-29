@@ -14,11 +14,14 @@
           <el-col :span="12"><div class="grid-content bg-purple"></div><b>侧重点及权重：</b>{{cuTransAnswers.questionWeight}}</el-col>
         </el-row>
         <el-row class="exact">
-          <el-col :span="12"><div class="grid-content bg-purple-light"><b>译员领域：</b>{{adTransResult.domains}}</div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple"><b>试题领域：</b>{{cuTransAnswers.questionFields}}</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple-light"><b>译员领域：</b>{{adTransResult.subDomains}}</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple"><b>试题领域：</b>{{cuTransAnswers.questionSubDomain}}</div></el-col>
         </el-row>
         <el-row style="margin-bottom: 10px">
           <el-col :span="24"><div class="grid-content bg-purple"><b>原文：</b>{{cuTransAnswers.question}}</div></el-col>
+        </el-row>
+        <el-row style="margin-bottom: 10px">
+          <el-col :span="24"><div class="grid-content bg-purple"><b>译文：</b>{{cuTransAnswers.answer}}</div></el-col>
         </el-row>
         <el-row style="margin-bottom: 0px">
           <el-col :span="24"><div class="grid-content bg-purple"><b>参考译文：</b>{{cuTransAnswers.correctAnswer}}</div></el-col>
@@ -35,7 +38,7 @@
                 <el-col :span="16">
                   <el-form-item label="准确性">
                     <el-select placeholder="请选择" v-model="form.grammarRatio">
-                      <el-option v-for="item in formSelect.levelOptions"
+                      <el-option v-for="item in levelOptions"
                                  :key="item"
                                  :value="item">{{item}}</el-option>
                     </el-select>
@@ -49,7 +52,7 @@
                 <el-col :span="16">
                   <el-form-item label="专业性">
                     <el-select placeholder="请选择" v-model="form.temporalTatio">
-                      <el-option v-for="item in formSelect.levelOptions"
+                      <el-option v-for="item in levelOptions"
                                  :key="item"
                                  :value="item">{{item}}</el-option>
                     </el-select>
@@ -63,7 +66,7 @@
                 <el-col :span="16">
                   <el-form-item label="可读性">
                     <el-select placeholder="请选择" v-model="form.vocabularyRatio">
-                      <el-option v-for="item in formSelect.levelOptions"
+                      <el-option v-for="item in levelOptions"
                                  :key="item"
                                  :value="item">{{item}}</el-option>
                     </el-select>
@@ -98,15 +101,13 @@
   </div>
 </template>
 <script>
+  import { mapState } from 'vuex';
   export default {
     data (){
       return {
         btn:{
           disabled: false,
           txt: '提交结果'
-        },
-        formSelect: {
-          levelOptions: [1,2,3,4,5,6,7,8,9,10]
         },
         form: {
           comment:'',
@@ -143,6 +144,11 @@
         }
       }
     },
+    computed: {
+      ...mapState('select',{
+        levelOptions: state => state.level
+      })
+    },
     created (){
       this.showDetail()
     },
@@ -154,18 +160,21 @@
             resultId: this.$route.params.id
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.message === 'success'){
-            for(let prop in res.data.data.adTransResult){
+          if(res.data.message === 'success'){
+            const domainItem = res.data.data.adTransResult;
+            for(let prop in domainItem){
               if(prop === 'domains'){
                 this.adTransResult[prop] = '';
-                const domain = res.data.data.adTransResult[prop]
-                domain.forEach(item => {
-                  this.adTransResult[prop] += item.fullSpecialtyName + ' '
-                })
-              }else{
-                this.adTransResult[prop] = res.data.data.adTransResult[prop]
+                const domain = domainItem[prop] && JSON.parse(domainItem[prop]) || [];
+                this.adTransResult[prop] = domain.toString();
+              }else if(prop === 'setLevel'){
+                this.adTransResult[prop] = 'P'+ domainItem[prop]
+              }else if(prop === 'gradePartition'){
+                const gradePartition = domainItem[prop] && JSON.parse(domainItem[prop]) || {};
+                this.gradePartition = {...gradePartition}
+              }else {
+                this.adTransResult[prop] = domainItem[prop]
               }
-              this.weight.translatorLevel = res.data.data.adTransResult.translatorLevel
             }
             for(let prop in res.data.data.cuTransAnswers[0]){
               if(prop === 'questionWeight'){
@@ -173,7 +182,7 @@
                 this.cuTransAnswers[prop] = `
                         准确性（${weight['grammarRatio']}）
                         专业性（${weight['temporalTatio']}）
-                        可读性（${weight['vocabularyRatio']}）`
+                        可读性（${weight['vocabularyRatio']}）`;
                 this.weight = {...weight}
               }else if(prop === 'questionFields'){
                 const field = JSON.parse(res.data.data.cuTransAnswers[0][prop])
@@ -195,13 +204,13 @@
           this.$message({
             type: 'warning',
             message: '请先选择相关分值'
-          })
-          return false;
+          });
+          return false
         }
-        let total = this.form.grammarRatio*this.weight.grammarRatio
+        let mytotal = this.form.grammarRatio*this.weight.grammarRatio
           + this.form.temporalTatio*this.weight.temporalTatio
           + this.form.vocabularyRatio*this.weight.vocabularyRatio;
-        this.result.score = total;
+        this.result.score = mytotal;
         this.result.isPass = this.result.score >= 80 ? '通过':'不通过';
         this.getLevel();
       },
@@ -209,11 +218,11 @@
       getLevel (){
         this.$http.get('/exam/admin/getResultByScore',{
           params: {
-            currentLevle: 2,
+            currentLevle: this.adTransResult.translatorLevel,
             grade: this.result.score
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.message === 'success'){
+          if(res.data.message === 'success'){
             this.result.level = 'p'+res.data.data.calculateLevle
           }else{
             this.$message({
@@ -229,28 +238,28 @@
           this.$message({
             type: 'warning',
             message: '请先完成结果评定'
-          })
-          return false;
+          });
+          return false
         }
-        this.btn.disabled = true
-        this.btn.txt = '保存中'
+        this.btn.disabled = true;
+        this.btn.txt = '保存中';
         this.$http.post('/exam/admin/commitAuditTransResult',this.$qs.stringify({
           resultId: this.$route.params.id,
           auditResult: this.result.isPass,
           comment: this.form.comment,
           grade: this.result.score,
           setLevel: this.result.level.slice(1),
-          grammarRatio: this.weight.grammarRatio,
-          temporalTatio: this.weight.temporalTatio,
-          vocabularyRatio: this.weight.vocabularyRatio
+          grammarRatio: this.form.grammarRatio,
+          temporalTatio: this.form.temporalTatio,
+          vocabularyRatio: this.form.vocabularyRatio
         })).then(res => {
           if(res.data.code === '200'){
             this.$message({
               type: 'success',
               message: '提交成功'
-            })
-            window.setTimeout(() => {
-              this.$router.back(-1)
+            });
+            setTimeout(() => {
+              this.$router.push('/onlineTestResult/trans')
             },1000)
           }else{
             this.$message({
@@ -258,7 +267,7 @@
               message: res.data.message
             })
           }
-          this.btn.disabled = false
+          this.btn.disabled = false;
           this.btn.txt = '提交结果'
         })
       }

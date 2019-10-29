@@ -3,7 +3,7 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="文章标题">
                 <el-input v-model="form.title" placeholder="请输入文章标题"></el-input>
@@ -23,7 +23,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
             <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
@@ -32,7 +32,7 @@
     <div class="default-style">
       <el-row>
         <el-col :span="12">
-          <el-button type="success" icon="el-icon-plus" @click.native="$router.push('/article/official/release')">发布文章</el-button>
+          <el-button type="success" icon="el-icon-circle-plus-outline" @click.native="$router.push('/article/official/release')">发布文章</el-button>
         </el-col>
       </el-row>
     </div>
@@ -44,9 +44,12 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
-          prop="num"
           label="#"
-          width="40">
+          width="60">
+          <template slot-scope="scope">
+            <el-badge v-if="scope.row.isTop" value="置顶" class="item">{{scope.row.num}}</el-badge>
+            <el-badge v-else class="item">{{scope.row.num}}</el-badge>
+          </template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -91,7 +94,6 @@
           width="160">
           <template slot-scope="scope">
             <el-button type="text" @click="$router.push('/article/official/detail/'+scope.row.id)">查看</el-button>
-
             <el-button type="text"
                        v-if="!scope.row.isTop"
                        @click="topTableRow(scope.row.id, 1)">置顶</el-button>
@@ -145,9 +147,10 @@
             publishEndTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.data.content.length >= 0){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });
@@ -193,9 +196,7 @@
                 type: 'success',
                 message: '删除成功'
               });
-              this.showTableList({
-                pageNo: sessionStorage.getItem('sy_rm_current_page')
-              })
+              this.showTableList()
             } else {
               this.$message({
                 type: 'error',
@@ -207,5 +208,4 @@
       }
     }
   }
-
 </script>

@@ -4,7 +4,7 @@
       <div class="detail">
         <el-row class="exact">
           <el-col :span="4"><div class="grid-content bg-purple"><b>译员：</b>{{detail.translatorCode}}</div></el-col>
-          <el-col :span="4"><div class="grid-content bg-purple-light"><b>语言：</b>{{detail.targetLanguageName}}</div></el-col>
+          <el-col :span="4"><div class="grid-content bg-purple-light"><b>语言对：</b>{{detail.targetLanguageName}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple"></div><b>测试开始时间：</b>{{detail.examStartTime}}</el-col>
           <el-col :span="5"><div class="grid-content bg-purple-light"><b>测试情况：</b>{{detail.examOverview}}</div></el-col>
           <el-col :span="5"><div class="grid-content bg-purple-light"><b>测试结果：</b>
@@ -67,8 +67,11 @@
           </el-table-column>
           <el-table-column
             width="90"
-            prop="answer"
             label="译员答案">
+            <template slot-scope="scope">
+              <span v-if="scope.row.answer === scope.row.correctAnswer" style="color: limegreen">{{scope.row.answer}}</span>
+              <span v-else style="color: red">{{scope.row.answer}}</span>
+            </template>
           </el-table-column>
         </el-table>
       </div>

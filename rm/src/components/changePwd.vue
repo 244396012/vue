@@ -74,7 +74,8 @@
               message: '修改成功，请重新登录'
             });
             setTimeout(() => {
-              localStorage.removeItem('sy_rm_admin_access_token');
+              sessionStorage.removeItem('sy_rm_admin_access_token');
+              sessionStorage.removeItem('sy_rm_admin_permission');
               this.$store.commit('showModalPwd');
               this.$router.push('/login');
             }, 1000);

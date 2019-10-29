@@ -2,7 +2,7 @@
 
 ## entry.vue 入口模版
 
-## interpreterSettlement - 译员结算
+## team - 团队信息
   ### index 列表
   ### detail 详情
 

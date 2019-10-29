@@ -3,31 +3,70 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
-            <el-form-item label="题号">
-              <el-input v-model="form.questionNo" placeholder="请输入题号"></el-input>
-            </el-form-item>
-            <el-form-item label="语言">
+            <el-form-item label="语言对" class="width620">
               <el-select
-                v-model="form.language" placeholder="请选择语言">
+                v-model="form.origin"
+                placeholder="请选择原文语言">
                 <el-option
-                  v-for="item in languageList"
+                  v-for="item in $store.state.languageList"
                   :key="item.id"
                   :label="item.chineseName"
-                  :value="item.englishName">
+                  :value="item.chineseName">
+                </el-option>
+              </el-select>
+              <label class="sep">-</label>
+              <el-select
+                v-model="form.target"
+                placeholder="请选择译文语言">
+                <el-option
+                  v-for="item in $store.state.languageList"
+                  :key="item.id"
+                  :label="item.chineseName"
+                  :value="item.chineseName">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="题目">
-              <el-input v-model="form.questionTitle" placeholder="请输入题目"></el-input>
+            <el-form-item label="题号">
+              <el-input v-model="form.questionNo" placeholder="请输入题号"></el-input>
             </el-form-item>
+            <el-form-item label="题目类型">
+              <el-select
+                v-model="form.type"
+                placeholder="请选择题目类型">
+                <el-option value="基础题"></el-option>
+                <el-option value="专业题"></el-option>
+              </el-select>
+            </el-form-item>
+              <el-form-item label="专业领域" class="width620">
+                <el-select
+                  @change="selectSecondField"
+                  v-model="form.field" placeholder="请选择一级领域">
+                  <el-option
+                    v-for="item in $store.state.fieldOptions"
+                    :key="item.id"
+                    :label="item.fullSpecialtyName"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+                <label class="sep">-</label>
+                <el-select
+                  v-model="form.secondField" placeholder="请选择二级领域">
+                  <el-option
+                    v-for="item in formSelect.secondOptions"
+                    :key="item.id"
+                    :label="item.fullSpecialtyName"
+                    :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
             <el-form-item label="难度">
               <el-select
                 v-model="form.level"
                 placeholder="请选择难度">
                 <el-option
-                  v-for="item in $store.state.mod1.level"
+                  v-for="item in $store.state.select.level"
                   :key="item"
                   :label="item"
                   :value="item">
@@ -36,10 +75,10 @@
             </el-form-item>
             <el-form-item label="状态">
               <el-select
-                v-model="form.state"
+                v-model="form.status"
                 placeholder="请选择状态">
                 <el-option
-                  v-for="item in formSelect.stateOptions"
+                  v-for="item in formSelect.statusOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -61,8 +100,8 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
-            <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
+            <el-button icon="el-icon-refresh" @click="doExtraSearch">重 置</el-button>
           </div>
         </el-col>
       </el-row>
@@ -70,7 +109,7 @@
     <div class="default-style">
       <el-row>
         <el-col :span="12">
-          <el-button type="success" icon="el-icon-plus" @click.native="$router.push('/onlineTest/choice/create')">新建试题</el-button>
+          <el-button type="success" icon="el-icon-circle-plus-outline" @click.native="$router.push('/onlineTest/choice/create')">新建试题</el-button>
           <el-button @click="batchForbidAndUse({
             multipleSelection: multipleSelection,
             url: '/choiceQuestion/disableChoice',
@@ -82,7 +121,7 @@
           <el-button @click="deleteTableRows({
             multipleSelection: multipleSelection,
             url: '/choiceQuestion/deleteChoiceQuestion',
-            callback: showTableList})">批量删除</el-button>
+            callback: showTableList})" icon="el-icon-delete">批量删除</el-button>
         </el-col>
         <el-col :span="12" class="rm-right">
           <el-button @click="downLoad(downloadUrl)" type="text">选择题模版下载</el-button>
@@ -115,9 +154,21 @@
           width="90">
         </el-table-column>
         <el-table-column
-          prop="language"
-          label="语言"
-          width="120">
+          show-overflow-tooltip
+          min-width="120"
+          label="语言对">
+          <template slot-scope="scope" v-if="scope.row.orignLanguage">{{scope.row.orignLanguage}} -> {{scope.row.targetLanguage}}</template>
+        </el-table-column>
+        <el-table-column
+          width="80"
+          prop="questionType"
+          label="题目类型">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="120"
+          label="专业领域">
+          <template slot-scope="scope">{{scope.row.domains | formatDomain}}</template>
         </el-table-column>
         <el-table-column
           prop="difficultLevel"
@@ -168,9 +219,25 @@
         <el-table-column
           label="状态"
           width="60">
-          <template slot-scope="scope">
-            {{scope.row.status ? '启用':'禁用'}}
-          </template>
+          <template slot-scope="scope">{{scope.row.status ? '启用':'禁用'}}</template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="80"
+          prop="createUser"
+          label="添加人">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="120"
+          prop="gmtCreate"
+          label="添加时间">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="80"
+          prop="correctRate"
+          label="正确率">
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -199,9 +266,9 @@
   </div>
 </template>
 <script>
-  import pagination from '@/components/pagination'
-  import modal_import from './modal_import'
-  import { mapGetters } from 'vuex';
+  import pagination from '@/components/pagination';
+  import modal_import from './modal_import';
+  import { formatDomains } from '@/common/filter';
   export default {
     components: {
       pagination,
@@ -209,58 +276,84 @@
     },
     data (){
       return {
-        loading: false,
         downloadUrl: '/choiceQuestion/downloadChoiceQuestionModel',
-        totalTableList: 0,
         form: {
+          type: '',
+          origin: '',
+          target: '',
           questionNo: '',
-          language: '',
-          questionTitle: '',
-          state: '',
-          rangeTime: '',
-          level: ''
+          status: '',
+          level: '',
+          field: '',
+          secondField: '',
+          rangeTime: ''
         },
         formSelect: {
-          stateOptions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}]
+          statusOptions: [{label:'禁用',value:'0'},{label:'启用',value:'1'}],
+          secondOptions: []
         },
+        loading: false,
         tableData: [],
+        totalTableList: 0,
         multipleSelection: []
       }
+    },
+    filters: {
+      formatDomain: formatDomains
     },
     created (){
       this.showTableList()
     },
-    computed: {
-      ...mapGetters([
-        'languageList'
-      ])
-    },
     methods: {
       handleSelectionChange(val) {
         this.multipleSelection = val;
+      },
+      doExtraSearch (){
+        this.formSelect.secondOptions = [];
+        this.resetSearch(this.form, this.showTableList)
+      },
+      //获取二级领域
+      selectSecondField (id){
+        const result = this.$store.state.fieldOptions.find(item => {
+          return item.id === id;
+        });
+        const sid = result.specialtyId || '';
+        this.form.secondField = '';
+        this.formSelect.secondOptions = [];
+        this.getSecondField(sid).then(res => {
+          this.formSelect.secondOptions = res;
+        });
       },
       //展示表格数据
       showTableList (config){
         config = config || {};
         config.pageNo = config.pageNo || 1;
         config.pageSize = config.pageSize || 10;
+        let url = '/choiceQuestion/listChoiceQuestions';
+        if(this.form.field && !this.form.secondField){
+          url += '?domainIds='+ this.form.field +'&onlyFirstDomain=true'
+        }else if(this.form.secondField){
+          url += '?domainIds='+this.form.secondField
+        }
         this.loading = true;
-        this.$http.get('/choiceQuestion/listChoiceQuestions', {
+        this.$http.get(url, {
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
             questionNo: this.form.questionNo,
-            questionHead: this.form.questionTitle,
-            language : this.form.language,
-            status: this.form.state,
+            type : this.form.type,
+            orignlanguage : this.form.origin,
+            targetlanguage : this.form.target,
+            status: this.form.status,
             difficultLevel: this.form.level,
             startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
             endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });

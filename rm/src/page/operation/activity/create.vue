@@ -19,7 +19,15 @@
             </el-col>
           </el-form-item>
           <el-form-item label="活动时间：" prop="activityTime">
-            <el-date-picker
+            <el-date-picker v-if="$route.query.id"
+              v-model="ruleForm.activityTime"
+              type="daterange"
+              value-format="yyyy-MM-dd"
+              range-separator="至"
+              start-placeholder="活动开始时间"
+              end-placeholder="活动结束时间">
+            </el-date-picker>
+            <el-date-picker v-else
               :picker-options="pickerOptions"
               v-model="ruleForm.activityTime"
               type="daterange"
@@ -32,15 +40,21 @@
           <el-form-item label="活动介绍：" prop="activityShort">
             <el-input type="textarea" v-model="ruleForm.activityShort" clearable placeholder="请输入活动规则和要求等"></el-input>
           </el-form-item>
+          <el-form-item v-if="this.$route.query.id">
+            <el-button type="success"
+                       @click="submitForm('ruleForm')"
+                       :disabled="btn.disabled">{{btn.txt}}</el-button>
+            <el-button @click="$router.push('/operation/activity')">取 消</el-button>
+          </el-form-item>
         </el-form>
       </div>
     </div>
-    <div class="default-style">
+    <div class="default-style" v-if="!this.$route.query.id">
       <div class="detail form">
         <el-row style="margin-bottom: 15px;">
           <el-col :span="12" style="line-height: 32px;font-size: 16px;font-weight: 700;">奖品列表</el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="success" icon="el-icon-plus"
+            <el-button type="success" icon="el-icon-circle-plus-outline"
                        @click="addReward">添加奖品</el-button>
           </el-col>
         </el-row>
@@ -50,9 +64,8 @@
           :max-height="$store.state.tableHeight"
           :data="tableData">
           <el-table-column
-            label="#"
-            type="index"
-            width="40">
+            label="奖品序号"
+            prop="no">
           </el-table-column>
           <el-table-column
             prop="level"
@@ -119,6 +132,9 @@
              * 这里减8.64e7的作用是,让今天的日期可以选择,如果不减的话,
              * 今天的日期就不可以选择,判断中写<= 也是没用的,一天的毫秒数就是8.64e7
             * */
+            if(this.$route.query.id){
+              return true
+            }
             return time.getTime() < Date.now() - 8.64e7;
           }
         },
@@ -147,11 +163,14 @@
       };
     },
     mounted (){
-      if(this.$route.query.id){
-        this.fillInForm();
-        document.title = '编辑活动';
-        document.querySelectorAll('.el-breadcrumb__item')[2].innerHTML = '编辑活动';
-      }
+      this.$nextTick(() => {
+        if(this.$route.query.id){
+          this.fillInForm();
+          this.btn.txt = '保 存';
+          document.title = '编辑活动';
+          document.querySelectorAll('.el-breadcrumb__item')[2].innerHTML = '编辑活动';
+        }
+      })
     },
     methods: {
       //添加奖品
@@ -161,9 +180,15 @@
       },
       //接收子组件传递的table 数据
       getDataFromChild (data){
+        if(this.tableData.length >= 8){
+          this.$message({
+            type: 'warning',
+            message: '最多添加8个奖品'
+          });
+          return false
+        }
         if(data.$index !== undefined){
           const idx = data.$index;
-          delete data.$index;
           this.tableData.splice(idx, 1, data);
         }else{
           this.tableData.push(data);
@@ -202,7 +227,10 @@
             const prizes = [];
             this.tableData.forEach(item => {
               const tempData = {};
+              tempData.prizeNo = item.no;
               tempData.level = item.level;
+              tempData.score = item.scoreNum;
+              tempData.money = item.cashNum;
               tempData.type = item.type;
               tempData.prizeName = item.name;
               tempData.totalCount = item.total;

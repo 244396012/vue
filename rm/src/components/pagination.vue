@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+  import { mapState } from 'vuex';
   export default {
     name: 'pagination',
     props: ['callback','total'],
@@ -21,8 +22,16 @@
         pageSizes: [10, 20, 50]
       }
     },
-    mounted (){
-      sessionStorage.setItem('sy_rm_current_page', 1);
+    computed: {
+      ...mapState(['resetSearchState'])
+    },
+    watch: {
+      //监听重置搜索状态，true时代表重置状态，current设为1
+      resetSearchState () {
+        if(this.resetSearchState){
+          this.currentPage = 1;
+        }
+      }
     },
     methods: {
       handleSizeChange(size) {
@@ -39,7 +48,7 @@
           pageNo: this.currentPage,
           pageSize: this.pageSize
         });
-        sessionStorage.setItem('sy_rm_current_page', curr)
+        this.$store.state.resetSearchState = false;
       }
     }
   }

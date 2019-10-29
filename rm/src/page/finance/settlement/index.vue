@@ -3,13 +3,10 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="译员姓名">
                 <el-input v-model="form.name" placeholder="请输入译员姓名"></el-input>
-              </el-form-item>
-              <el-form-item label="登录账号">
-                <el-input v-model="form.account" placeholder="请输入译员登录账号"></el-input>
               </el-form-item>
               <el-form-item label="币种">
                 <el-select v-model="form.moneyType" placeholder="请选择币种">
@@ -62,7 +59,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
             <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
@@ -73,22 +70,21 @@
         <el-col :span="10">
           <el-button icon="el-icon-download"
                      @click="downLoad(exportUrl)">批量导出</el-button>
-          <el-button v-if="form.payStatus === '未付款'"
-                     @click="mulHandleLock()">批量锁定</el-button>
-          <el-button v-if="form.payStatus === '未付款' && (form.settleType === '社保51' || form.settleType === '云账户')"
-                     @click="mulSettle()">批量提交结算</el-button>
-          <el-button v-if="form.payStatus === '已锁定'"
-                     @click="mulProvide()">批量发放成功</el-button>
+          <el-button icon="el-icon-lock"
+                     v-if="form.payStatus === '0'"
+                     @click="mulHandleLock">批量锁定</el-button>
+          <!--<el-button v-if="form.payStatus === '未付款' && (form.settleType === '社保51' || form.settleType === '云账户')"-->
+                     <!--@click="mulSettle()">批量提交结算</el-button>-->
+          <!--<el-button v-if="form.payStatus === '已锁定'"-->
+                     <!--@click="mulProvide()">批量发放成功</el-button>-->
         </el-col>
         <el-col :span="14"
                 v-if="form.settleType === '社保51'"
                 v-html="servicePayInfo_51"
-                class="rm-right"
                 style="line-height: 32px;font-size: 13px;"></el-col>
         <el-col :span="14"
                 v-else-if="form.settleType === '云账户'"
                 v-html="servicePayInfo_yun"
-                class="rm-right"
                 style="line-height: 32px;font-size: 13px;"></el-col>
       </el-row>
     </div>
@@ -114,30 +110,18 @@
         <el-table-column
           show-overflow-tooltip
           min-width="120"
-          prop="settleNo"
+          prop="payCode"
           label="结算编号">
         </el-table-column>
         <el-table-column
           width="70"
-          prop="realName"
+          prop="applyerRealName"
           label="姓名">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
           min-width="120"
-          prop="account"
-          label="用户账号">
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          min-width="100"
-          prop="company"
-          label="所属公司">
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          min-width="120"
-          prop="applyDate"
+          prop="applyDateTime"
           label="申请时间">
         </el-table-column>
         <el-table-column
@@ -146,9 +130,9 @@
           label="币种">
         </el-table-column>
         <el-table-column
-          width="110"
-          prop="amount"
-          label="申请金额(元)">
+          width="100"
+          prop="applyMoney"
+          label="申请金额">
         </el-table-column>
         <el-table-column
           width="80"
@@ -163,7 +147,7 @@
         <el-table-column
           show-overflow-tooltip
           min-width="100"
-          prop="deposit"
+          prop="depositBank"
           label="银行名称">
         </el-table-column>
         <el-table-column
@@ -174,29 +158,24 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="150"
           prop="settleAccount"
           label="银行账号">
         </el-table-column>
         <el-table-column
-          width="110"
-          prop="balance"
-          label="账户余额(元)">
-        </el-table-column>
-        <el-table-column
           width="80"
-          prop="payState"
           label="支付状态">
+          <template slot-scope="scope">{{scope.row.payState | formatPayStatus}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
           min-width="120"
-          prop="payDate"
+          prop="payDateTime"
           label="支付时间">
         </el-table-column>
         <el-table-column
           width="70"
-          prop="operator"
+          prop="payPersonRealName"
           label="操作人">
         </el-table-column>
         <el-table-column
@@ -208,17 +187,17 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="190">
+          width="260">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/finance/interpreter/detail/'+scope.row.userId)">查看</el-button>
+            <el-button type="text" @click="$router.push('/finance/interpreter/detail/'+scope.row.applyerUserCode)">查看</el-button>
             <el-button type="text"
-                       v-if="scope.row.payState === '未付款' && (scope.row.payType === '社保51' || scope.row.payType === '云账户')"
+                       v-if="scope.row.payState === 0 && (scope.row.settleType === '社保51' || scope.row.settleType === '云账户')"
                        @click="mulSettle(scope.row.id)">提交结算</el-button>
             <el-button type="text"
-                       v-if="scope.row.payState === '未付款'"
+                       v-if="scope.row.payState === 0"
                        @click="mulHandleLock(scope.row.id)">手动锁定</el-button>
             <el-button type="text"
-                       v-if="scope.row.payState === '未付款' || scope.row.payState === '付款中' || scope.row.payState === '已锁定'"
+                       v-if="scope.row.payState === 0 || scope.row.payState === 3 || scope.row.payState === 1"
                        @click="addRemark(scope.row.id)">添加备注</el-button>
           </template>
         </el-table-column>
@@ -233,6 +212,7 @@
 <script>
   import pagination from '@/components/pagination';
   import addremark from './modal_add';
+  import { formatPayStatus } from '@/common/filter';
   export default {
     components: {
       pagination,
@@ -243,7 +223,6 @@
         form: {
           id: '',
           name: '',
-          account: '',
           moneyType: '',
           settleType: '',
           payType: '',
@@ -252,27 +231,33 @@
         },
         formSelect: {
           moneyType: [
-            {label: '人民币', value: '人民币'},
-            {label: '美元', value: '美元'},
-            {label: '欧元', value: '欧元'},
-            {label: '英镑', value: '英镑'}
+            {label: '人民币', value: 'CNY'},
+            {label: '美元', value: 'USD'},
+            {label: '欧元', value: 'EUR'},
+            {label: '英镑', value: 'GBP'}
           ],
           settleType: [
             {label: '51社保', value: '社保51'},
             {label: '云账户', value: '云账户'},
-            {label: '其他', value: '其他'}
+            {label: 'PayPal', value: 'PayPal'},
+            {label: '校企合作', value: '校企合作'},
+            {label: '非全日制', value: '非全日制'},
+            {label: '劳务报酬', value: '劳务报酬'},
+            {label: '微信', value: '微信'},
+            {label: '国外银行', value: '国外银行'}
           ],
           payType: [
             {label: '银行卡', value: '银行卡'},
             {label: '支付宝', value: '支付宝'},
-            {label: 'Paypal', value: 'Paypal'}
+            {label: 'PayPal', value: 'PayPal'},
+            {label: '微信', value: '微信'}
           ],
           payStatus: [
-            {label: '未付款', value: '未付款'},
-            {label: '付款中', value: '付款中'},
-            {label: '付款失败', value: '付款失败'},
-            {label: '付款成功', value: '付款成功'},
-            {label: '已锁定', value: '已锁定'}
+            {label: '未付款', value: '0'},
+            {label: '付款中', value: '3'},
+            {label: '付款失败', value: '4'},
+            {label: '付款成功', value: '2'},
+            {label: '已锁定', value: '1'}
           ],
         },
         loading: false,
@@ -281,8 +266,11 @@
         multipleSelection: [],
         servicePayInfo_51: '',
         servicePayInfo_yun: '',
-        exportUrl: '/finance/batchExport'
+        exportUrl: '/financeNew/batchExport'
       }
+    },
+    filters: {
+      formatPayStatus: formatPayStatus
     },
     mounted (){
       this.showTableList()
@@ -328,23 +316,23 @@
         config.pageNo = config.pageNo || 1;
         config.pageSize = config.pageSize || 10;
         this.loading = true;
-        this.$http.get('/finance/listApplyCashout', {
+        this.$http.get('/financeNew/settleSummary', {
           params: {
-            pageNo: config.pageNo-1,
-            pageSize: config.pageSize,
+            page: config.pageNo-1,
+            size: config.pageSize,
             realName: this.form.name,
-            accout: this.form.account,
             currencyName: this.form.moneyType,
-            payState: this.form.payStatus,
+            payStatus: this.form.payStatus,
             payType: this.form.payType,
             settleType: this.form.settleType,
-            startDateTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
-            endDateTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
+            applyStartDateTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
+            applyEndDateTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });
@@ -356,7 +344,6 @@
       //批量处理函数
       multipleFn (url, id){
         const arr = [];
-        id && arr.push(id);
         if(!id){
           if(this.multipleSelection.length < 1){
             this.$message({
@@ -368,6 +355,8 @@
           this.multipleSelection.forEach(item => {
             arr.push(item.id);
           });
+        }else{
+          arr.push(id);
         }
         this.$confirm('是否确认此操作，操作后无法撤销', '提示', {
           confirmButtonText: '确定',
@@ -377,9 +366,7 @@
           this.$http({
             method: 'post',
             url: url,
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(arr)
           }).then(res => {
             if(res.data.message === 'success'){
@@ -387,7 +374,7 @@
                 type: 'success',
                 message: '操作成功'
               });
-              this.showTableList();
+              this.doSearch(this.showTableList)
             }else{
               this.$message({
                 type: 'error',
@@ -399,15 +386,15 @@
       },
       //（批量）提交结算
       mulSettle (id){
-        this.multipleFn('/finance/batchSubmitSettle', id);
+        this.multipleFn('/financeNew/batchSubmit', id);
       },
       //（批量）发放成功
       mulProvide (id){
-        this.multipleFn('/finance/batchSettleSuccess', id);
+        this.multipleFn('/financeNew/batchSetSettleSuccess', id);
       },
       //（批量）手动锁定
       mulHandleLock (id){
-        this.multipleFn('/finance/bactchLockSettle', id);
+        this.multipleFn('/financeNew/batchLock', id);
       },
       //"添加备注"模态框
       addRemark (id){

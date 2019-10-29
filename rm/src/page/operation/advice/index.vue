@@ -3,7 +3,7 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="姓名">
                 <el-input v-model="form.name" placeholder="请输入真实姓名"></el-input>
@@ -21,7 +21,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="反馈等级">
-                <el-select v-model="form.feedbackLevle" placeholder="请选择反馈等级">
+                <el-select v-model="form.feedbackLevel" placeholder="请选择反馈等级">
                   <el-option
                     v-for="item in formSelect.feedbackLevel"
                     :key="item.value"
@@ -34,7 +34,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
             <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
@@ -150,8 +150,8 @@
         tableData: []
       }
     },
-    mounted (){
-     this.showTableList()
+    created (){
+      this.showTableList()
     },
     methods: {
       //展示表格数据
@@ -172,7 +172,8 @@
         }).then(res => {
           if(res.data.code === '200' && res.data.data.content.length >= 0){
             this.tableData = [];
-            res.data.data.content.forEach((item, index) => {
+            const list = res.data.data.content;
+            list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });

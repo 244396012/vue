@@ -3,15 +3,31 @@
     <div class="default-style">
       <div class="detail form">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
-          <el-form-item label="语言：" prop="language">
-            <el-select v-model="ruleForm.language" placeholder="请选择语言对">
-              <el-option
-                v-for="item in $store.state.languageList"
-                :key="item.id"
-                :label="item.chineseName"
-                :value="item.chineseName">
-              </el-option>
-            </el-select>
+          <el-form-item label="语言对：" required style="margin-bottom: 0px">
+            <el-col :span="12">
+              <el-form-item prop="origin">
+                <el-select v-model="ruleForm.origin" placeholder="请选择源语言" style="width: 99%">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.chineseName">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="target">
+                <el-select v-model="ruleForm.target" placeholder="请选择目标语言" style="width: 100%">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.chineseName">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-form-item>
           <el-form-item label="类型：" prop="type">
             <el-select placeholder="请选择试题类型"
@@ -37,7 +53,7 @@
             <el-input type="textarea" v-model="ruleForm.title"
                       :placeholder="formSelect.placeholder"></el-input>
             <!--选择填空题时才有此提醒-->
-            <p v-if="formSelect.show" style="position: absolute;bottom: -40px;font-size: 12px;">* 将 [[[所填的空]]] 用英文三重方括号包围起来</p>
+            <p v-if="ruleForm.type === '填空'" style="position: absolute;bottom: -40px;font-size: 12px;">* 将 [[[所填的空]]] 用英文三重方括号包围起来</p>
           </el-form-item>
           <el-form-item label="选项A：" prop="option_A">
             <el-input type="text" v-model="ruleForm.option_A" clearable placeholder="请输入选项A"></el-input>
@@ -61,20 +77,27 @@
           </el-form-item>
           <el-form-item label="难度等级：" prop="level">
             <el-select v-model="ruleForm.level" placeholder="请选择难度等级">
-              <el-option v-for="item in formSelect.levelOptions"
+              <el-option v-for="item in levelOptions"
                          :key="item"
                          :label="item"
                          :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="行业领域：" class="exact">
-            <el-checkbox-group v-model="ruleForm.field" :max="5">
-              <el-checkbox v-for="item in formSelect.fieldOptions"
-                           :key="item.id"
-                           :value="item.id"
-                           :label="item.id" name="field">{{item.fullSpecialtyName}}</el-checkbox>
-            </el-checkbox-group>
-            <p style="position: absolute;bottom: -32px;font-size: 12px;color: #F56C6C">* 最多选择5项</p>
+            <el-select v-model="ruleForm.field"
+                       @change="getSecondFields"
+                       placeholder="请选择一级领域">
+              <el-option v-for="item in $store.state.fieldOptions"
+                         :key="item.id"
+                         :label="item.fullSpecialtyName"
+                         :value="item.specialtyId"></el-option>
+            </el-select>
+            <el-select v-model="ruleForm.secondField" placeholder="请选择二级领域" multiple :collapse-tags="true">
+              <el-option v-for="item in formSelect.secondOptions"
+                         :key="item.id"
+                         :label="item.fullSpecialtyName"
+                         :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item style="margin-top: 2rem">
             <el-button type="success"
@@ -91,11 +114,13 @@
   </div>
 </template>
 <script>
+  import { mapState } from 'vuex';
   export default {
     data() {
       return {
         ruleForm: {
-          language: '',
+          origin: '',
+          target: '',
           type: '',
           require: '',
           title: '',
@@ -104,51 +129,54 @@
           option_C: '',
           option_D: '',
           answer: '',
-          field: [],
+          field: '',
+          secondField: [],
           level: ''
         },
         formSelect: {
-          placeholder: '请输入题目',
           show: false,
-          fieldOptions: [],
-          typeOptions: ['选择','填空','对话'],
+          placeholder: '请输入题目',
+          secondOptions: [],
+          typeOptions: ['翻译','填空','对话'],
           requireOptions: [
             { "value": "请选出以下翻译正确的一项"},
             { "value": "请选择空格中正确的答案"},
             { "value": "请根据题目选出正确的意思"}
-          ],
-          levelOptions: [1,2,3,4,5,6,7,8,9,10]
+          ]
         },
         rules: {
-          language: [
-            { required: true, message: '请选择相关语言对', trigger: 'change' }
+          origin: [
+            { required: true, message: '请选择源语言' }
+          ],
+          target: [
+            { required: true, message: '请选择目标语言' }
           ],
           type: [
-            { required: true, message: '请选择题目类型', trigger: 'change' }
+            { required: true, message: '请选择题目类型' }
           ],
           require: [
-            { required: true, message: '请输入题目要求', trigger: 'change' }
+            { required: true, message: '请输入题目要求'}
           ],
           title: [
-            { required: true, message: ' ', trigger: 'blur' }
+            { required: true, message: ' '}
           ],
           option_A: [
-            { required: true, message: '请输入选项A', trigger: 'blur' }
+            { required: true, message: '请输入选项A' }
           ],
           option_B: [
-            { required: true, message: '请输入选项B', trigger: 'blur' }
+            { required: true, message: '请输入选项B' }
           ],
           option_C: [
-            { required: true, message: '请输入选项C', trigger: 'blur' }
+            { required: true, message: '请输入选项C' }
           ],
           option_D: [
-            { required: true, message: '请输入选项D', trigger: 'blur' }
+            { required: true, message: '请输入选项D' }
           ],
           answer: [
-            { required: true, message: '请选择正确答案', trigger: 'change' }
+            { required: true, message: '请选择正确答案' }
           ],
           level: [
-            { required: true, message: '请选择难度等级', trigger: 'change' }
+            { required: true, message: '请选择难度等级' }
           ]
         },
         btn: {
@@ -161,16 +189,26 @@
         }
       };
     },
-    created (){
-      this.getFirstField().then(res => {
-        this.formSelect.fieldOptions = res
+    computed: {
+      ...mapState('select',{
+        levelOptions: state => state.level
       })
+    },
+    created (){
       this.$route.query.u && this.fillInForm()
     },
     methods: {
+      //获取二级领域
+      getSecondFields (id){
+        this.ruleForm.secondField = [];
+        this.formSelect.secondOptions = [];
+        this.getSecondField(id).then(res => {
+          this.formSelect.secondOptions = res;
+        })
+      },
       //题目要求下拉显示模版
       querySearch(queryString, cb) {
-        let restaurants = this.formSelect.requireOptions
+        let restaurants = this.formSelect.requireOptions;
         let results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
         // 调用 callback 返回建议列表的数据
         cb(results);
@@ -183,10 +221,8 @@
       //切换提示信息：placeholder、tip
       showPrompt() {
         if(this.ruleForm.type === '填空'){
-          this.formSelect.show = true
           this.formSelect.placeholder = 'Choose from a [[[]]] selection of all the industry areas you are good at, with a maximum of 4 industry areas.'
         }else{
-          this.formSelect.show = false
           this.formSelect.placeholder = '请输入题目'
         }
       },
@@ -196,8 +232,25 @@
           if (valid) {
             let type = 'post',
                 url = '/choiceQuestion/addChoiceQuestion';
+            if(this.ruleForm.origin === this.ruleForm.target){
+              this.$message({
+                type: 'warning',
+                message: '请选择不同的语言'
+              });
+              return false
+            }
+            let domainId = '';
+            const firstDomain = this.$store.state.fieldOptions.find(item => {
+              return this.ruleForm.field === item.specialtyId
+            }) || {};
+            if(firstDomain.id && this.ruleForm.secondField.length < 1){
+              domainId = firstDomain.id
+            }else if(this.ruleForm.secondField.length > 0){
+              domainId = this.ruleForm.secondField
+            }
             const formData = {
-              language: this.ruleForm.language,
+              orignLanguage: this.ruleForm.origin,
+              targetLanguage: this.ruleForm.target,
               type: this.ruleForm.type,
               questionRequirement: this.ruleForm.require,
               questionHead: this.ruleForm.title,
@@ -207,18 +260,18 @@
               optiond: this.ruleForm.option_D,
               correctAnswer: this.ruleForm.answer,
               difficultLevel: this.ruleForm.level,
-              domainIds: this.ruleForm.field
-            }
+              domainIds: domainId
+            };
             if(this.$route.query.u){
               type = 'put';
               url = '/choiceQuestion/updateChoiceQuestion';
               formData.id = this.$route.query.u;
             }
-            if(btn === 1){
-              this.btn1.disabled = true
+            if(btn){
+              this.btn1.disabled = true;
               this.btn1.txt = '保存中'
             }else {
-              this.btn.disabled = true
+              this.btn.disabled = true;
               this.btn.txt = '保存中'
             }
             this.$http({
@@ -226,32 +279,33 @@
               url: url,
               data: this.$qs.stringify(formData)
             }).then(res => {
-              if(res.data.code === '200' && res.data.message === 'success'){
+              if(res.data.message === 'success'){
                 this.$message({
                   type: 'success',
                   message: '保存成功'
-                })
-                window.setTimeout(() => {
-                  if(btn === 1){
-                    this.$refs[formName].resetFields()
-                    this.ruleForm.field = []
-                    this.formSelect.placeholder = '请输入题目'
-                    this.formSelect.show = false
-                  }else {
-                    this.$router.back(-1)
-                  }
-                }, 1000)
+                });
+                if(btn === 1){
+                  this.$refs[formName].resetFields();
+                  this.ruleForm.field = '';
+                  this.ruleForm.secondField = [];
+                  this.formSelect.secondOptions = [];
+                  this.formSelect.placeholder = '请输入题目';
+                }else {
+                  setTimeout(() => {
+                    this.$router.push('/onlineTest/choice')
+                  }, 1000)
+                }
               }else{
                 this.$message({
                   type: 'error',
                   message: res.data.message
                 })
               }
-              if(btn === 1){
-                this.btn1.disabled = false
+              if(btn){
+                this.btn1.disabled = false;
                 this.btn1.txt = '保存并添加下一条'
               }else {
-                this.btn.disabled = false
+                this.btn.disabled = false;
                 this.btn.txt = '保存'
               }
             })
@@ -265,20 +319,31 @@
             id: this.$route.query.u
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.message === 'success'){
-            this.ruleForm.language = res.data.data.language
-            this.ruleForm.type = res.data.data.type
-            this.ruleForm.require = res.data.data.questionRequirement
-            this.ruleForm.title = res.data.data.questionHead
-            this.ruleForm.option_A = res.data.data.optiona
-            this.ruleForm.option_B = res.data.data.optionb
-            this.ruleForm.option_C = res.data.data.optionc
-            this.ruleForm.option_D = res.data.data.optiond
-            this.ruleForm.answer = res.data.data.correctAnswer
-            this.ruleForm.level = res.data.data.difficultLevel
-            res.data.data.domains.forEach(item => {
-              this.ruleForm.field.push(item.id)
-            })
+          if(res.data.message === 'success'){
+            const data = res.data.data;
+            this.ruleForm.origin = data.orignLanguage;
+            this.ruleForm.target = data.targetLanguage;
+            this.ruleForm.type = data.type;
+            this.ruleForm.require = data.questionRequirement;
+            this.ruleForm.title = data.questionHead;
+            this.ruleForm.option_A = data.optiona;
+            this.ruleForm.option_B = data.optionb;
+            this.ruleForm.option_C = data.optionc;
+            this.ruleForm.option_D = data.optiond;
+            this.ruleForm.answer = data.correctAnswer.toLowerCase();
+            this.ruleForm.level = data.difficultLevel;
+            const domains = data.domains || [];
+            if(domains.length > 0){
+              this.ruleForm.field = domains[0].pSpecialtyId;
+              setTimeout(() => {
+                this.getSecondField(this.ruleForm.field).then(res => {
+                  this.formSelect.secondOptions = res;
+                  this.ruleForm.secondField = domains.map(item => {
+                    return item.id
+                  })
+                })
+              }, 10)
+            }
           }
         })
       }

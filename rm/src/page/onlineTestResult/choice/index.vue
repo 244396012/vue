@@ -3,20 +3,42 @@
     <div class="default-style default-form">
       <el-row class="filterRow">
         <el-col :span="21">
-          <div class="grid-content bg-purple pd-r-50 dotted-border-rg">
+          <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
-              <el-form-item label="译员ID">
-                <el-input v-model="form.transId" placeholder="请输入译员ID"></el-input>
-              </el-form-item>
-              <el-form-item label="语言">
+              <el-form-item label="语言对" class="width620">
                 <el-select
-                  v-model="form.language"
-                  placeholder="请选择语言">
+                  v-model="form.origin"
+                  placeholder="请选择原文语言">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
                     :label="item.chineseName"
                     :value="item.englishName">
+                  </el-option>
+                </el-select>
+                <label class="sep">-</label>
+                <el-select
+                  v-model="form.target"
+                  placeholder="请选择译文语言">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.englishName">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="译员ID">
+                <el-input v-model="form.transId" placeholder="请输入译员ID"></el-input>
+              </el-form-item>
+              <el-form-item label="专业领域">
+                <el-select
+                  v-model="form.field" placeholder="请选择专业领域">
+                  <el-option
+                    v-for="item in $store.state.fieldOptions"
+                    :key="item.id"
+                    :label="item.fullSpecialtyName"
+                    :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -47,7 +69,7 @@
         </el-col>
         <el-col :span="3">
           <div class="grid-content bg-purple-light">
-            <el-button type="success" icon="el-icon-search" @click="showTableList">查 询</el-button>
+            <el-button type="success" icon="el-icon-search" @click="doSearch(showTableList)">查 询</el-button>
             <el-button icon="el-icon-refresh" @click="resetSearch(form,showTableList)">重 置</el-button>
           </div>
         </el-col>
@@ -73,19 +95,21 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
-          prop="targetLanguageName"
-          label="语言">
+          min-width="140"
+          label="语言对">
+          <template slot-scope="scope" v-if="scope.row.originLanguageName">{{scope.row.originLanguageName}} -> {{scope.row.targetLanguageName}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
-          prop="examStartTime"
-          label="测试开始时间">
+          min-width="120"
+          label="专业领域">
+          <template slot-scope="scope">{{scope.row.subDobmain | formatDomain}}</template>
         </el-table-column>
         <el-table-column
-          prop="examTimes"
-          label="测试次数">
+          show-overflow-tooltip
+          min-width="120"
+          prop="examStartTime"
+          label="测试开始时间">
         </el-table-column>
         <el-table-column
           prop="examOverview"
@@ -98,7 +122,7 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="140">
+          width="100">
           <template slot-scope="scope">
             <el-button type="text" @click.native="$router.push('/onlineTestResult/choice/'+scope.row.id)">查看</el-button>
           </template>
@@ -111,28 +135,33 @@
   </div>
 </template>
 <script>
-  import pagination from '@/components/pagination'
+  import pagination from '@/components/pagination';
+  import { formatDomainsStr } from '@/common/filter';
   export default {
     components: {
       pagination
     },
     data (){
       return {
-        loading: false,
-        totalTableList: 0,
-        showTableUrl:'/exam/admin/listSelectResult',
         form: {
           transId: '',
-          language: '',
-          rangeTime: '',
-          result: ''
+          origin: '',
+          target: '',
+          field: '',
+          result: '',
+          rangeTime: ''
         },
         formSelect: {
           resultOptions: ['合格','不合格']
         },
+        loading: false,
         tableData: [],
+        totalTableList: 0,
         multipleSelection: []
       }
+    },
+    filters: {
+      formatDomain: formatDomainsStr
     },
     created (){
       this.showTableList()
@@ -143,28 +172,31 @@
       },
       //展示表格数据
       showTableList (config){
-        config = config || {}
-        config.pageNo = config.pageNo || 1
-        config.pageSize = config.pageSize || 10
-        this.loading = true
-        this.$http.get(this.showTableUrl, {
+        config = config || {};
+        config.pageNo = config.pageNo || 1;
+        config.pageSize = config.pageSize || 10;
+        this.loading = true;
+        this.$http.get('/exam/admin/listSelectResult', {
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
             translatorCode: this.form.transId,
-            targetLanguageCode: this.form.language,
+            originLanguageCode: this.form.origin,
+            targetLanguageCode: this.form.target,
+            domainId: this.form.field,
             examResult: this.form.result,
             startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
             endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
-            this.tableData = []
-            res.data.data.content.forEach((item, index) => {
-              item.num = (index + 1) + (config.pageNo-1)*config.pageSize
+          if(res.data.message === 'success'){
+            this.tableData = [];
+            const list = res.data.data.results;
+            list.forEach((item, index) => {
+              item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
-            })
-            this.totalTableList = res.data.data.totalElements
+            });
+            this.totalTableList = res.data.data.totalCount
           }
           this.loading = false
         })
