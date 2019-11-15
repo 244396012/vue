@@ -97,7 +97,7 @@
                     <el-table-column
                       label="#"
                       prop="num"
-                      width="40">
+                      width="50">
                     </el-table-column>
                     <el-table-column
                       label="用户头像">
@@ -148,10 +148,9 @@
                     <el-table-column
                       label="#"
                       prop="num"
-                      width="40">
+                      width="50">
                     </el-table-column>
                     <el-table-column
-                      prop=""
                       label="用户头像">
                       <template slot-scope="scope">
                         <img class="thumb" :src="formatProtocolUrl(scope.row.userAvatarId)" alt="">
@@ -352,6 +351,11 @@
             this.business.clickNum = res.data.data.baseLike;
             this.business.scanNum = res.data.data.baseView;
             Object.assign(this.business, res.data.data);
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
         })
       },

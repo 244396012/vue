@@ -7,10 +7,10 @@
           <h1>用户登录</h1>
           <el-form ref="form" :model="form">
             <el-form-item>
-              <el-input v-model="form.account" clearable placeholder="请输入帐号"></el-input>
+              <el-input v-model="form.account" clearable autocomplete="off" placeholder="请输入帐号"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="form.password" clearable type="password" placeholder="请输入密码"></el-input>
+              <el-input v-model="form.password" type="password" clearable autocomplete="off" placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item>
               <div id="slide_box">
@@ -48,8 +48,8 @@
       return {
         fullscreenLoading: false,
         form: {
-          account: 'Q00596',
-          password: '111111'
+          account: '',
+          password: ''
         },
         btn: {
           icon: '',
@@ -65,7 +65,7 @@
     },
     methods: {
       //发起登录请求
-      login (){
+      async login (){
         const _this = this;
         if(!this.form.account.trim() || !this.form.password.trim()){
           this.$message({
@@ -83,22 +83,26 @@
         }
         this.btn.disabled = true;
         this.btn.icon = 'el-icon-loading';
-        this.$http.post('/auth/oauth/token', this.$qs.stringify({
+        await this.$http.post('/auth/oauth/token', this.$qs.stringify({
           client_id: '1',
           client_secret: 'server',
           grant_type: 'password',
           usertype: '1',
           username: this.form.account,
           password: this.form.password
-        })).then(res => {
-          if(res.data.access_token){
-            sessionStorage.setItem('sy_rm_admin_access_token', res.data.access_token);
+        })).then(res => res).finally(() => {
+          this.btn.disabled = false;
+          this.btn.icon = ''
+        }).then(data => {
+          if(data.data.access_token){
+            sessionStorage.setItem('sy_rm_admin_access_token', data.data.access_token);
             const loading = this.$loading({
               lock: true,
-              text: '请稍等，正在获取权限',
+              text: '请稍等，正在初始化',
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.8)'
             });
+            //获取用户权限
             this.getPermission().then(permission => {
               if(permission.data.message === 'success'){
                 this.$router.options.routes = initRoutes;
@@ -109,7 +113,7 @@
                 setTimeout(() => {
                   _this.$route.query.url
                     ? _this.$router.push(_this.$route.query.url)
-                    : _this.$router.push('/');
+                    : _this.$router.push('/home');
                 }, 1000)
               }else{
                 loading.text = permission.data.message
@@ -117,15 +121,23 @@
               setTimeout(() => {
                 loading.close()
               }, 1500)
+            });
+            //获取用户id
+            this.$http.get('/auth/current', {
+              params: {
+                name: this.form.account
+              }
+            }).then(user => {
+              if(user.status === 200){
+                user.data.principal.user.id && sessionStorage.setItem('sy_rm_admin_ud', user.data.principal.user.id);
+              }
             })
           }else{
             this.$message({
               type: 'error',
-              message: res.message
+              message: data.message
             })
           }
-          this.btn.disabled = false;
-          this.btn.icon = ''
         })
       }
     }

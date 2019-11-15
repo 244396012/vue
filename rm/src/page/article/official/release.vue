@@ -2,8 +2,8 @@
   <div class="page">
     <div class="default-style">
       <div class="detail form">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" style="width: 80%;min-width: 900px;">
-          <el-form-item label="文章标题：" prop="title">
+        <el-form :model="ruleForm" ref="ruleForm" label-width="120px" style="width: 80%;min-width: 900px;">
+          <el-form-item label="文章标题：" :prop="'title'" :rules="{ required: true, message: '请输入文章标题', trigger: 'blur' }">
             <el-input type="text" v-model="ruleForm.title" clearable placeholder="请输入文章标题" style="width: 400px"></el-input>
             {{ruleForm.title.length}}/50
           </el-form-item>
@@ -26,7 +26,7 @@
           <el-form-item label="上传封面：" v-if="ruleForm.imgUrl">
             <img class="previewImg" :src="ruleForm.imgUrl" alt="">
           </el-form-item>
-          <el-form-item label="文章分类：" prop="type">
+          <el-form-item label="文章分类：" :prop="'type'" :rules="{ required: true, message: '请选择文章分类', trigger: 'change' }">
             <el-select v-model="ruleForm.type" placeholder="请选择文章分类" style="width: 400px">
               <el-option v-for="item in formSelect.typeOptions"
                          :key="item.value"
@@ -34,13 +34,13 @@
                          :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="正文内容：" prop="content">
+          <el-form-item label="正文内容：" :prop="'content'" :rules="{ required: true, message: '请输入正文内容', trigger: 'blur' }">
             <quill-editor :options="quillOption" v-model="ruleForm.content"></quill-editor>
           </el-form-item>
-          <el-form-item label="浏览量基数：" prop="scanNum">
+          <el-form-item label="浏览量基数：" :prop="'scanNum'" :rules="{ required: true, message: '请输入浏览量基数', trigger: 'blur' }">
             <el-input type="number" v-model="ruleForm.scanNum" clearable style="width: 400px"></el-input>
           </el-form-item>
-          <el-form-item label="点赞量基数：" prop="clickNum">
+          <el-form-item label="点赞量基数：" :prop="'clickNum'" :rules="{ required: true, message: '请输入点赞量基数', trigger: 'blur' }">
             <el-input type="number" v-model="ruleForm.clickNum" clearable style="width: 400px"></el-input>
           </el-form-item>
           <el-form-item style="margin-top: 2rem">
@@ -74,23 +74,6 @@
         },
         formSelect: {
           typeOptions: [{label: '行业资讯', value: '行业资讯'}]
-        },
-        rules: {
-          title: [
-            { required: true, message: '请输入文章标题', trigger: 'blur' }
-          ],
-          type: [
-            { required: true, message: '请选择文章分类', trigger: 'change' }
-          ],
-          content: [
-            { required: true, message: '请输入正文内容', trigger: 'blur' }
-          ],
-          scanNum: [
-            { required: true, message: '请输入浏览量基数', trigger: 'blur' }
-          ],
-          clickNum: [
-            { required: true, message: '请输入点赞量基数', trigger: 'blur' }
-          ]
         },
         btn: {
           disabled: false,

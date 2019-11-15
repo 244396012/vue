@@ -7,13 +7,18 @@
       center>
       <el-form :model="form" ref="form" label-width="95px">
         <el-form-item label="项目编号：" style="margin-bottom: 10px">
-          <el-input v-model="$route.query.n" disabled></el-input>
+          <el-input v-model="$route.query.p" disabled></el-input>
         </el-form-item>
         <el-form-item label="项目经理："
                       style="margin-bottom: 10px"
                       :prop="'pm'"
-                      :rules="{ required: true, message: '请填写项目经理', trigger: 'blur' }">
-          <el-input v-model="form.pm" placeholder="请填写项目经理"></el-input>
+                      :rules="{ required: true, message: '请选择项目经理', trigger: 'change' }">
+          <el-select v-model="form.pm" placeholder="请选择项目经理" style="width: 100%">
+            <el-option v-for="item of pmlist"
+                       :key="item.key"
+                       :value="item.key"
+                       :label="item.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="交付时间："
                       style="margin-bottom: 15px"
@@ -29,7 +34,6 @@
         </el-form-item>
         <el-form-item label="备注：" >
           <el-input v-model="form.remark"
-                    clearable
                     type="textarea" placeholder="请输入备注"></el-input>
         </el-form-item>
       </el-form>
@@ -43,7 +47,7 @@
 <script>
   import { mapState } from 'vuex';
   export default {
-    props: ['callback','updatedata'],
+    props: ['callback','updatedata','pmlist'],
     data (){
       return {
         form: {
@@ -63,8 +67,8 @@
     watch: {
       updatedata (newval){
         if(typeof(newval) === 'object'){
-          this.form.time = newval.endTime.split(' ')[0] || '';
-          this.form.pm = newval.projectManager;
+          this.form.time = newval.deliveryTime && newval.deliveryTime.split(' ')[0] || '';
+          this.form.pm = newval.projectManagerCode;
           this.form.remark = newval.remarks;
           this.form.projectNo = newval.projectNo;
           this.form.id = newval.id;
@@ -82,12 +86,17 @@
       confirmModify (formName){
         this.$refs[formName].validate((valid) => {
           if(valid){
+            //查找value
+            const result = this.pmlist.find(item => {
+              return item.key === this.form.pm;
+            }) || {};
             this.btn.disabled = true;
             this.btn.txt = '保存中';
             this.$http.put('/resourceOrder/updateProjectPm', this.$qs.stringify({
               id: this.form.id,
               projectNo: this.form.projectNo,
-              projectManager: this.form.pm,
+              projectManager: result.value,
+              projectManagerCode: this.form.pm,
               deliveryTime: this.form.time?this.form.time+' 00:00:00':'',
               remarks: this.form.remark,
               orderType: this.form.type

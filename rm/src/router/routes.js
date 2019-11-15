@@ -173,27 +173,27 @@ const routes = [
         ]
       },
       {
-        path: '/parttimeUser/applySkill',
+        path: '/parttimeUser/skill',
         name: '技能申请列表',
         component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/entry')), 'parttimeUser'),
         children: [
           {
-            path: '/parttimeUser/applySkill',
-            meta: { title: '笔译准译员' },
-            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/applySkill/index')), 'parttimeUser')
+            path: '/parttimeUser/skill',
+            meta: { title: '笔译技能申请' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/skill/index')), 'parttimeUser')
           },
           {
-            path: '/parttimeUser/applySkill/other',
-            meta: { title: '其他准资源' },
-            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/applySkill/other')), 'parttimeUser')
+            path: '/parttimeUser/skill/green',
+            meta: { title: '绿色申请列表' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/skill/green')), 'parttimeUser')
           },
           {
-            path: '/parttimeUser/applySkill/green',
-            meta: { title: '绿色通道申请' },
-            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/applySkill/green')), 'parttimeUser')
+            path: '/parttimeUser/skill/other',
+            meta: { title: '其他兼职申请' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/skill/other')), 'parttimeUser')
           },
           {
-            path: '/parttimeUser/applySkill/detail/:id',
+            path: '/parttimeUser/skill/detail/:id',
             meta: { title: '详情' },
             component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/detail')), 'parttimeUser')
           }
@@ -458,6 +458,33 @@ const routes = [
             component: resolve => require.ensure([], () => resolve(require('@/page/article/detai_reply')), 'article')
           }
         ]
+      },
+      {
+        path: '/article/message',
+        name: '系统消息管理',
+        component: resolve => require.ensure([], () => resolve(require('@/page/article/entry')), 'article'),
+        children: [
+          {
+            path: '/article/message',
+            meta: { title: '系统消息管理' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/article/message/index')), 'article')
+          },
+          {
+            path: '/article/message/release',
+            meta: { title: '发布公告' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/article/message/release')), 'article')
+          },
+          {
+            path: '/article/message/detail/:id',
+            meta: { title: '详情' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/article/message/detail')), 'article')
+          },
+          {
+            path: '/article/message/modify/:id',
+            meta: { title: '修改公告' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/article/message/release')), 'article')
+          }
+        ]
       }
     ]
   },
@@ -515,17 +542,17 @@ const routes = [
     component: layout,
     children: [
       {
-        path: '/finance/interpreter',
+        path: '/finance/settlement',
         name: '译员结算管理',
         component: resolve => require.ensure([], () => resolve(require('@/page/finance/entry')), 'finance'),
         children: [
           {
-            path: '/finance/interpreter',
+            path: '/finance/settlement',
             meta: { title: '译员结算管理' },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/index')), 'finance')
           },
           {
-            path: '/finance/interpreter/detail/:id',
+            path: '/finance/settlement/detail/:id',
             meta: { title: '详情' },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/detail')), 'finance')
           }
@@ -563,7 +590,20 @@ const routes = [
         children: [
           {
             path: '/report/total',
+            meta: { title: '兼职账目' },
             component: resolve => require.ensure([], () => resolve(require('@/page/reportForm/total/index')), 'reportForm')
+          }
+        ]
+      },
+      {
+        path: '/report/expenses',
+        name: '兼职费报表',
+        component: resolve => require.ensure([], () => resolve(require('@/page/reportForm/entry')), 'reportForm'),
+        children: [
+          {
+            path: '/report/expenses',
+            meta: { title: '兼职费报表' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/reportForm/expenses/index')), 'reportForm')
           }
         ]
       }

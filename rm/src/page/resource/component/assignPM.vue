@@ -6,15 +6,20 @@
           <el-form-item label="项目编号：" style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item>
-                <el-input v-model="$route.query.n" disabled></el-input>
+                <el-input v-model="$route.query.p" disabled></el-input>
               </el-form-item>
             </el-col>
           </el-form-item>
           <el-form-item label="项目经理：" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item :prop="'pm'"
-                            :rules="{ required: true, message: '请填写项目经理', trigger: 'blur' }">
-                <el-input v-model="form.pm" placeholder="请填写项目经理"></el-input>
+                            :rules="{ required: true, message: '请选择项目经理', trigger: 'change' }">
+                <el-select v-model="form.pm" placeholder="请选择项目经理" style="width: 100%">
+                  <el-option v-for="item of formSelect.pmOptions"
+                             :key="item.key"
+                             :value="item.key"
+                             :label="item.value"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-form-item>
@@ -59,7 +64,7 @@
               <el-table-column
                 label="#"
                 prop="num"
-                width="40">
+                width="50">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -102,7 +107,7 @@
         </el-row>
       </div>
     </div>
-    <pm-modal :callback="showLogTableList" :updatedata="updatedata"></pm-modal>
+    <pm-modal :callback="showLogTableList" :pmlist="formSelect.pmOptions" :updatedata="updatedata"></pm-modal>
   </div>
 </template>
 <script>
@@ -121,14 +126,17 @@
           time: '',
           remark: ''
         },
-        updatedata: {},
+        formSelect: {
+          pmOptions: []
+        },
         btn: {
           disabled: false,
           txt: '分 配'
         },
         loading: false,
         tableData: [],
-        totalTableList: 0
+        totalTableList: 0,
+        updatedata: {}
       };
     },
     computed: {
@@ -137,12 +145,29 @@
           case '1': return '/resource/written';
           case '2': return '/resource/meeting';
           case '3': return '/resource/send';
-          case '4': return '/resource/train';
+          // case '4': return '/resource/train';
+        }
+      },
+      getParam (){
+        switch (this.$route.query.t){
+          case '1': return 'ROLE_hr_res_commissioner';
+          case '2': return 'ROLE_hr_interpretation_commissioner';
+          case '3': return 'ROLE_hr_expatriate_commissioner';
+          // case '4': return 'ROLE_train_supervision';
         }
       }
     },
     created (){
       this.showLogTableList();
+      this.$http.get('/resourceOrder/getPmUserInfo',{
+        params: {
+          roleCode: this.getParam
+        }
+      }).then(res => {
+        if(res.data.message === 'success'){
+          this.formSelect.pmOptions = res.data.data
+        }
+      })
     },
     filters: {
       formatResourceProStatus: formatResourceProStatus
@@ -153,13 +178,19 @@
         const url = this.redirectUrl || '';
         this.$refs[formName].validate((valid) => {
           if(valid){
+            //查找value
+            const result = this.formSelect.pmOptions.find(item => {
+              return item.key === this.form.pm;
+            }) || {};
+
             this.btn.disabled = true;
             this.btn.txt = '分配中';
             this.$http.post('/resourceOrder/distributePm', this.$qs.stringify({
               id: this.$route.params.id,
-              projectNo: this.$route.query.n,
-              projectManager: this.form.pm,
-              deliveryTime: this.form.time?this.form.time+' 00:00:00':'',
+              projectNo: this.$route.query.p,
+              projectManager: result.value,
+              projectManagerCode: this.form.pm,
+              deliveryTime: this.form.time ? this.form.time+' 00:00:00':'',
               remarks: this.form.remark,
               orderType: this.$route.query.t
             })).then(res => {
@@ -193,7 +224,7 @@
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
-            projectNo: this.$route.query.n
+            projectNo: this.$route.query.p
           }
         }).then(res => {
           if(res.data.message === 'success'){
@@ -216,7 +247,8 @@
           type: 'warning'
         }).then(() => {
           this.$http.put('/resourceOrder/deleteProjectPm',this.$qs.stringify({
-            id: id
+            id: id,
+            orderType:this.$route.query.t
           })).then(res => {
             if(res.data.message === 'success'){
               this.$message({

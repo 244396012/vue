@@ -67,8 +67,8 @@
                 </tr>
                 <tr>
                   <td class="name">译员类型</td><td>{{userDetail.userExtension && userDetail.userExtension.userSource}}</td>
-                  <td class="name">绑定手机号</td><td>{{userDetail.userExtension && userDetail.userExtension.userSource}}</td>
-                  <td class="name">绑定邮箱</td><td colspan="3">{{userDetail.userExtension && userDetail.userExtension.userSource}}</td>
+                  <td class="name">绑定手机号</td><td>{{userDetail.telephone}}</td>
+                  <td class="name">绑定邮箱</td><td colspan="3">{{userDetail.email}}</td>
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">简历信息</p>
@@ -168,9 +168,7 @@
                   <td class="name">证件号码</td><td>{{userDetail.userExtension && userDetail.userExtension.certificateNumFuzzy}}</td>
                 </tr>
               </table>
-              <p class="sy-bold sy-title" style="overflow: auto;margin-bottom: 8px;line-height: 38px;">结算认证
-                <span class="download" style="float: right">默认结算方式：{{userDetail.settleList | filterCard}}</span>
-              </p>
+              <p class="sy-bold sy-title" style="overflow: auto;margin-bottom: 8px;line-height: 38px;">结算认证</p>
               <table class="parttime-table">
                 <template v-for="item in userDetail.settleList">
                   <template v-if="item.selttleName === '银行卡'">
@@ -197,7 +195,9 @@
                 <tr>
                   <td class="name">结算类型</td>
                   <td class="name">当前结算类型</td>
-                  <td colspan="5">123</td>
+                  <td colspan="5">
+                       {{userDetail.userExtension && userDetail.userExtension.defaultSettleType !== ''?userDetail.userExtension.defaultSettleType:'默认'}}
+                  </td>
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;margin-bottom: 8px;line-height: 38px;">测试记录</p>
@@ -210,7 +210,7 @@
                 <el-table-column
                   prop="num"
                   label="#"
-                  width="40">
+                  width="50">
                 </el-table-column>
                 <el-table-column
                   show-overflow-tooltip
@@ -347,20 +347,7 @@
     },
     filters: {
       formatNum: formatNum,
-      formatStatus:formatAccountStatus,
-      //结算方式
-      filterCard (data){
-        let result = '--';
-        if(typeof data === 'object'){
-          data.forEach(item => {
-            if(item.settleDefault){
-              result = item.selttleName;
-              return result;
-            }
-          });
-        }
-        return result;
-      }
+      formatStatus:formatAccountStatus
     },
     created (){
       this.$http.interceptors.request.use(
@@ -387,7 +374,7 @@
       })
     },
     methods: {
-      handleClick(tab, event) {
+      handleClick(tab) {
         if (tab.label === '技能类型'){
           this.$refs.skill.getSelectOptions();
           this.$refs.skill.showDetail();
@@ -418,6 +405,7 @@
             this.baseinfo.email = _data.email;
             this.baseinfo.sex = _data.sex;
             if(_data.userExtension){
+              this.skillDetail.userSource = _data.userExtension && _data.userExtension.userSource || '';
               this.skillDetail.userExtendList = _data.userExtendList;
               this.skillDetail.transYear = _data.userExtension.translateYear;
               this.skillDetail.transDate = _data.userExtension.translatorDate;

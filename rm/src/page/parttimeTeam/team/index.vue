@@ -6,15 +6,14 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="90px">
               <el-form-item label="团队名称">
-                <el-input v-model="form.teamName" clearable placeholder="请输入团队名称"></el-input>
+                <el-input v-model="form.teamName" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="团队人数">
                 <el-input v-model="form.rangeNoStart" type="number" style="width: 100px"></el-input> -
                 <el-input v-model="form.rangeNoEnd" type="number" style="width: 99px"></el-input>
               </el-form-item>
               <el-form-item label="团队状态">
-                <el-select v-model="form.teamState"
-                  placeholder="请选择团队状态">
+                <el-select v-model="form.teamState" placeholder="请选择">
                   <el-option
                     v-for="item in userStateOptions"
                     :key="item.value"
@@ -24,8 +23,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="接单开关">
-                <el-select v-model="form.toggles"
-                           placeholder="请选择接单开关">
+                <el-select v-model="form.toggles" placeholder="请选择">
                   <el-option
                     v-for="item in togglesOptions"
                     :key="item.value"
@@ -35,8 +33,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="账号状态">
-                <el-select v-model="form.accountState"
-                           placeholder="请选择账号状态">
+                <el-select v-model="form.accountState" placeholder="请选择">
                   <el-option
                     v-for="item in accountStateOptions"
                     :key="item.value"
@@ -46,8 +43,9 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="添加时间">
-                <el-date-picker
-                  v-model="form.rangeTime"
+                <el-date-picker v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -75,13 +73,15 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="userCode"
-          width="100"
+          min-width="100"
           label="团队ID">
         </el-table-column>
         <el-table-column
@@ -103,7 +103,8 @@
           label="发票类型">
         </el-table-column>
         <el-table-column
-          width="95"
+          show-overflow-tooltip
+          min-width="100"
           prop="primaryContactName"
           label="主要联系人">
         </el-table-column>
@@ -114,29 +115,29 @@
           <template slot-scope="scope">{{scope.row.primaryContactMobile | hiddenAccount}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="fullTimeNumber"
           label="团队人数">
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           label="语言对/语种">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="擅长领域">
         </el-table-column>
         <el-table-column
-          width="60"
+          min-width="60"
           label="等级">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="身份认证">
           <template slot-scope="scope">{{+scope.row.certificatePassed===1 ? '已认证':'未认证'}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="帐号认证">
           <template slot-scope="scope">{{+scope.row.settleCertificatePassed===1 ? '已认证':'未认证'}}</template>
         </el-table-column>
@@ -147,32 +148,32 @@
           label="添加时间">
         </el-table-column>
         <el-table-column
-          width="70"
+          min-width="70"
           prop="orderTaked"
           label="接单数">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="numberOfComplaints"
           label="投诉次数">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="接单开关">
           <template slot-scope="scope">{{+scope.row.receipt===1 ? '开启':'关闭'}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="translatorIdleStatus"
           label="团队状态">
         </el-table-column>
         <el-table-column
-          width="70"
+          min-width="70"
           prop="totalScore"
           label="译侠值">
         </el-table-column>
         <el-table-column
-          width="95"
+          min-width="95"
           prop="orderAverageScore"
           label="订单平均分">
         </el-table-column>
@@ -183,7 +184,7 @@
           label="常住地址">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="账号状态">
           <template slot-scope="scope">{{scope.row.isEnabled | formatStatus}}</template>
         </el-table-column>
@@ -192,27 +193,31 @@
           label="操作"
           width="140">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/parttimeTeam/team/detail/'+scope.row.userId)">查看</el-button>
-            <el-button type="text"
-                       v-if="+scope.row.isEnabled !== 1"
-                       @click="setAccountStatus({
+            <router-link :to="{path:'/parttimeTeam/team/detail/'+scope.row.userId+'?code='+scope.row.userCode}"
+                         class="blank"
+                         target="_blank">查看</router-link>
+            <template v-if="$store.state.secondPermission['/userExtension/saveUserStatus'] !== undefined">
+              <el-button type="text"
+                         v-if="+scope.row.isEnabled !== 1"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 1
                        }, showTableList)">启用</el-button>
-            <el-button type="text"
-                       class="del"
-                       v-if="+scope.row.isEnabled !== 0"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del"
+                         v-if="+scope.row.isEnabled !== 0"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 0
                        }, showTableList)">停用</el-button>
-            <el-button type="text"
-                       class="del2"
-                       v-if="+scope.row.isEnabled === 1"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del2"
+                         v-if="+scope.row.isEnabled === 1"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: -1
                        }, showTableList)">冻结</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -318,6 +323,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

@@ -4,7 +4,7 @@
       <el-select v-model="form.type"
                  clearable
                  @change="selectType"
-                 placeholder="请选择兼职类型">
+                 placeholder="请选择">
         <el-option
           v-for="item in formSelect.typeOptions"
           :key="item.value"
@@ -15,9 +15,7 @@
     </el-form-item>
     <template v-if="form.type === '笔译'">
       <el-form-item label="测试领域" class="width620">
-        <el-select v-model="form.firstField"
-                   @change="getSecondFieldFn"
-                   placeholder="请选择一级领域">
+        <el-select v-model="form.firstField" @change="getSecondFieldFn" placeholder="一级领域">
           <el-option
             v-for="item in $store.state.fieldOptions"
             :key="item.id"
@@ -26,10 +24,7 @@
           </el-option>
         </el-select>
         <label class="sep">-</label>
-        <el-select multiple
-                   :collapse-tags="true"
-                   v-model="form.secondField"
-                   placeholder="请选择二级领域">
+        <el-select multiple v-model="form.secondField" :collapse-tags="true" placeholder="二级领域">
           <el-option
             v-for="item in formSelect.secondFieldOptions"
             :key="item.id"
@@ -37,44 +32,37 @@
             :value="item.fullSpecialtyName"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="源语言">
-        <el-select
-          v-model="form.origin" placeholder="请选择源语言">
-          <el-option
-            v-for="item in languageList"
-            :key="item.id"
-            :label="item.chineseName"
-            :value="item.chineseName"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="目标语言">
-        <el-select
-          v-model="form.target" placeholder="请选择目标语言">
-          <el-option
-            v-for="item in languageList"
-            :key="item.id"
-            :label="item.chineseName"
-            :value="item.chineseName"></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="等级">
-        <el-select
-          v-model="form.level"
-          placeholder="请选择等级">
+        <el-select v-model="form.level" placeholder="请选择">
           <el-option
             v-for="item in memberLevel"
             :key="item"
             :value="item"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="语言对" class="width620">
+        <el-select v-model="form.origin" placeholder="源语言">
+          <el-option
+            v-for="item in $store.state.languageList"
+            :key="item.id"
+            :label="item.chineseName"
+            :value="item.chineseName">
+          </el-option>
+        </el-select>
+        <label class="sep">-</label>
+        <el-select v-model="form.target" placeholder="目标语言">
+          <el-option
+            v-for="item in $store.state.languageList"
+            :key="item.id"
+            :label="item.chineseName"
+            :value="item.chineseName">
+          </el-option>
+        </el-select>
+      </el-form-item>
     </template>
     <template v-else-if="form.type === 'DTP'">
       <el-form-item label="DTP经验">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.dtpExp"
-          placeholder="请选择DTP经验">
+        <el-select v-model="form.dtpExp" multiple :collapse-tags="true" placeholder="请选择">
           <el-option
             v-for="item in formSelect.expeOptions"
             :key="item"
@@ -83,11 +71,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="擅长软件">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.software"
-          placeholder="请选择擅长软件">
+        <el-select v-model="form.software" multiple :collapse-tags="true" placeholder="请选择">
           <el-option
             v-for="item in formSelect.softwareOptions"
             :key="item"
@@ -98,10 +82,7 @@
     </template>
     <template v-else-if="form.type === '会展'">
       <el-form-item label="擅长领域" class="width620">
-        <el-select
-          v-model="form.firstField"
-          @change="getSecondFieldFn"
-          placeholder="请选择一级领域">
+        <el-select v-model="form.firstField" @change="getSecondFieldFn" placeholder="一级领域">
           <el-option
             v-for="item in $store.state.fieldOptions"
             :key="item.id"
@@ -109,11 +90,7 @@
             :value="item.specialtyId+','+item.fullSpecialtyName"></el-option>
         </el-select>
         <label class="sep">-</label>
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.secondField"
-          placeholder="请选择二级领域">
+        <el-select v-model="form.secondField" multiple :collapse-tags="true" placeholder="二级领域">
           <el-option
             v-for="item in formSelect.secondFieldOptions"
             :key="item.id"
@@ -122,23 +99,16 @@
         </el-select>
       </el-form-item>
       <el-form-item label="语种">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.lanPair" placeholder="请选择语种">
+        <el-select v-model="form.lanPair" multiple :collapse-tags="true" placeholder="请选择">
           <el-option
-            v-for="item in languageList"
+            v-for="item in $store.state.languageList"
             :key="item.id"
             :label="item.chineseName"
             :value="item.chineseName"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="口译类型">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.speakExp"
-          placeholder="请选择口译类型">
+        <el-select v-model="form.speakExp" multiple :collapse-tags="true" placeholder="请选择">
           <el-option
             v-for="item in formSelect.kyTypeOptions"
             :key="item"
@@ -148,10 +118,7 @@
     </template>
     <template v-else-if="form.type === '设备'">
       <el-form-item label="设备名称">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.deviceType" placeholder="请选择设备名称">
+        <el-select v-model="form.deviceType" multiple :collapse-tags="true" placeholder="请选择">
           <el-option value="同传套件">同传套件</el-option>
           <el-option value="同传主机">同传主机</el-option>
           <el-option value="辐射板">辐射板</el-option>
@@ -167,10 +134,7 @@
     </template>
     <template v-else-if="form.type === '搭建'">
       <el-form-item label="搭建项">
-        <el-select
-          multiple
-          :collapse-tags="true"
-          v-model="form.buildType" placeholder="请选择搭建项">
+        <el-select v-model="form.buildType" multiple :collapse-tags="true" placeholder="请选择">
           <el-option value="投影机">投影机</el-option>
           <el-option value="投影幕">投影幕</el-option>
           <el-option value="电视机">电视机</el-option>
@@ -215,15 +179,12 @@
             {label:'搭建',value:'搭建'}],
           kyTypeOptions: ['同声传译','陪同传译','大型活动','交替传译'],
           expeOptions: ['1年以内','1~2年','2~3年','3年以上'],
-          softwareOptions: ['Word','Excel','PowerPoint','Photoshop','FrameMaker','AutoCAD','PageMaker','Illustrator','QuarkXpress','Pm'],
+          softwareOptions: ['Word','Excel','PowerPoint','Photoshop','FrameMaker','AutoCAD','PageMaker','Illustrator','QuarkXpress','PM'],
           secondFieldOptions: [],
         }
       }
     },
     computed: {
-      ...mapState([
-        'languageList'
-      ]),
       ...mapState('select', {
         memberLevel: state => state.memberLevel
       }),

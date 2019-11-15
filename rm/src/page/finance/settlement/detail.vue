@@ -59,9 +59,10 @@
               v-loading="loading"
               :data="tableRecordsData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="50">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -70,12 +71,13 @@
                 label="结算编号">
               </el-table-column>
               <el-table-column
-                width="100"
+                show-overflow-tooltip
+                min-width="100"
                 prop="applyMoney"
                 label="申请金额">
               </el-table-column>
               <el-table-column
-                width="70"
+                min-width="70"
                 prop="currencyName"
                 label="币种">
               </el-table-column>
@@ -86,7 +88,8 @@
                 label="申请时间">
               </el-table-column>
               <el-table-column
-                width="80"
+                show-overflow-tooltip
+                min-width="80"
                 prop="payType"
                 label="付款方式">
               </el-table-column>
@@ -109,12 +112,14 @@
                 label="账户信息">
               </el-table-column>
               <el-table-column
-                width="80"
+                show-overflow-tooltip
+                min-width="80"
                 prop="settleType"
                 label="结算类型">
               </el-table-column>
               <el-table-column
-                width="80"
+                show-overflow-tooltip
+                min-width="80"
                 label="支付状态">
                 <template slot-scope="scope">{{scope.row.payState | formatPayStatus}}</template>
               </el-table-column>
@@ -125,12 +130,17 @@
                 label="支付时间">
               </el-table-column>
               <el-table-column
-                width="70"
-                prop=""
+                min-width="80"
                 label="图片">
+                <template slot-scope="scope">
+                  <a v-if="scope.row.certificateImg" :href="scope.row.certificateImg" target="_blank" download="">
+                    <img :src="scope.row.certificateImg" width="60" height="60" alt="">
+                  </a>
+                </template>
               </el-table-column>
               <el-table-column
-                width="70"
+                show-overflow-tooltip
+                min-width="70"
                 prop="payPersonRealName"
                 label="操作人">
               </el-table-column>
@@ -139,22 +149,6 @@
                 min-width="150"
                 prop="remark"
                 label="备注">
-              </el-table-column>
-              <el-table-column
-                fixed="right"
-                label="操作"
-                width="220">
-                <template slot-scope="scope">
-                  <el-button type="text"
-                             v-if="scope.row.payState === 0 && (scope.row.settleType === '社保51' || scope.row.settleType === '云账户')"
-                             @click="mulSettle(scope.row.id)">提交结算</el-button>
-                  <el-button type="text"
-                             v-if="scope.row.payState === 0"
-                             @click="mulHandleLock(scope.row.id)">手动锁定</el-button>
-                  <el-button type="text"
-                             v-if="scope.row.payState === 0 || scope.row.payState === 3 || scope.row.payState === 1"
-                             @click="addRemark(scope.row.id)">添加备注</el-button>
-                </template>
               </el-table-column>
             </el-table>
             <template v-if="totalRecords > 0">
@@ -177,9 +171,10 @@
               v-loading="loading"
               :data="orderDetail.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="50">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -212,27 +207,35 @@
                 label="语言对">
               </el-table-column>
               <el-table-column
-                width="80"
+                show-overflow-tooltip
+                min-width="80"
                 prop="taskType"
                 label="任务类型">
               </el-table-column>
               <el-table-column
-                width="80"
+                show-overflow-tooltip
+                min-width="80"
                 prop="taskNumber"
                 label="任务数量">
               </el-table-column>
               <el-table-column
-                width="90"
+                show-overflow-tooltip
+                min-width="90"
                 prop="taskAmount"
                 label="任务金额">
               </el-table-column>
               <el-table-column
-                width="90"
+                show-overflow-tooltip
+                min-width="90"
                 prop="settleAmount"
                 label="结算金额">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.taskAmount === scope.row.settleAmount">{{scope.row.settleAmount}}</span>
+                  <span v-else style="color: orangered">{{scope.row.settleAmount}}</span>
+                </template>
               </el-table-column>
               <el-table-column
-                width="80"
+                min-width="80"
                 prop="currencyName"
                 label="币种">
               </el-table-column>
@@ -255,18 +258,10 @@
                 label="领域">
               </el-table-column>
               <el-table-column
-                width="80"
+                min-width="80"
                 prop="taskStatus"
                 label="任务状态">
               </el-table-column>
-              <!--<el-table-column-->
-                <!--fixed="right"-->
-                <!--label="操作"-->
-                <!--width="100">-->
-                <!--<template slot-scope="scope">-->
-                  <!--<el-button type="text" @click="$router.push('')">查看详情</el-button>-->
-                <!--</template>-->
-              <!--</el-table-column>-->
             </el-table>
             <template v-if="orderDetail.total > 0">
               <order-pagination :callback="showOrderList" :total="orderDetail.total"></order-pagination>
@@ -280,9 +275,10 @@
               v-loading="loading"
               :data="accountDetail.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="50">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -291,22 +287,28 @@
                 label="时间">
               </el-table-column>
               <el-table-column
-                width="100"
-                prop="amount"
+                show-overflow-tooltip
+                min-width="100"
                 label="金额">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.exchangeType.includes('提现')" style="color: orangered">-{{scope.row.amount}}</span>
+                  <span v-else style="color: #159396">+{{scope.row.amount}}</span>
+                </template>
               </el-table-column>
               <el-table-column
-                width="80"
+                min-width="80"
                 label="币种">
                 <template slot-scope="scope">{{scope.row.currencyCode | formatMoneyType}}</template>
               </el-table-column>
               <el-table-column
-                width="100"
+                show-overflow-tooltip
+                min-width="100"
                 prop="exchangeType"
                 label="变动类型">
               </el-table-column>
               <el-table-column
-                width="100"
+                show-overflow-tooltip
+                min-width="100"
                 prop="payType"
                 label="结算方式">
               </el-table-column>
@@ -469,7 +471,7 @@
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.orderDetail.tableData.push(item)
             });
-            this.orderDetail.total = res.data.totalElements
+            this.orderDetail.total = res.data.data.totalElements
           }
           this.loading = false;
         })

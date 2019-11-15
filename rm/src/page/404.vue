@@ -20,7 +20,7 @@
           this.time --;
           if(this.time === 0){
             clearInterval(timer);
-            this.$router.push('/');
+            this.$router.push('/home');
             return false
           }
         }, 1000)

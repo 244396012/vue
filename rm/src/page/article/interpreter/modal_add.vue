@@ -80,7 +80,7 @@
             this.form.id = '';
             this.form.labelName = '';
             this.$store.commit('showModal');
-            this.callback();
+            this.doSearch(this.callback)
           }else{
             this.$message({
               type: 'error',

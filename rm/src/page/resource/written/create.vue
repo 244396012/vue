@@ -198,6 +198,7 @@
                 <el-date-picker
                   v-model="ruleForm.projectTime"
                   type="daterange"
+                  :unlink-panels="true"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
                   start-placeholder="开始时间"
@@ -205,24 +206,28 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="测试题：" required>
-                <el-upload
-                  class="upload-demo"
-                  action="/"
-                  :before-upload="beforeUpload">
-                  <el-popover
-                    placement="top-start"
-                    trigger="hover"
-                    content="支持上传pdf、zip、rar、doc、docx、xlsx文件">
-                    <el-button slot="reference" type="text">点击上传</el-button>
-                  </el-popover>
-                </el-upload>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8" v-if="ruleForm.fileName">
-              <el-form-item label="已上传测试题：" style="color: #EC6941">{{ruleForm.fileName}}</el-form-item>
-            </el-col>
+            <template v-if="ruleForm.isTest === 'true'">
+              <el-col :span="8">
+                <el-form-item label="测试题：" required>
+                  <el-upload
+                    class="upload-demo"
+                    action="/"
+                    :before-upload="beforeUpload">
+                    <el-popover
+                      placement="top-start"
+                      trigger="hover"
+                      content="支持上传pdf、zip、rar、doc、docx、xlsx文件">
+                      <el-button slot="reference" type="text">点击上传</el-button>
+                    </el-popover>
+                  </el-upload>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8" v-if="ruleForm.fileName">
+                <el-form-item label="已上传测试题：" style="color: #EC6941">
+                  <p style="margin: 8px 0; line-height: 22px">{{ruleForm.fileName}}</p>
+                </el-form-item>
+              </el-col>
+            </template>
           </el-row>
           <el-row>
             <el-col :span="8">
@@ -245,7 +250,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="年龄：">
-                <el-input v-model="form.age" type="number" clearable placeholder="请输入年龄"></el-input>
+                <el-input v-model="form.age" type="text" clearable placeholder="请输入年龄"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -296,7 +301,7 @@
           <el-table-column
             type="index"
             label="#"
-            width="40">
+            width="50">
           </el-table-column>
           <el-table-column
             show-overflow-tooltip
@@ -368,6 +373,7 @@
         isModify: false,
         detail: {},
         ruleForm: {
+          department: '',
           projectName: '',
           projectStatus: '',
           field: '',
@@ -375,7 +381,9 @@
           origin: '',
           target: '',
           customerName: '',
+          customerCode: '',
           saleManager: '',
+          saleManagerCode: '',
           deliveryTime: '',
           resourceService: '翻译',
           preWorkload: '',
@@ -454,7 +462,7 @@
       async selectSecondField (name){
         const result = this.$store.state.fieldOptions.find(item => {
           return item.fullSpecialtyName === name;
-        });
+        }) || {};
         const sid = result.specialtyId || '';
         this.ruleForm.secondField = '';
         this.formSelect.secondOptions = [];
@@ -505,13 +513,15 @@
       //更新销售经理
       updateSaleMg (data){
         this.ruleForm.saleManager = data.sale;
+        this.ruleForm.saleManagerCode = data.saleCode;
         this.ruleForm.customerName = data.customer;
+        this.ruleForm.customerCode = data.customerCode;
       },
       //确认下单
       submitForm (formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            if(!this.ruleForm.url){
+            if(this.ruleForm.isTest === 'true' && !this.ruleForm.url){
               this.$message({
                 type: 'warning',
                 message: '请上传测试文件'
@@ -521,16 +531,20 @@
             let method = 'POST',
               apiUrl = '/resourceOrder/addTranslationOrder',
               translationOrder = {
-                department: this.userInfo.department,
+                department: '',
                 orderPerson: this.userInfo.name,
                 projectName: this.ruleForm.projectName,
                 projectStatus: this.ruleForm.projectStatus,
                 domain: this.ruleForm.field,
                 subDomain: this.ruleForm.secondField,
                 sourceLanguage: this.ruleForm.origin,
+                sourceLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.origin] || '',
                 targetLanguage: this.ruleForm.target,
+                targetLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.target] || '',
                 customerName: this.ruleForm.customerName,
+                customerId: this.ruleForm.customerCode,
                 saleManager: this.ruleForm.saleManager,
+                saleManagerCode: this.ruleForm.saleManagerCode || '',
                 estimatedTranslationVolume: this.ruleForm.preWorkload,
                 deliveryTime: this.ruleForm.deliveryTime ? this.ruleForm.deliveryTime+' 00:00:00' : '',
                 requiredService: this.ruleForm.resourceService,
@@ -552,7 +566,8 @@
               method = 'PUT';
               apiUrl = '/resourceOrder/editTranslationOrder';
               Object.assign(translationOrder, {
-                id: this.$route.params.id
+                id: this.$route.params.id,
+                department: this.ruleForm.department
               })
             }
             this.btn.disabled = true;
@@ -577,7 +592,7 @@
                 });
               }
               this.btn.disabled = false;
-              this.btn.txt = this.isModify?'提交修改':'确认下单';
+              this.btn.txt = this.isModify ? '提交修改':'确认下单';
 
             });
           }
@@ -598,6 +613,7 @@
               orderTime: _data.orderTime
             };
             this.ruleForm = {
+              department: _data.department,
               projectName: _data.projectName,
               projectStatus: _data.projectStatus,
               field: _data.domain,
@@ -605,9 +621,11 @@
               origin: _data.sourceLanguage,
               target: _data.targetLanguage,
               customerName: _data.customerName,
+              customerCode: _data.customerId,
               saleManager: _data.saleManager,
+              saleManagerCode: _data.saleManagerCode,
               deliveryTime: _data.deliveryTime?_data.deliveryTime.split(' ')[0]:'',
-              resourceService: _data.projectName,
+              resourceService: _data.requiredService,
               preWorkload: _data.estimatedTranslationVolume,
               needPersonNum: _data.requiredPersonNumber,
               needType: _data.requiredType,

@@ -63,6 +63,7 @@
                 <div class="areaPicker">
                   <select v-model="ruleForm.province"
                           style="width: 143px"
+                          @change="resetProvince"
                           name="deliverprovince" id="deliverprovince"></select>
                   <select v-model="ruleForm.city"
                           style="width: 143px"
@@ -104,22 +105,22 @@
             <div class="lan-item" v-for="(item, index) in ruleForm.language" :key="index">
               <el-form-item label="语言对：" required style="margin-bottom: 0px">
                 <el-col :span="10">
-                  <el-select class="exact" v-model="item.origin" placeholder="请选择源语言">
+                  <el-select class="exact" v-model="item.origin" placeholder="源语言">
                     <el-option
                       v-for="lg in $store.state.languageList"
                       :key="lg.id"
                       :label="lg.chineseName"
-                      :value="lg.chineseName+','+lg.englishName"></el-option>
+                      :value="lg.chineseName+','+lg.englishName+','+lg.englishSimpleName"></el-option>
                   </el-select>
                 </el-col>
                 <el-col :span="1" style="text-align: center">-</el-col>
                 <el-col :span="10">
-                  <el-select class="exact" v-model="item.target" placeholder="请选择目标语言">
+                  <el-select class="exact" v-model="item.target" placeholder="目标语言">
                     <el-option
                       v-for="lg in $store.state.languageList"
                       :key="lg.id"
                       :label="lg.chineseName"
-                      :value="lg.chineseName+','+lg.englishName"></el-option>
+                      :value="lg.chineseName+','+lg.englishName+','+lg.englishSimpleName"></el-option>
                   </el-select>
                 </el-col>
                 <el-col :span="2" style="text-align: right">
@@ -130,7 +131,7 @@
                 <el-col :span="10">
                   <el-select class="exact"
                              @change="getSecondFieldFn(index)"
-                             v-model="item.firstField" placeholder="请选择一级领域">
+                             v-model="item.firstField" placeholder="一级领域">
                     <el-option
                       v-for="fd in $store.state.fieldOptions"
                       :key="fd.id"
@@ -143,7 +144,7 @@
                   <el-select class="exact"
                              multiple
                              :collapse-tags="true"
-                             v-model="item.secondField" placeholder="请选择二级领域">
+                             v-model="item.secondField" placeholder="二级领域">
                     <el-option
                       v-for="fd in item.secondFieldOptions"
                       :key="fd.id"
@@ -209,7 +210,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="证件号码：" required style="margin-bottom: 0px">
+            <el-form-item label="证件号码：" required style="margin-bottom:0px;">
               <el-col :span="12">
                 <el-input v-model="ruleForm.identyNo" clearable placeholder="请输入译员证件号码"></el-input>
               </el-col>
@@ -304,6 +305,10 @@
       })
     },
     methods: {
+      resetProvince (){
+        this.ruleForm.city = '';
+        this.ruleForm.area = '';
+      },
       //添加语言
       addLanPair (){
         this.ruleForm.language.push({
@@ -354,18 +359,18 @@
                 if(item.origin === item.target){
                   this.$message({
                     type: 'warning',
-                    message: '请选择不同的源语言和目标语言'
+                    message: '请选择不同的语言对'
                   });
                   return false;
                 }
-                if(uniqueArr.includes(item.firstField)){
+                if(uniqueArr.includes(item.origin+item.target+item.firstField)){
                   this.$message({
                     type: 'warning',
-                    message: '请选择不同的行业领域'
+                    message: '请选择不同的语言信息'
                   });
                   return false;
                 }
-                uniqueArr.push(item.firstField);
+                uniqueArr.push(item.origin+item.target+item.firstField);
                 let firstFieldId = '',
                   secondFieldIds = [];
                 let result = this.$store.state.fieldOptions.find(ff => {
@@ -382,10 +387,12 @@
                   "domain": JSON.stringify([item.firstField]),
                   "domainId": JSON.stringify([firstFieldId]),
                   "level": item.level.slice(1),
+                  "originLanguageSimpleCode": item.origin.split(',')[2],
                   "originLanguageCode": item.origin.split(',')[1],
                   "originLanguageName": item.origin.split(',')[0],
                   "subDomain": JSON.stringify(item.secondField),
                   "subDomainId": JSON.stringify(secondFieldIds),
+                  "targetLanguageSimpleCode": item.target.split(',')[2],
                   "targetLanguageCode": item.target.split(',')[1],
                   "targetLanguageName": item.target.split(',')[0]
                 };

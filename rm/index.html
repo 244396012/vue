@@ -2,11 +2,35 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,Chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="author" content="zhaoyong">
     <meta name="email" content="244396012@163.com">
     <link rel="shortcut icon" type="images/x-icon" href="/static/image/favicon.png">
     <title>资源管理端</title>
+    <script>
+      (function () {
+        const userAgent = navigator.userAgent,
+          isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1,
+          isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
+        let invalidChrome = false;
+        if (userAgent.indexOf("Chrome") > -1) {
+          const version = userAgent.match(/chrome\/[\d.]+/gi)[0].match(/[\d]+/)[0];
+          if (+version < 52) {
+            invalidChrome = true;
+          }
+        }
+        if(isIE || isIE11 || invalidChrome){
+          const isCon = window.confirm('您的浏览器版本过低，为了更好的体验，请升级您的浏览器！若您使用的是360、搜狗等双核浏览器，请手动切换至极速模式。');
+          if(isCon){
+            location.href='https://www.baidu.com/s?wd=chrome'
+          }
+        }
+      }())
+    </script>
+    <script type="text/javascript" src="http://www.lanpecker.com/static/lib/sockjs.min.js"></script>
+    <script type="text/javascript" src="http://www.lanpecker.com/static/lib/stomp.min.js"></script>
   </head>
   <body>
     <div id="app"></div>

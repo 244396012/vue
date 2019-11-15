@@ -10,7 +10,7 @@
       <el-table-column
         prop="num"
         label="#"
-        width="40">
+        width="50">
       </el-table-column>
       <el-table-column
         min-width="110"
@@ -19,7 +19,7 @@
       </el-table-column>
       <el-table-column
         min-width="100"
-        prop="desc"
+        prop="remark"
         label="积分变更">
       </el-table-column>
       <el-table-column
@@ -36,11 +36,10 @@
     <template v-if="scoreDetail.total > 0">
       <pagination :callback="showScoreDetail" :total="scoreDetail.total"></pagination>
     </template>
-    <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">签到记录</p>
-    <el-row style="margin: 0;padding: 0;text-align: right;">
-      <el-button type="text">连续签到：{{sign.continuityCount}}天</el-button>
-      <el-button type="text">总签到次数：{{sign.total}}天</el-button>
-    </el-row>
+    <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">签到记录
+      <span style="float: right;font-weight: 400;font-size: 14px;margin-left: 10px">总签到次数：{{sign.total}}天</span>
+      <span style="float: right;font-weight: 400;font-size: 14px">连续签到：{{sign.continuityCount}}天</span>
+    </p>
     <el-table
       border
       stripe
@@ -50,7 +49,7 @@
       <el-table-column
         prop="num"
         label="#"
-        width="40">
+        width="50">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip

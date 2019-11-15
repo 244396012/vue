@@ -30,6 +30,7 @@
                 <el-date-picker
                   v-model="ruleForm.projectTime"
                   type="daterange"
+                  :unlink-panels="true"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
                   start-placeholder="开始时间"
@@ -196,6 +197,7 @@
       return {
         isModify: false,
         ruleForm: {
+          department: '',
           projectName: '',
           projectPlace: '',
           projectTime: '',
@@ -205,7 +207,9 @@
           origin: '',
           target: '',
           customerName: '',
+          customerCode: '',
           saleManager: '',
+          saleManagerCode: '',
           deliveryTime: '',
           resourceService: '同声传译',
           needPersonNum: '',
@@ -265,7 +269,9 @@
       //更新销售经理
       updateSaleMg (data){
         this.ruleForm.saleManager = data.sale;
+        this.ruleForm.saleManagerCode = data.saleCode;
         this.ruleForm.customerName = data.customer;
+        this.ruleForm.customerCode = data.customerCode;
       },
       //提交
       submitForm (formName){
@@ -274,14 +280,18 @@
             let method = 'POST',
               apiUrl = '/resourceOrder/addExhibitionOrder',
               meetingData = {
-                department: this.userInfo.department,
+                department: '',
                 projectName: this.ruleForm.projectName,
                 domain: this.ruleForm.field,
                 subDomain: this.ruleForm.secondField,
                 sourceLanguage: this.ruleForm.origin,
+                sourceLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.origin] || '',
                 targetLanguage: this.ruleForm.target,
+                targetLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.target] || '',
                 customerName: this.ruleForm.customerName,
+                customerId: this.ruleForm.customerCode,
                 projectManager: this.ruleForm.saleManager,
+                projectManagerCode: this.ruleForm.saleManagerCode || '',
                 customerQuote: this.ruleForm.customerPrice,
                 deliveryTime: this.ruleForm.deliveryTime ? this.ruleForm.deliveryTime+' 00:00:00' : '',
                 startTime: this.ruleForm.projectTime.length>0 ? this.ruleForm.projectTime[0]+' 00:00:00' : '',
@@ -300,7 +310,8 @@
               method = 'PUT';
               apiUrl = '/resourceOrder/editExhibitionOrder';
               Object.assign(meetingData, {
-                id: this.$route.params.id
+                id: this.$route.params.id,
+                department: this.ruleForm.department
               })
             }
             this.btn.disabled = true;
@@ -340,6 +351,7 @@
           if(res.data.message === 'success'){
             const _data = res.data.data;
             this.ruleForm = {
+              department: _data.department,
               projectName: _data.projectName,
               projectPlace: _data.projectPlace,
               projectTime: _data.startTime?[_data.startTime.split(' ')[0],_data.endTime.split(' ')[0]]: '',
@@ -349,7 +361,9 @@
               origin: _data.sourceLanguage,
               target: _data.targetLanguage,
               customerName: _data.customerName,
+              customerCode: _data.customerId,
               saleManager: _data.projectManager,
+              saleManagerCode: _data.projectManagerCode,
               deliveryTime: _data.deliveryTime?_data.deliveryTime.split(' ')[0]:'',
               resourceService: _data.requiredService,
               needPersonNum: _data.requiredPersonNumber,

@@ -15,7 +15,8 @@
                   </el-col>
                   <el-col :span="8" >
                     <el-form-item label="客户名称：">
-                      <div class="detail-item">{{detail.customerName}}</div>
+                      <div class="detail-item detail-short"
+                           :title="detail.customerName">{{detail.customerName}}</div>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -27,7 +28,8 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="项目地点：">
-                      <div class="detail-item">{{detail.projectPlace}}</div>
+                      <div class="detail-item detail-short"
+                           :title="detail.projectPlace">{{detail.projectPlace}}</div>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -44,7 +46,7 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="专业领域：">
-                      <div class="detail-item">{{detail.subDomain}}</div>
+                      <div class="detail-item">{{detail.domain}}</div>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">

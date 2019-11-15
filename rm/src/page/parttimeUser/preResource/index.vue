@@ -6,22 +6,21 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="96px">
               <el-form-item label="用户ID">
-                <el-input v-model="form.userId" clearable placeholder="请输入用户ID"></el-input>
+                <el-input v-model="form.userId" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="昵称">
-                <el-input v-model="form.nickName" clearable placeholder="请输入昵称"></el-input>
+                <el-input v-model="form.nickName" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="用户姓名">
-                <el-input v-model="form.userName" clearable placeholder="请输入用户姓名"></el-input>
+                <el-input v-model="form.userName" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="技能类型">
-                <el-select v-model="form.skillType"
-                           placeholder="请选择技能申请类型">
+                <el-select v-model="form.skillType" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.skillTypeOptions"
-                    :key="item"
-                    :label="item"
-                    :value="item"></el-option>
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-form>
@@ -35,7 +34,8 @@
         </el-col>
       </el-row>
     </div>
-    <div class="default-style">
+    <div class="default-style"
+         v-if="$store.state.secondPermission['/greenChannel/savePartTimeStaffByGreenChannel'] !== undefined">
       <el-row>
         <el-col :span="24">
           <el-button type="success" icon="el-icon-circle-plus-outline" @click="$router.push('/parttimeUser/preResource/create')">新增用户</el-button>
@@ -51,13 +51,15 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="65">
         </el-table-column>
         <el-table-column
-          prop="userCode"
+          show-overflow-tooltip
           min-width="100"
+          prop="userCode"
           label="用户ID">
         </el-table-column>
         <el-table-column
@@ -84,9 +86,9 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="100"
           prop="skillType"
-          label="申请技能类型">
+          label="技能类型">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -96,7 +98,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="120"
           prop="permanentAddress"
           label="常住地址">
         </el-table-column>
@@ -110,20 +112,24 @@
           label="操作"
           width="140">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/parttimeUser/preResource/detail/'+scope.row.userId)">查看</el-button>
-            <el-button type="text"
-                       v-if="+scope.row.isEnable !== 1"
-                       @click="setAccountStatus({
+            <router-link :to="{path:'/parttimeUser/preResource/detail/'+scope.row.userId+'?code='+scope.row.userCode}"
+                         class="blank"
+                         target="_blank">查看</router-link>
+            <template v-if="$store.state.secondPermission['/userExtension/saveUserStatus'] !== undefined">
+              <el-button type="text"
+                         v-if="+scope.row.isEnable !== 1"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 1
                        }, showTableList)">启用</el-button>
-            <el-button type="text"
-                       class="del"
-                       v-if="+scope.row.isEnable !== 0"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del"
+                         v-if="+scope.row.isEnable !== 0"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 0
                        }, showTableList)">停用</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -154,7 +160,12 @@
           skillType: ''
         },
         formSelect: {
-          skillTypeOptions: ['DTP申请','会展申请','外派申请','培训申请','笔译申请']
+          skillTypeOptions: [
+            {label: '笔译申请', value: '笔译'},
+            {label: 'DTP申请', value: 'DTP'},
+            {label: '会展申请', value: '会展'},
+            {label: '外派申请', value: '外派'},
+            {label: '培训申请', value: '培训'}]
         },
         loading: false,
         totalTableList: 0,
@@ -199,6 +210,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalRow
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

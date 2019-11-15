@@ -129,3 +129,11 @@ export const formatMoneyType = (code) => {
   }
 };
 
+//消息类型
+export const formatMsgType = (type) => {
+  switch (String(type)){
+    case '0': return '系统消息';
+    default: return type;
+  }
+};
+

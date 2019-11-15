@@ -179,7 +179,7 @@
             //除培训外的兼职分配 （this.$route.query.t = 4 为培训单）
             this.$http.post('/resourceOrder/distributeInterpreter', this.$qs.stringify({
               id: this.$route.params.id,
-              projectNo: this.$route.query.n,
+              projectNo: this.$route.query.p,
               partTimeName: this.$refs.searchPart.form.member.split(',')[0] || '',
               partTimeNo: this.$refs.searchPart.form.member.split(',')[1] || '',
               testLevel: this.form.level,
@@ -216,7 +216,7 @@
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
-            projectNo: this.$route.query.no
+            projectNo: this.$route.query.p
           }
         }).then(res => {
           if(res.data.message === 'success'){

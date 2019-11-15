@@ -3,13 +3,13 @@
     <div class="default-style">
       <div class="detail form">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
-          <el-form-item label="用户手机：" required style="margin-bottom: 0px">
+          <el-form-item label="用户帐号：" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item prop="phone">
-                <el-input v-model="ruleForm.phone" clearable placeholder="请输入用户手机号"></el-input>
+                <el-input v-model="ruleForm.phone" clearable placeholder="请输入手机号/邮箱"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="12" style="padding-left: 10px;color: #999;font-size: 12px">注：该手机号将为译员的登录账号</el-col>
+            <el-col :span="12" style="padding-left: 10px;color: #999;font-size: 12px">注：该用户帐号为译员的登录账号</el-col>
           </el-form-item>
           <el-form-item label="真实姓名：" required style="margin-bottom: 0px">
             <el-col :span="12">
@@ -27,8 +27,8 @@
                   <el-checkbox label="笔译">笔译</el-checkbox>
                   <el-checkbox label="DTP">DTP</el-checkbox>
                   <el-checkbox label="会展">会展</el-checkbox>
-                  <el-checkbox label="设备">设备</el-checkbox>
-                  <el-checkbox label="搭建">搭建</el-checkbox>
+                  <el-checkbox label="外派">外派</el-checkbox>
+                  <el-checkbox label="培训">培训</el-checkbox>
                 </el-checkbox-group>
               </el-form-item>
             </el-col>
@@ -40,22 +40,22 @@
             <div class="lan-item" v-for="(item, index) in ruleForm.language" :key="index">
               <el-form-item label="语言对：" required style="margin-bottom: 0px">
                 <el-col :span="10">
-                  <el-select class="exact" v-model="item.origin" placeholder="请选择源语言">
+                  <el-select class="exact" v-model="item.origin" placeholder="源语言">
                     <el-option
                       v-for="lg in $store.state.languageList"
                       :key="lg.id"
                       :label="lg.chineseName"
-                      :value="lg.chineseName+','+lg.englishName"></el-option>
+                      :value="lg.chineseName+','+lg.englishName+','+lg.englishSimpleName"></el-option>
                   </el-select>
                 </el-col>
                 <el-col :span="1" style="text-align: center">-</el-col>
                 <el-col :span="10">
-                  <el-select class="exact" v-model="item.target" placeholder="请选择目标语言">
+                  <el-select class="exact" v-model="item.target" placeholder="目标语言">
                     <el-option
                       v-for="lg in $store.state.languageList"
                       :key="lg.id"
                       :label="lg.chineseName"
-                      :value="lg.chineseName+','+lg.englishName"></el-option>
+                      :value="lg.chineseName+','+lg.englishName+','+lg.englishSimpleName"></el-option>
                   </el-select>
                 </el-col>
                 <el-col :span="2" style="text-align: right">
@@ -66,7 +66,7 @@
                 <el-col :span="10">
                   <el-select class="exact"
                              @change="getSecondFieldFn(index)"
-                             v-model="item.firstField" placeholder="请选择一级领域">
+                             v-model="item.firstField" placeholder="一级领域">
                     <el-option
                       v-for="fd in $store.state.fieldOptions"
                       :key="fd.id"
@@ -79,7 +79,7 @@
                   <el-select class="exact"
                              multiple
                              :collapse-tags="true"
-                             v-model="item.secondField" placeholder="请选择二级领域">
+                             v-model="item.secondField" placeholder="二级领域">
                     <el-option
                       v-for="fd in item.secondFieldOptions"
                       :key="fd.id"
@@ -164,6 +164,7 @@
                 <div class="areaPicker">
                   <select v-model="ruleForm.baseInfo.province"
                           style="width: 148px"
+                          @change="resetProvince"
                           name="deliverprovince" id="deliverprovince"></select>
                   <select v-model="ruleForm.baseInfo.city"
                           style="width: 148px"
@@ -242,7 +243,7 @@
               </el-col>
             </el-form-item>
           </div>
-		  <el-form-item label="备注：" style="margin: 20px 0">
+		  <el-form-item label="备注：" style="margin: 20px 0;width: 50%">
 			 <el-input type="textarea" v-model="ruleForm.remark" clearable placeholder="请输入备注信息"></el-input>
 		  </el-form-item>
           <el-form-item style="margin-top: 1rem">
@@ -264,9 +265,9 @@
     data() {
       let isPhone = (rule, value, callback) => {
         if(!value){
-          return callback(new Error('请输入手机号'));
-        }else if(!this.regPhone.test(value)){
-          return callback(new Error('请输入正确的手机号'));
+          return callback(new Error('请输入用户账号'));
+        }else if(!(this.regPhone.test(value) || this.regEmail.test(value))){
+          return callback(new Error('请输入正确的手机/邮箱'));
         }
         callback();
       };
@@ -292,7 +293,7 @@
             areaNationality: '',
             areaSandbar: '',
             areaOther: '',
-            language: '中文 - 中国',
+            language: '中文简体',
             transYear: '',
             currency: '',
             province: '',
@@ -340,7 +341,7 @@
       ...mapState('select', {
         recordOptions: state => state.recordOptions
       }),
-      ...mapState(['regPhone','regCard'])
+      ...mapState(['regPhone','regEmail','regCard'])
     },
     created (){
       //初始化地区插件
@@ -356,11 +357,15 @@
             this.ruleForm.baseInfo.areaSandbar = '亚洲';
             this.ruleForm.baseInfo.areaNationality = '中国大陆';
           }, 500)
-        }, 10);
+        }, 10)
       })
     },
     methods: {
       isAllFill: isAllFill,
+      resetProvince (){
+        this.ruleForm.baseInfo.city = '';
+        this.ruleForm.baseInfo.area = '';
+      },
       //添加语言
       addLanPair (){
         this.ruleForm.language.push({
@@ -395,15 +400,16 @@
         }else{
           this.formSelect.cardOptions = ['身份证','港澳通行证','往来台湾通行证','护照'];
         }
+        this.ruleForm.identyInfo.identyType = '';
       },
       //提交
       submitForm (formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const languageInfoLst = [];
-            const uniqueArr = [];
             const lan = this.ruleForm.language;
             if(this.ruleForm.partTimeType.includes('笔译')){
+              const uniqueArr = [];
               for(let i = 0, len = lan.length; i < len; i++){
                 const item = lan[i];
                 for(let key in item){
@@ -418,18 +424,18 @@
                 if(item.origin === item.target){
                   this.$message({
                     type: 'warning',
-                    message: '请选择不同的源语言和目标语言'
+                    message: '请选择不同的语言对'
                   });
                   return false;
                 }
-                // if(uniqueArr.includes(item.firstField)){
-                //   this.$message({
-                //     type: 'warning',
-                //     message: '请选择不同的行业领域'
-                //   });
-                //   return false;
-                // }
-                uniqueArr.push(item.firstField);
+                if(uniqueArr.includes(item.origin+item.target+item.firstField)){
+                  this.$message({
+                    type: 'warning',
+                    message: '请选择不同的语言信息'
+                  });
+                  return false;
+                }
+                uniqueArr.push(item.origin+item.target+item.firstField);
                 let firstFieldId = '',
                   secondFieldIds = [];
                 let result = this.$store.state.fieldOptions.find(ff => {
@@ -446,10 +452,12 @@
                   "domain": JSON.stringify([item.firstField]),
                   "domainId": JSON.stringify([firstFieldId]),
                   "level": item.level.slice(1),
+                  "originLanguageSimpleCode": item.origin.split(',')[2],
                   "originLanguageCode": item.origin.split(',')[1],
                   "originLanguageName": item.origin.split(',')[0],
                   "subDomain": JSON.stringify(item.secondField),
                   "subDomainId": JSON.stringify(secondFieldIds),
+                  "targetLanguageSimpleCode": item.target.split(',')[2],
                   "targetLanguageCode": item.target.split(',')[1],
                   "targetLanguageName": item.target.split(',')[0]
                 };
@@ -460,9 +468,9 @@
               name: this.ruleForm.baseInfo.nickName,
               year: this.ruleForm.baseInfo.transYear,
               currency: this.ruleForm.baseInfo.currency,
-              province: this.ruleForm.baseInfo.province,
-              city: this.ruleForm.baseInfo.city,
-              area: this.ruleForm.baseInfo.area
+              province: this.ruleForm.baseInfo.province || '',
+              city: this.ruleForm.baseInfo.city || '',
+              area: this.ruleForm.baseInfo.area || ''
             };
             const tempRecordInfo = {...this.ruleForm.recordInfo};
             delete tempRecordInfo.schoolType;
@@ -495,8 +503,8 @@
               "graduatedDate": this.ruleForm.recordInfo.graduateTime,
               "graduatedSchoolName": this.ruleForm.recordInfo.school,
               "major": this.ruleForm.recordInfo.major,
-              "motherTongue": this.ruleForm.baseInfo.language,
-              "nationality": this.ruleForm.baseInfo.areaSandbar+' '+this.ruleForm.baseInfo.areaNationality,
+              "motherTongue": this.ruleForm.baseInfo.nickName ? this.ruleForm.baseInfo.language : '',
+              "nationality": this.ruleForm.baseInfo.nickName ? this.ruleForm.baseInfo.areaSandbar+' '+this.ruleForm.baseInfo.areaNationality : '',
               "nickName": this.ruleForm.baseInfo.nickName,
               "realName": this.ruleForm.realName,
               "remark": this.ruleForm.remark,
@@ -506,9 +514,9 @@
               "currencyName": (this.formSelect.currencyOptions.find(item => {
                 return item.value === this.ruleForm.baseInfo.currency
               }) || {label: ''}).label,
-              "province": this.ruleForm.baseInfo.province,
-              "city": this.ruleForm.baseInfo.city,
-              "county": this.ruleForm.baseInfo.area,
+              "province": this.ruleForm.baseInfo.province || '',
+              "city": this.ruleForm.baseInfo.city || '',
+              "county": this.ruleForm.baseInfo.area || '',
               "translateYear": this.ruleForm.baseInfo.transYear
             };
             Object.assign(greenChannelParam, {

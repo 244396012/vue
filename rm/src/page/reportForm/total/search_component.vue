@@ -5,15 +5,13 @@
         <div class="grid-content bg-purple dotted-border-rg">
           <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
             <el-form-item label="兼职名称">
-              <el-input v-model="form.name" placeholder="请输入兼职名称"></el-input>
+              <el-input v-model="form.name" placeholder="请输入"></el-input>
             </el-form-item>
             <el-form-item label="兼职编码">
-              <el-input v-model="form.code" placeholder="请输入兼职编码"></el-input>
+              <el-input v-model="form.code" placeholder="请输入"></el-input>
             </el-form-item>
             <el-form-item label="所属组别">
-              <el-select v-model="form.group"
-                         filterable
-                         placeholder="请选择所属组别">
+              <el-select v-model="form.groupId" filterable placeholder="请选择">
                 <el-option
                   v-for="item in formSelect.groupOptions"
                   :key="item.Value"
@@ -24,6 +22,8 @@
             <el-form-item label="统计时间">
               <el-date-picker
                 v-model="form.rangeTime"
+                :clearable="false"
+                :unlink-panels="true"
                 type="daterange"
                 value-format="yyyy-MM-dd"
                 range-separator="-"
@@ -52,8 +52,8 @@
         form:{
           name: '',
           code: '',
-          group: '',
-          rangeTime: '',
+          groupId: '',
+          rangeTime: [],
         },
         formSelect: {
           groupOptions: []
@@ -61,11 +61,34 @@
       }
     },
     created (){
+      this.form.rangeTime = [
+        this.getMonthFirstDay(),
+        this.getMonthLastDay()
+      ];
+
       this.$http.defaults.baseURL = domain.baseReportURL_r1;
       this.$http.get('/pangu/GetFreelancerFeeOrg')
         .then(res => {
           res.data.Success && (this.formSelect.groupOptions = res.data.Data);
         })
+    },
+    methods: {
+      //当月第一天
+      getMonthFirstDay (){
+        const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth() +1,
+          day = 1;
+        return year+'-'+month+'-'+day
+      },
+      //当月最后
+      getMonthLastDay (){
+        const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth() +1,
+          day = new Date(year, month, 0).getDate(); //day为0时，会自动判断为最后一天
+        return year+'-'+month+'-'+day
+      }
     }
   }
 </script>

@@ -15,9 +15,10 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           label="#"
           prop="num"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -44,7 +45,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="110"
+          min-width="120"
           prop="gmtCreate"
           label="创建时间">
         </el-table-column>
@@ -110,6 +111,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

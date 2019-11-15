@@ -10,7 +10,7 @@
         <el-table-column
           label="#"
           prop="num"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -47,7 +47,7 @@
         <el-table-column
           label="#"
           prop="num"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -148,7 +148,7 @@
                 type: 'success',
                 message: '删除成功'
               });
-              this.showCommentTableList();
+              this.doSearch(this.showCommentTableList)
             } else {
               this.$message({
                 type: 'error',

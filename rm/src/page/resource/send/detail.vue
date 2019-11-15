@@ -10,7 +10,8 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="项目名称：">
-                      <div class="detail-item">{{detail.projectName}}</div>
+                      <div class="detail-item detail-short"
+                           :title="detail.projectName">{{detail.projectName}}</div>
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -20,7 +21,8 @@
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="客户名称：">
-                      <div class="detail-item">{{detail.customerName}}</div>
+                      <div class="detail-item detail-short"
+                           :title="detail.customerName">{{detail.customerName}}</div>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -37,7 +39,7 @@
                   </el-col>
                   <el-col :span="8">
                     <el-form-item label="专业领域：">
-                      <div class="detail-item">{{detail.subDomain}}</div>
+                      <div class="detail-item">{{detail.domain}}</div>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -158,9 +160,13 @@
                 <el-row>
                   <el-col :span="8">
                     <el-form-item label="项目合同：">
-                      <a class="download" :href="detail.projectContractUrl" target="_blank">
-                        {{detail.contractName?detail.contractName:'点击下载'}}
-                      </a>
+                      <p style="margin: 8px 0; line-height: 22px">
+                        <a class="download"
+                           v-if="detail.questionUrl"
+                           :href="detail.projectContractUrl" target="_blank">
+                          {{detail.contractName?detail.contractName:'点击下载'}}
+                        </a>
+                      </p>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -174,7 +180,7 @@
                 <el-table-column
                   type="index"
                   label="#"
-                  width="40">
+                  width="50">
                 </el-table-column>
                 <el-table-column
                   show-overflow-tooltip
@@ -238,6 +244,11 @@
                   min-width="100"
                   prop="visa"
                   label="签证">
+                </el-table-column>
+                <el-table-column
+                  min-width="100"
+                  prop="insurance"
+                  label="保险">
                 </el-table-column>
                 <el-table-column
                   show-overflow-tooltip

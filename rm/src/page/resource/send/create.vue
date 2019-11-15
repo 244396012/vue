@@ -148,9 +148,9 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="项目周期：" :prop="'projectTime'" :rules="{ required: true, message: '请选择项目周期', trigger: 'blur' }">
-                <el-date-picker
-                  v-model="ruleForm.projectTime"
+                <el-date-picker v-model="ruleForm.projectTime"
                   type="daterange"
+                  :unlink-panels="true"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
                   start-placeholder="开始时间"
@@ -229,7 +229,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row style="margin-bottom: 5px">
             <el-col :span="8">
               <el-form-item label="工作内容：" :prop="'workContent'" :rules="{ required: true, message: '请选择工作内容', trigger: 'change' }">
                 <el-select v-model="ruleForm.workContent" placeholder="请选择工作内容">
@@ -279,7 +279,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="8" v-if="ruleForm.fileName">
-              <el-form-item label="已上传合同：" style="color: #EC6941">{{ruleForm.fileName}}</el-form-item>
+              <el-form-item label="已上传合同：" style="color: #EC6941">
+                <p style="margin: 8px 0; line-height: 22px">{{ruleForm.fileName}}</p>
+              </el-form-item>
             </el-col>
           </el-row>
           <h3>人员要求</h3>
@@ -292,6 +294,7 @@
             <el-col :span="8">
               <el-form-item label="性别：" required>
                 <el-select v-model="form.sex" placeholder="请选择性别">
+                  <el-option label="不限" value="不限"></el-option>
                   <el-option label="男" value="男"></el-option>
                   <el-option label="女" value="女"></el-option>
                 </el-select>
@@ -299,7 +302,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="年龄：">
-                <el-input v-model="form.age" type="number" clearable placeholder="请输入年龄"></el-input>
+                <el-input v-model="form.age" type="text" clearable placeholder="请输入年龄"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -354,6 +357,14 @@
                 <el-input v-model="form.visa" clearable placeholder="请输入签证"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="8">
+              <el-form-item label="保险：">
+                <el-select v-model="form.insurance" placeholder="请选择保险">
+                  <el-option label="客户购买" value="客户购买"></el-option>
+                  <el-option label="语言桥购买" value="语言桥购买"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row>
             <el-col :span="8">
@@ -379,7 +390,7 @@
           <el-table-column
             type="index"
             label="#"
-            width="40">
+            width="50">
           </el-table-column>
           <el-table-column
             show-overflow-tooltip
@@ -445,6 +456,11 @@
             label="签证">
           </el-table-column>
           <el-table-column
+            min-width="100"
+            prop="insurance"
+            label="保险">
+          </el-table-column>
+          <el-table-column
             show-overflow-tooltip
             min-width="120"
             prop="overseasExperience"
@@ -489,6 +505,7 @@
         isModify: false,
         detail: {},
         ruleForm: {
+          department: '',
           projectName: '',
           projectTime: '',
           field: '',
@@ -496,7 +513,9 @@
           origin: '',
           target: '',
           customerName: '',
+          customerCode: '',
           saleManager: '',
+          saleManagerCode: '',
           customerRole: '总包',
           contactRole: '人力资源部/主任',
           traslatorRole: '普通翻译（内勤、后勤、采购）',
@@ -535,9 +554,10 @@
           "overseasExperience": "",
           "passport": "",
           "profession": "",
-          "sex": "",
+          "sex": "不限",
           "specialtyDomain": "",
-          "visa": ""
+          "visa": "",
+          "insurance": ""
         },
         formSelect: {
           secondOptions: []
@@ -583,6 +603,7 @@
         this.ruleForm.requiredList.push({...this.form});
         this.resetParam(this.form);
         this.form.nationality = '汉族';
+        this.form.sex = '不限';
         this.form.education = '本科'
       },
       //删除人员要求
@@ -644,7 +665,9 @@
       //更新销售经理
       updateSaleMg (data){
         this.ruleForm.saleManager = data.sale;
+        this.ruleForm.saleManagerCode = data.saleCode;
         this.ruleForm.customerName = data.customer;
+        this.ruleForm.customerCode = data.customerCode;
       },
       //提交
       submitForm (formName){
@@ -653,7 +676,7 @@
             let method = 'POST',
               apiUrl = '/resourceOrder/addExpatriateOrder',
               translationOrder = {
-                department: this.userInfo.department,
+                department: '',
                 projectName: this.ruleForm.projectName,
                 accommodationTransportation: this.ruleForm.hotelTraffic,
                 appointmentTime: this.ruleForm.jobTime? this.ruleForm.jobTime+' 00:00:00' : '',
@@ -663,9 +686,13 @@
                 domain: this.ruleForm.field,
                 subDomain: this.ruleForm.secondField,
                 sourceLanguage: this.ruleForm.origin,
+                sourceLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.origin] || '',
                 targetLanguage: this.ruleForm.target,
+                targetLanguageCode: this.$store.state.mapLanguageListN_C[this.ruleForm.target] || '',
                 customerName: this.ruleForm.customerName,
+                customerId: this.ruleForm.customerCode,
                 saleManager: this.ruleForm.saleManager,
+                saleManagerCode: this.ruleForm.saleManagerCode || '',
                 orderPerson: this.userInfo.name,
                 customerBudget: this.ruleForm.customerYsPrice,
                 customerContactDepart: this.ruleForm.contactRole,
@@ -694,7 +721,8 @@
               method = 'PUT';
               apiUrl = '/resourceOrder/editExpatriateOrder';
               Object.assign(translationOrder, {
-                id: this.$route.params.id
+                id: this.$route.params.id,
+                department: this.ruleForm.department
               })
             }
             this.btn.disabled = true;
@@ -739,6 +767,7 @@
               orderTime: _data.orderTime
             };
             this.ruleForm = {
+              department: _data.department,
               projectName: _data.projectName,
               projectTime: _data.startTime?[_data.startTime.split(' ')[0],_data.endTime.split(' ')[0]]: '',
               field: _data.domain,
@@ -746,7 +775,9 @@
               origin: _data.sourceLanguage,
               target: _data.targetLanguage,
               customerName: _data.customerName,
+              customerCode: _data.customerId,
               saleManager: _data.saleManager,
+              saleManagerCode: _data.saleManagerCode,
               customerRole: _data.customerRole,
               contactRole: _data.customerContactDepart,
               traslatorRole: _data.interpreterRole,
@@ -798,7 +829,7 @@
       font-size: 0px;
     }
     select {
-      width: 32%;
+      width: 31.88%;
       max-width: 91px;
       height: 32px;
       line-height: 32px;

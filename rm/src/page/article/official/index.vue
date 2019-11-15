@@ -6,11 +6,12 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="文章标题">
-                <el-input v-model="form.title" placeholder="请输入文章标题"></el-input>
+                <el-input v-model="form.title" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="发布时间">
-                <el-date-picker
-                  v-model="form.rangeTime"
+                <el-date-picker v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -32,7 +33,9 @@
     <div class="default-style">
       <el-row>
         <el-col :span="12">
-          <el-button type="success" icon="el-icon-circle-plus-outline" @click.native="$router.push('/article/official/release')">发布文章</el-button>
+          <el-button type="success"
+                     icon="el-icon-circle-plus-outline"
+                     @click="$router.push('/article/official/release')">发布文章</el-button>
         </el-col>
       </el-row>
     </div>
@@ -44,6 +47,7 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           label="#"
           width="60">
           <template slot-scope="scope">
@@ -64,21 +68,22 @@
           <template slot-scope="scope"><img class="thumb" :src="scope.row.coverId" alt=""></template>
         </el-table-column>
         <el-table-column
+          min-width="120"
           prop="articleClass"
           label="文章分类">
         </el-table-column>
         <el-table-column
-          width="80"
-          prop="baseView"
+          min-width="100"
+          prop="viewCount"
           label="浏览数">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="100"
           prop="baseLike"
           label="点赞数">
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           prop="commentsCount"
           label="评论数">
         </el-table-column>
@@ -147,7 +152,7 @@
             publishEndTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
             const list = res.data.data.content;
             list.forEach((item, index) => {
@@ -155,6 +160,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false;
         })
@@ -196,7 +206,7 @@
                 type: 'success',
                 message: '删除成功'
               });
-              this.showTableList()
+              this.doSearch(this.showTableList)
             } else {
               this.$message({
                 type: 'error',

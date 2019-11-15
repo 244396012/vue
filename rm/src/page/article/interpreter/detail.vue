@@ -4,7 +4,7 @@
       <template>
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="文章信息" name="first">
-            <div class="detail rm-right" v-if="detail.status === 1">
+            <div class="detail rm-right" v-if="+detail.status === 1">
               <el-button type="success" @click="reviewArticlePass()">审核通过</el-button>
               <el-button type="default" @click="reviewArticleRefuse()">审核不通过</el-button>
             </div>
@@ -29,11 +29,16 @@
                   <el-col :span="8"><div class="grid-content bg-purple"></div><b>发布时间：</b>{{detail.publishTime}}</el-col>
                 </template>
               </el-row>
+
               <el-row class="exact">
-                <el-col :span="20"><div class="grid-content bg-purple sy-line">
-                  <b style="display: table-cell;vertical-align: top;padding-top: 13px">正文内容：</b>
-                  <div style="display: table-cell;" v-html="detail.contentHtml && detail.contentHtml.replace(/\&lt\;/g,'<').replace(/\&gt\;/g,'>')"></div>
-                </div></el-col>
+                <el-col :span="20">
+                  <div class="grid-content bg-purple sy-line">
+                    <b style="display: table-cell;">正文内容：</b>
+                    <div style="display: table-cell;">
+                      <quill-editor :options="quillOption" v-model="detail.contentHtml" disabled></quill-editor>
+                    </div>
+                  </div>
+                </el-col>
               </el-row>
               <el-row class="exact">
                 <el-col :span="20"><div class="grid-content bg-purple">
@@ -47,7 +52,7 @@
                     <el-table-column
                       label="#"
                       prop="num"
-                      width="40">
+                      width="50">
                     </el-table-column>
                     <el-table-column
                       show-overflow-tooltip
@@ -99,7 +104,7 @@
                     <el-table-column
                       label="#"
                       prop="num"
-                      width="40">
+                      width="50">
                     </el-table-column>
                     <el-table-column
                       label="用户头像">
@@ -150,10 +155,9 @@
                     <el-table-column
                       label="#"
                       prop="num"
-                      width="40">
+                      width="50">
                     </el-table-column>
                     <el-table-column
-                      prop=""
                       label="用户头像">
                       <template slot-scope="scope">
                         <img class="thumb" :src="formatProtocolUrl(scope.row.userAvatarId)" alt="">
@@ -183,17 +187,21 @@
   </div>
 </template>
 <script>
+  import { quillEditor } from 'vue-quill-editor';
+  import quillConfig from '@/common/quill-config';
   import pagination from '@/components/pagination';
   export default {
     components: {
+      quillEditor,
       'pagination-log': pagination,
       'pagination-comment': pagination,
       'pagination-click': pagination
     },
     data() {
       return {
+        quillOption: quillConfig,
         activeName: 'first',
-        detail: "",
+        detail: {},
         btn: {
           disabled: false,
           txt: '确认发布'
@@ -240,6 +248,12 @@
         }).then(res => {
           if(res.data.message === 'success'){
             this.detail = res.data.data;
+            this.detail.contentHtml = res.data.data.contentHtml.replace(/\&lt\;/g,'<').replace(/\&gt\;/g,'>');
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
         })
       },

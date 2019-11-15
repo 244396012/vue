@@ -2,20 +2,19 @@
   <div>
     <el-dialog
       title="客户列表"
-      width="800px"
+      width="770px"
       :visible.sync="$store.state.showModal"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :show-close="false"
       center>
       <div style="width: 250px;padding: 10px 0;float: right">
-        <el-input placeholder="搜索客户"
+        <el-input placeholder="搜索客户名称"
                   clearable
                   v-model="form.customerName" @input="searchCustomer"></el-input>
       </div>
       <el-table
         border
-        stripe
         :max-height="$store.state.tableHeight"
         ref="singleTable"
         v-loading="loading"
@@ -52,7 +51,8 @@
     data (){
       return {
         form: {
-          customerName: ''
+          customerName: '',
+          customerCode: ''
         },
         loading: false,
         tableData: [],
@@ -106,10 +106,13 @@
         })).then(res => {
           if(res.data.success){
             this.$emit('saleMg', {
-              sale: res.data.data,
-              customer: this.currentRow.customerName
+              sale: res.data.data.chnName,
+              saleCode: res.data.data.staffNum,
+              customer: this.currentRow.customerName,
+              customerCode: this.currentRow.customerCode,
             });
             this.form.customerName = '';
+            this.form.customerCode = '';
             this.$store.commit('showModal');
             this.$http.defaults.baseURL = domain.baseRMURL
           }

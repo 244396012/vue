@@ -15,19 +15,40 @@ const routes = [
   },
   //登录
   {
-    path: '/login',
+    path: '/',
     meta: {title: '账号登录'},
     component: () => import(/* webpackChunkName: 'login' */'@/page/login')
   },
+  //消息通知
+  {
+    path: '/message',
+    meta: { title: '消息通知' },
+    component: layout,
+    children: [
+      {
+        path: '/message',
+        name: '消息通知',
+        component: resolve => require.ensure([], () => resolve(require('@/page/message/entry')), 'message'),
+        children: [
+          {
+            path: '/message',
+            meta: { title: '消息通知列表' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/message/index')), 'message')
+          }
+        ]
+      }
+    ]
+  },
   //首页
   {
-    path: '/',
+    path: '/home',
     meta: { title: '首页' },
     component: layout,
     children: [
       {
-        path: '/',
+        path: '/home',
         name: '首页',
+        meta: { title: '首页' },
         component: resolve => require.ensure([], () => resolve(require('@/page/index')), 'index')
       }
     ]

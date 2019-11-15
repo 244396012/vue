@@ -6,9 +6,7 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="语言对" class="width620">
-                <el-select
-                  v-model="form.origin"
-                  placeholder="请选择原文语言">
+                <el-select v-model="form.origin" placeholder="源语言">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -17,9 +15,7 @@
                   </el-option>
                 </el-select>
                 <label class="sep">-</label>
-                <el-select
-                  v-model="form.target"
-                  placeholder="请选择译文语言">
+                <el-select v-model="form.target" placeholder="目标语言">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -29,12 +25,10 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="译员ID">
-                <el-input v-model="form.transId" placeholder="请输入译员ID"></el-input>
+                <el-input v-model="form.transId" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="状态">
-                <el-select
-                  v-model="form.status"
-                  placeholder="请选择状态">
+                <el-select v-model="form.status" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.statusOptions"
                     :key="item"
@@ -44,9 +38,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="专业领域" class="width620">
-                <el-select
-                  @change="selectSecondField"
-                  v-model="form.field" placeholder="请选择一级领域">
+                <el-select v-model="form.field" @change="selectSecondField" placeholder="一级领域">
                   <el-option
                     v-for="item in $store.state.fieldOptions"
                     :key="item.id"
@@ -55,8 +47,7 @@
                   </el-option>
                 </el-select>
                 <label class="sep">-</label>
-                <el-select
-                  v-model="form.secondField" placeholder="请选择二级领域">
+                <el-select v-model="form.secondField" placeholder="二级领域">
                   <el-option
                     v-for="item in formSelect.secondOptions"
                     :key="item.id"
@@ -66,8 +57,9 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="测试时间">
-                <el-date-picker
-                  v-model="form.rangeTime"
+                <el-date-picker v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -76,9 +68,7 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="测试结果">
-                <el-select
-                  v-model="form.result"
-                  placeholder="请选择测试结果">
+                <el-select v-model="form.result" placeholder="请选择">
                   <el-option
                     v-for="(item,index) in formSelect.resultOptions"
                     :key="index"
@@ -108,9 +98,10 @@
         :data="tableData"
         @selection-change="handleSelectionChange">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           min-width="80"
@@ -277,6 +268,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

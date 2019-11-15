@@ -40,7 +40,7 @@
               <el-table-column
                 label="#"
                 prop="num"
-                width="40">
+                width="50">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip

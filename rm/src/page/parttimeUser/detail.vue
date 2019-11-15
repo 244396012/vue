@@ -105,6 +105,9 @@
                   <td class="name">座机</td><td>{{baseinfo.contactObj['座机']}}</td>
                   <td class="name">Skype</td><td>{{baseinfo.contactObj['Skype']}}</td>
                 </tr>
+                <tr>
+                  <td class="name">备注</td><td colspan="7">{{userDetail.userExtension && userDetail.userExtension.remark}}</td>
+                </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">账号信息</p>
               <table class="parttime-table">
@@ -208,8 +211,7 @@
                   <td class="name">技能证书</td>
                   <td colspan="6">
                     <div class="td-item" v-for="(item,index) in userDetail.userSkillList" :key="index">
-                      <el-image
-                        style="width: 100px; height: 100px"
+                      <el-image style="width: 100px; height: 100px"
                         :src="item.userCertificatePath"
                         :preview-src-list="[item.userCertificatePath]"></el-image>
                       <p>{{item.userCertificateType}}</p>
@@ -258,7 +260,7 @@
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">身份认证
                 <template v-if="userDetail.userExtension
                 && userDetail.userExtension.userSource === '绿通用户'
-                && userDetail.userExtension.certificatePassed === 0">
+                && +userDetail.userExtension.certificatePassed !== 1">
                   <template v-if="identy.show">
                     <el-button type="success" icon="el-icon-edit"
                                style="float: right"
@@ -281,7 +283,7 @@
                     <span v-if="identy.show">{{userDetail.userExtension && userDetail.userExtension.certificateType}}</span>
                     <el-select v-else v-model="identy.cardType" placeholder="证件类型">
                       <el-option
-                        v-for="item in formSelect.cardOptions"
+                        v-for="item in cardOptions"
                         :key="item"
                         :label="item"
                         :value="item">
@@ -289,7 +291,7 @@
                     </el-select>
                   </td>
                   <td class="name">证件号码</td><td style="padding: 0;">
-                    <span v-if="identy.show">{{userDetail.userExtension && userDetail.userExtension.certificateNumFuzzy}}</span>
+                    <span v-if="identy.show">{{userDetail.userExtension && userDetail.userExtension.certificateNum}}</span>
                     <input v-else v-model="identy.cardNum" type="text">
                   </td>
                 </tr>
@@ -354,7 +356,7 @@
                 <el-table-column
                   prop="num"
                   label="#"
-                  width="40">
+                  width="50">
                 </el-table-column>
                 <el-table-column
                   show-overflow-tooltip
@@ -423,7 +425,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="技能类型" name="second">
-            <detail-skill ref="skill" :detail="skillDetail" :callback="showDetail"></detail-skill>
+            <detail-skill ref="skill" :skillDetail="skillDetail" :callback="showDetail"></detail-skill>
           </el-tab-pane>
           <el-tab-pane label="任务与评价" name="third">
             <detail-comment ref="comment"></detail-comment>
@@ -550,19 +552,6 @@
       })
     },
     methods: {
-      //修改基本信息，初始化地区插件
-      modifyBaseInit (){
-        this.baseinfo.areaSandbar = '';
-        this.baseinfo.areaNationality = '';
-        this.baseinfo.show = false;
-        this.baseinfo.areaSandbar = this.baseinfo.nationArr[0];
-        setTimeout(() => {
-          const event = document.createEvent("HTMLEvents");
-          event.initEvent("change", false, true);
-          document.querySelector('#areaSandbar').dispatchEvent(event);
-          this.baseinfo.areaNationality = this.baseinfo.nationArr[1];
-        }, 100)
-      },
       handleClick(tab, event) {
         if (tab.label === '技能类型'){
           this.$refs.skill.getSelectOptions();
@@ -578,6 +567,19 @@
           this.$refs.score.showSignDetail();
           this.$refs.score.showSignTotal()
         }
+      },
+      //修改基本信息，初始化地区插件
+      modifyBaseInit (){
+        this.baseinfo.areaSandbar = '';
+        this.baseinfo.areaNationality = '';
+        this.baseinfo.show = false;
+        this.baseinfo.areaSandbar = this.baseinfo.nationArr[0];
+        setTimeout(() => {
+          const event = document.createEvent("HTMLEvents");
+          event.initEvent("change", false, true);
+          document.querySelector('#areaSandbar').dispatchEvent(event);
+          this.baseinfo.areaNationality = this.baseinfo.nationArr[1];
+        }, 100)
       },
       //获取详情数据
       showDetail (){
@@ -696,7 +698,7 @@
           graduatedDate: this.resumeinfo.graduateTime,
           degree: this.resumeinfo.record,
           id: this.resumeinfo.id,
-          userId: this.detail.userId
+          userId: this.$route.params.id
         })).then(res => {
           if(res.data.message === 'success'){
             this.$message({
@@ -732,7 +734,7 @@
           certificateType: this.identy.cardType,
           identifyId: this.identy.cardNum,
           realName: this.identy.userName,
-          userId: this.detail.userId
+          userId: this.$route.params.id
         })).then(res => {
           if(res.data.message === 'success'){
             this.$message({

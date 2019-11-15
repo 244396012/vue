@@ -2,9 +2,8 @@
   <div class="page maxwidth">
     <template>
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <my-search ref="searchform" :callback="showTableList_r1"></my-search>
-        <div v-if="totalInfo"
-             class="default-style sy-font-md">{{totalInfo}}</div>
+        <my-search ref="searchform" :callback="currentCallback"></my-search>
+        <div v-if="totalInfo" class="default-style sy-font-md">{{totalInfo}}</div>
         <el-tab-pane label="费用汇总" :disabled="loading" name="first">
           <div class="default-style">
             <el-table
@@ -14,50 +13,54 @@
               v-loading="loading"
               :data="data_rm.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="65">
               </el-table-column>
               <el-table-column
-                prop=""
+                min-width="100"
+                prop="orgName"
                 label="所属组别">
               </el-table-column>
               <el-table-column
-                width="90"
-                prop=""
+                min-width="100"
+                prop="userCode"
                 label="兼职编码">
               </el-table-column>
               <el-table-column
-                prop=""
+                min-width="90"
+                prop="userName"
                 label="兼职姓名">
               </el-table-column>
               <el-table-column
                 min-width="120"
-                prop=""
+                prop="getCurrentMonthAmount"
                 label="当月兼职费用">
               </el-table-column>
               <el-table-column
                 min-width="120"
-                prop=""
+                prop="getTotalAmount"
                 label="累计兼职费用">
               </el-table-column>
               <el-table-column
-                prop=""
+                min-width="100"
+                prop="applyCurrentMonthAmount"
                 label="申请费用">
               </el-table-column>
               <el-table-column
                 min-width="120"
-                prop=""
+                prop="applyTotalAmount"
                 label="累计申请费用">
               </el-table-column>
               <el-table-column
                 min-width="110"
-                prop=""
+                prop="notApplyAmount"
                 label="未申请费用">
               </el-table-column>
               <el-table-column
                 min-width="120"
-                prop=""
+                prop="deductAmount"
                 label="累计扣款费用">
               </el-table-column>
             </el-table>
@@ -75,9 +78,10 @@
               v-loading="loading"
               :data="data_rm.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="65">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -86,6 +90,7 @@
                 label="项目所属公司">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="projectNo"
                 label="项目编号">
@@ -97,16 +102,19 @@
                 label="项目语言对">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="projectManager"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="partTimeId"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="partTimeName"
                 label="兼职姓名">
@@ -124,11 +132,13 @@
                 label="完成时间">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="chapter"
                 label="章节">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="projectWordCount"
                 label="项目字数">
@@ -139,36 +149,43 @@
                 label="单价(千字/元)">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="videoDuration"
                 label="影音时长">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="unitOfMeasurement"
                 label="计量单位">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="videoUnitPrice"
                 label="影音单价">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="videoTask"
                 label="影音任务">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="evaluationHappening"
                 label="评比情况">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="actualCoping"
                 label="实际应付">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="qualityLevel"
                 label="质量等级">
@@ -188,9 +205,10 @@
               v-loading="loading"
               :data="data_rm.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="40">
+                width="65">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -211,16 +229,19 @@
                 label="项目编号">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="projectManager"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="partTimeId"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="partTimeName"
                 label="兼职姓名">
@@ -238,6 +259,7 @@
                 label="任务详情">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="totalFee"
                 label="费用合计">
@@ -257,13 +279,14 @@
               v-loading="loading"
               :data="data_r1.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="60">
+                width="65">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="110"
                 prop="COrgName"
                 label="项目所属公司">
               </el-table-column>
@@ -280,16 +303,19 @@
                 label="项目编号">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="PM"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="100"
                 prop="UserCode"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="Chnname"
                 label="兼职姓名">
@@ -307,16 +333,19 @@
                 label="执行时间">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="CourseHour"
                 label="课时">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="BasicCoursePrice"
                 label="报酬">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="TotalMoney"
                 label="费用合计">
@@ -336,11 +365,13 @@
               v-loading="loading"
               :data="data_r1.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="60">
+                width="65">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="110"
                 prop="COrgName"
                 label="项目所属公司">
@@ -352,16 +383,19 @@
                 label="项目编号">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="PM"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="100"
                 prop="UserCode"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="Chnname"
                 label="兼职姓名">
@@ -379,16 +413,19 @@
                 label="结束时间">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Price"
                 label="单价">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="75"
                 prop="dayNum"
                 label="天数">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="OtherFee"
                 label="其他费用">
@@ -400,11 +437,13 @@
                 label="预支费用">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Payables"
                 label="应付">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="TotalMoney"
                 label="费用合计">
@@ -424,11 +463,13 @@
               v-loading="loading"
               :data="data_r1.tableData">
               <el-table-column
+                fixed
                 prop="num"
                 label="#"
-                width="60">
+                width="65">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="110"
                 prop="COrgName"
                 label="项目所属公司">
@@ -440,79 +481,92 @@
                 label="客户名称">
               </el-table-column>
               <el-table-column
-                min-width="125"
+                show-overflow-tooltip
+                min-width="110"
                 prop="ProjectID"
                 label="项目编号">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="PM"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="100"
                 prop="UserCode"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="Chnname"
                 label="兼职姓名">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="120"
                 prop="RequireTimeStart"
                 label="开始时间">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="120"
                 prop="RequireTimeEnd"
                 label="结束时间">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Price"
                 label="单价">
               </el-table-column>
               <el-table-column
-                min-width="75"
+                show-overflow-tooltip
+                min-width="65"
                 prop="dayNum"
                 label="天数">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="OtherFee"
                 label="其他费用">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Percentage"
                 label="比例">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="HotelFee"
                 label="交通费">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="TranFee"
                 label="住宿费">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="OvertimePrice"
                 label="加班单">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="OvertimeHours"
                 label="加班时">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="koukuan"
                 label="扣款">
               </el-table-column>
@@ -523,11 +577,13 @@
                 label="预支费用">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="60"
                 prop="Payables"
                 label="应付">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="TotalMoney"
                 label="费用合计">
@@ -547,12 +603,14 @@
               v-loading="loading"
               :data="data_r1.tableData">
               <el-table-column
-                min-width="60"
+                fixed
                 prop="num"
-                label="#">
+                label="#"
+                width="65">
               </el-table-column>
               <el-table-column
-                width="110"
+                show-overflow-tooltip
+                min-width="110"
                 prop="COrgName"
                 label="项目所属公司">
               </el-table-column>
@@ -563,21 +621,25 @@
                 label="客户名称">
               </el-table-column>
               <el-table-column
-                min-width="125"
+                show-overflow-tooltip
+                min-width="110"
                 prop="ProjectID"
                 label="项目编号">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="PM"
                 label="项目经理">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="95"
                 prop="UserCode"
                 label="兼职ID">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="DeviceType"
                 label="设备类型">
@@ -601,46 +663,55 @@
                 label="结束时间">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Price"
                 label="单价">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="75"
                 prop="dayNum"
                 label="天数">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="OtherFee"
                 label="其他费用">
               </el-table-column>
               <el-table-column
-                min-width="60"
+                show-overflow-tooltip
+                min-width="70"
                 prop="Percentage"
                 label="比例">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="TranFee"
                 label="交通费">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="HotelFee"
                 label="住宿费">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="OvertimePrice"
                 label="加班单">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="OvertimeHours"
                 label="加班时">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="70"
                 prop="koukuan"
                 label="扣款">
@@ -652,6 +723,7 @@
                 label="预支费用">
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
                 min-width="80"
                 prop="TotalMoney"
                 label="费用合计">
@@ -679,6 +751,7 @@
     data (){
       return {
         activeName: 'first',
+        currentCallback: null,
         loading: false,
         formSelect: {
           groupOptions: [],
@@ -700,6 +773,11 @@
     computed :{
       ...mapState(['userCode'])
     },
+    mounted (){
+      this.url = '/financeTask/parttimerAccountList';
+      this.currentCallback = this.showTableList_total;
+      this.showTableList_total();
+    },
     methods: {
       handleClick(tab, event) {
         //切换tab页，重置search值
@@ -707,35 +785,49 @@
           this.$refs.searchform.form[key] = '';
         }
         this.data_r1.totalTableList = 0;
+        this.data_rm.totalTableList = 0;
+
+        this.$refs.searchform.form.rangeTime = [
+          this.$refs.searchform.getMonthFirstDay(),
+          this.$refs.searchform.getMonthLastDay()
+        ];
+
         switch (tab.label){
           case '费用汇总':
-
-
+            this.url = '/financeTask/parttimerAccountList';
+            this.currentCallback = this.showTableList_total;
+            this.showTableList_total();
             break;
           case '笔译详情':
             this.url = '/orderAndComment/getBiYiList';
+            this.currentCallback = this.showTableList_rm;
             this.showTableList_rm();
             this.getTotalFees('/orderAndComment/getBiyiTotalMoney');
             break;
           case 'DTP详情':
             this.url = '/orderAndComment/getDtpList';
+            this.currentCallback = this.showTableList_rm;
             this.showTableList_rm();
             this.getTotalFees('/orderAndComment/getDtpTotalMoney');
             break;
           case '培训详情':
             this.url = '/pangu/GetTrainFeeList';
+            this.currentCallback = this.showTableList_r1;
             this.showTableList_r1();
             break;
           case '外派详情':
             this.url = '/pangu/GetAssignFeeList';
+            this.currentCallback = this.showTableList_r1;
             this.showTableList_r1();
             break;
           case '会展详情':
             this.url = '/pangu/GetInterFeeList';
+            this.currentCallback = this.showTableList_r1;
             this.showTableList_r1();
             break;
           case '设备详情':
             this.url = '/pangu/GetDeviceFeeList';
+            this.currentCallback = this.showTableList_r1;
             this.showTableList_r1();
             break;
         }
@@ -758,7 +850,7 @@
           pagesize: config.pageSize,
           usercode: getForm.code,
           chnname: getForm.name,
-          OrgID: getForm.group,
+          OrgID: getForm.groupId,
           StartDate: getForm.rangeTime.length>0 ? getForm.rangeTime[0] : '',
           EndDate: getForm.rangeTime.length>0 ? getForm.rangeTime[1] : ''
         }).then(res => {
@@ -792,9 +884,9 @@
             pageSize: config.pageSize,
             userCode: getForm.code,
             name: getForm.name,
-            group: getForm.group,
-            startTime: getForm.rangeTime.length>0 ? getForm.rangeTime[0] : '',
-            endTime: getForm.rangeTime.length>0 ? getForm.rangeTime[1] : ''
+            group: getForm.groupId,
+            startTime: getForm.rangeTime.length>0 ? getForm.rangeTime[0]+' 00:00:00' : '',
+            endTime: getForm.rangeTime.length>0 ? getForm.rangeTime[1]+' 23:59:59' : ''
           }
         }).then(res => {
           this.data_rm.tableData = [];
@@ -805,6 +897,11 @@
               this.data_rm.tableData.push(item)
             });
             this.data_rm.totalTableList = res.data.data.totalElements;
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false;
         })
@@ -815,6 +912,51 @@
           if(res.data.message === 'success'){
             this.totalInfo = '兼职总费用：'+res.data.data
           }
+        })
+      },
+      //费用汇总
+      showTableList_total (config){
+        config = config || {};
+        config.pageNo = config.pageNo || 1;
+        config.pageSize = config.pageSize || 10;
+        const getForm = this.$refs.searchform.form;
+        this.loading = true;
+        this.totalInfo = '';
+        this.$http.defaults.baseURL = domain.baseRMURL;
+        this.$http.get(this.url, {
+          params: {
+            pageNo: config.pageNo - 1,
+            pageSize: config.pageSize,
+            userCode: getForm.code,
+            userName: getForm.name,
+            orgId: getForm.groupId,
+            startTime: getForm.rangeTime.length>0 ? getForm.rangeTime[0]+' 00:00:00' : '2000-01-01 00:00:00',
+            endTime: getForm.rangeTime.length>0 ? getForm.rangeTime[1]+' 23:59:59' : '2099-12-12 23:59:59'
+          }
+        }).then(res => {
+          this.data_rm.tableData = [];
+          if(res.data.message === 'success'){
+            const list = res.data.data.datalist.results;
+            list.forEach((item, index) => {
+              item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
+              this.data_rm.tableData.push(item)
+            });
+            this.data_rm.totalTableList = res.data.data.datalist.totalCount;
+            res.data.data.total.forEach(item => {
+              this.totalInfo = `兼职费用：${item.getCurTotal}，
+                                申请费用：${item.applyCurTotal}，
+                                总兼职费用：${item.getTotal}，
+                                总申请费用：${item.applyTotal}，
+                                总未申请费用：${item.notApplyTotal}，
+                                累计扣款费用合计：${item.deductTotal}`
+            })
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
+          }
+          this.loading = false;
         })
       }
     }

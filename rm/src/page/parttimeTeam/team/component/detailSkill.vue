@@ -22,7 +22,7 @@
         <td class="name">成为笔译时间</td><td colspan="2">{{skillDetail.transDate}}</td>
         <td class="name">笔译经验</td><td colspan="2" style="padding: 0">
           <span v-if="biyi.show">{{skillDetail.transYear?(skillDetail.transYear.indexOf('年')>0?skillDetail.transYear:skillDetail.transYear+'年'):'--'}}</span>
-          <input v-else v-model="biyi.transYear" type="number" style="width: 130px">
+          <input v-else v-model="biyi.transYear" type="text" style="width: 130px">
         </td>
         <td class="name">翻译字数</td><td colspan="6">{{detail.wordCount}}</td>
       </tr>

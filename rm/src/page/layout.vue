@@ -4,12 +4,16 @@
       <el-row>
         <el-col :span="12">
           <div class="grid-content bg-purple">
-            <img src="../../static/image/logo.png" alt="">
+            <a href="http://www.lanpecker.com">
+              <img src="../../static/image/logo.png" alt="">
+            </a>
           </div>
         </el-col>
         <el-col :span="12"><div class="grid-content bg-purple-light">
           <span class="rm-icon-two work" @click="goPlatFrom">工作台</span>
-          <!--<span class="rm-icon-two message" @click="">消息通知</span>-->
+          <el-badge :value="$store.state.noReadMsg" class="item">
+            <span class="rm-icon-two message" @click="$router.push('/message')">消息通知</span>
+          </el-badge>
           <el-dropdown>
             <span class="el-dropdown-link rm-icon-two user">个人中心</span>
             <el-dropdown-menu slot="dropdown">
@@ -30,15 +34,15 @@
               :default-active="this.activeIndex"
               text-color="#333">
               <template v-for="(menu, index) in asideMenu">
-                  <el-submenu v-if="menu.path !== '/'" :key="index" :index="String(index)">
+                  <el-menu-item v-if="menu.path === '/home'" class="exact" :key="index" :index="menu.path">
+                    <span slot="title">{{menu.meta.title}}</span>
+                  </el-menu-item>
+                  <el-submenu v-else :key="index" :index="String(index)">
                     <span slot="title">{{menu.name}}</span>
                     <template v-for="(menu1, index1) in menu.children">
                       <el-menu-item :key="index+'-'+index1" :index="menu1.path">{{menu1.name}}</el-menu-item>
                     </template>
                   </el-submenu>
-                <el-menu-item class="exact" v-else :key="index" :index="menu.path">
-                  <span slot="title">{{menu.meta.title}}</span>
-                </el-menu-item>
               </template>
             </el-menu>
           </el-aside>
@@ -47,8 +51,12 @@
       <el-main>
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item class="extra">资源管理系统</el-breadcrumb-item>
-          <el-breadcrumb-item v-if="breadcrumb.firstItem">{{breadcrumb.firstItem}}</el-breadcrumb-item>
-          <el-breadcrumb-item v-if="breadcrumb.secondItem">{{breadcrumb.secondItem}}</el-breadcrumb-item>
+          <el-breadcrumb-item
+            v-if="breadcrumb.firstItem"
+            v-html="breadcrumb.firstItem"
+            @click.native="breadRouter"></el-breadcrumb-item>
+          <el-breadcrumb-item
+            v-if="breadcrumb.secondItem">{{breadcrumb.secondItem}}</el-breadcrumb-item>
         </el-breadcrumb>
         <router-view id="webView" :key="breadKey"></router-view>
       </el-main>
@@ -74,7 +82,8 @@
     },
     data (){
       return {
-        asideMenu: this.$router.options.routes.slice(3),
+        pollTimer: null,
+        asideMenu: this.$router.options.routes.slice(4),
         activeIndex: '',
         breadcrumb: ''
       }
@@ -84,42 +93,23 @@
       this.activeIndex = this.$route.matched[1].path
     },
     created (){
-      //获取语言对
-      this.$http.get('/language/listAll')
-        .then(res => {
-          if(res.data.data.length > 0){
-            this.$store.commit('languageList', res.data.data)
+      this.$store.dispatch('getLanguagePair');
+      this.$store.dispatch('getFirstDomain');
+      this.$store.dispatch('getSecondPermission');
+    },
+    mounted (){
+      const _this = this;
+      this.getWaitingMsg();
+      //连接socket
+      utils.connectSocket(api.baseURL + '/gs-guide-websocket', (res) => {
+        if(res){
+          const resJson = JSON.parse(res);
+          if(resJson){
+            setTimeout(() => {
+              _this.getWaitingMsg()
+            }, 3000)
           }
-        });
-      //获取一级领域
-      this.$http.get('/domain/listDomain')
-        .then(res =>{
-          if(res.data.message === 'success'){
-            this.$store.commit('fieldList', res.data.data)
-          }
-        });
-      this.$nextTick(() => {
-        // const throttle = utils.throttle;
-        // const asideEl = document.querySelector('.el-aside.aside'),
-        //   mainEl = document.querySelector('.el-main');
-        // let scroll = 0,
-        //   clientHeight = document.body.clientHeight,
-        //   bodyHeight = document.body.scrollHeight;
-        // window.onscroll = throttle(function () {
-        //   scroll = document.documentElement.scrollTop || document.body.scrollTop;
-        //   if(scroll > 70){
-        //     asideEl.classList.add('fixed');
-        //     mainEl.classList.add('fixed');
-        //     if(bodyHeight - (scroll+clientHeight) <= 50){
-        //       asideEl.classList.add('btm');
-        //     }else{
-        //       asideEl.classList.remove('btm');
-        //     }
-        //   }else{
-        //     asideEl.classList.remove('fixed');
-        //     mainEl.classList.remove('fixed');
-        //   }
-        // }, 30);
+        }
       })
     },
     computed: {
@@ -129,15 +119,43 @@
       }
     },
     methods: {
+      breadRouter (event){
+        const target = event.target,
+          path = target.getAttribute('data') || '',
+          type = target.getAttribute('type') || '';
+        if(path && type && this.$route.path.includes('/skill/detail')){
+            this.$router.back()
+        }else{
+          this.$router.push(path)
+        }
+      },
       //退出
       logout (){
         sessionStorage.removeItem('sy_rm_admin_access_token');
         sessionStorage.removeItem('sy_rm_admin_permission');
-        this.$router.push('/login')
+        this.$router.push('/')
+      },
+      //获取未读消息
+      getWaitingMsg (){
+        this.$http.get('/notice/getNoReadCount',{
+          params: {
+            status: 0
+          }
+        }).then(res => {
+          if(res.data.message === 'success'){
+            this.$store.state.noReadMsg = +res.data.data ? res.data.data : '';
+          }
+        })
       },
       //跳转到工作台
 	    goPlatFrom (){
-		    location.href = api.platFormUrl+'?token='+sessionStorage.getItem('sy_rm_admin_access_token')
+        const a = document.createElement('a'),
+          token = sessionStorage.getItem('sy_rm_admin_access_token');
+        a.style.display = 'none';
+        a.href = api.platFormUrl;
+        a.target = token;
+        document.body.appendChild(a);
+        a.click();
 	    }
     }
   }

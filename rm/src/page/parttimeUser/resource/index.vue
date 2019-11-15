@@ -6,24 +6,16 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="90px">
               <el-form-item label="用户ID">
-                <el-input v-model="form.userId" clearable placeholder="请输入用户ID"></el-input>
+                <el-input v-model="form.userId" placeholder="请输入"></el-input>
+              </el-form-item>
+              <el-form-item label="用户账户">
+                <el-input v-model="form.account" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="用户姓名">
-                <el-input v-model="form.userName" clearable placeholder="请输入用户姓名"></el-input>
-              </el-form-item>
-              <el-form-item label="母语">
-                <el-select v-model="form.motherTogue" placeholder="请选择母语">
-                  <el-option
-                    v-for="item in $store.state.languageList"
-                    :key="item.id"
-                    :label="item.chineseName"
-                    :value="item.chineseName">
-                  </el-option>
-                </el-select>
+                <el-input v-model="form.userName" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="账号状态">
-                <el-select v-model="form.accountState"
-                           placeholder="请选择账号状态">
+                <el-select v-model="form.accountState" placeholder="请选择">
                   <el-option
                     v-for="item in accountStateOptions"
                     :key="item.value"
@@ -33,10 +25,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="任务领域" class="width620">
-                <el-select
-                  v-model="form.firstField"
-                  @change="getSecondFieldFn"
-                  placeholder="请选择一级领域">
+                <el-select v-model="form.firstField" @change="getSecondFieldFn" placeholder="一级领域">
                   <el-option
                     v-for="item in $store.state.fieldOptions"
                     :key="item.id"
@@ -45,9 +34,7 @@
                   </el-option>
                 </el-select>
                 <label class="sep">-</label>
-                <el-select
-                  v-model="form.secondField"
-                  placeholder="请选择二级领域">
+                <el-select v-model="form.secondField" placeholder="二级领域">
                   <el-option
                     v-for="item in formSelect.secondFieldOptions"
                     :key="item.id"
@@ -56,7 +43,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="常住地址" class="width620">
+              <el-form-item label="常住地址" class="width620 address">
                 <select v-model="form.province"
                         class="province" name="deliverprovince" id="deliverprovince"></select>
                 <label class="sep">-</label>
@@ -64,6 +51,16 @@
                         class="city" name="delivercity" id="delivercity"></select>
                 <select v-model="form.area"
                         class="area" name="deliverarea" id="deliverarea"></select>
+              </el-form-item>
+              <el-form-item label="母语">
+                <el-select v-model="form.motherTogue" placeholder="请选择">
+                  <el-option
+                    v-for="item in $store.state.languageList"
+                    :key="item.id"
+                    :label="item.chineseName"
+                    :value="item.chineseName">
+                  </el-option>
+                </el-select>
               </el-form-item>
               <parttime-type ref="parttimeTypeData"></parttime-type>
             </el-form>
@@ -85,22 +82,25 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
-          prop="userCode"
+          show-overflow-tooltip
           min-width="100"
+          prop="userCode"
           label="用户ID">
         </el-table-column>
         <el-table-column
-          min-width="120"
+          show-overflow-tooltip
+          min-width="110"
           label="用户账号">
           <template slot-scope="scope">{{scope.row.account | hiddenAccount}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="userName"
           label="用户姓名">
         </el-table-column>
@@ -138,42 +138,42 @@
           <template slot-scope="scope">{{scope.row.subAreaName | formatDomain}}</template>
         </el-table-column>
         <el-table-column
-          width="70"
+          min-width="70"
           prop="levelName"
           label="等级">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="账号认证">
           <template slot-scope="scope">{{+scope.row.certificatePassed===1?'已认证':'未认证'}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="orderReived"
           label="接单数">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="numberOfComplaints"
           label="投诉次数">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="接单开关">
           <template slot-scope="scope">{{+scope.row.receipted===1?'开启':'关闭'}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="translatorIdleStatus"
           label="用户状态">
         </el-table-column>
         <el-table-column
-          width="95"
+          min-width="95"
           prop="orderAverageScore"
           label="任务平均分">
         </el-table-column>
         <el-table-column
-          width="70"
+          min-width="70"
           prop="totalScore"
           label="译侠值">
         </el-table-column>
@@ -193,27 +193,31 @@
           label="操作"
           width="140">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/parttimeUser/resource/detail/'+scope.row.id)">查看</el-button>
-            <el-button type="text"
-                       v-if="+scope.row.isEnabled !== 1"
-                       @click="setAccountStatus({
+            <router-link :to="{path:'/parttimeUser/resource/detail/'+scope.row.id+'?code='+scope.row.userCode}"
+                         class="blank"
+                         target="_blank">查看</router-link>
+            <template v-if="$store.state.secondPermission['/userExtension/saveUserStatus'] !== undefined">
+              <el-button type="text"
+                         v-if="+scope.row.isEnabled !== 1"
+                         @click="setAccountStatus({
                         id: scope.row.id,
                         status: 1
                        }, showTableList)">启用</el-button>
-            <el-button type="text"
-                       class="del"
-                       v-if="+scope.row.isEnabled !== 0"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del"
+                         v-if="+scope.row.isEnabled !== 0"
+                         @click="setAccountStatus({
                         id: scope.row.id,
                         status: 0
                        }, showTableList)">停用</el-button>
-            <el-button type="text"
-                       class="del2"
-                       v-if="+scope.row.isEnabled === 1"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del2"
+                         v-if="+scope.row.isEnabled === 1"
+                         @click="setAccountStatus({
                         id: scope.row.id,
                         status: -1
                        }, showTableList)">冻结</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -239,6 +243,7 @@
       return {
         form: {
           userId: '',
+          account: '',
           userName: '',
           motherTogue: '',
           firstField: '',
@@ -286,6 +291,8 @@
         this.$refs.parttimeTypeData.form.type = '';
         this.$refs.parttimeTypeData.emptyType;
         this.formSelect.secondFieldOptions = [];
+        document.querySelector('#delivercity').innerHTML = '';
+        document.querySelector('#deliverarea').innerHTML = '';
         this.resetSearch(this.form, this.showTableList);
       },
       //获取二级领域
@@ -315,6 +322,7 @@
           "taskDomain": this.form.firstField.split(',')[1],
           "taskSubDomain": this.form.secondField,
           "userId": this.form.userId,
+          "account": this.form.account,
           "userName": this.form.userName,
           "waiPaiAndPeiXun": {
             "domain": childForm.waiAndpei.firstField?childForm.waiAndpei.firstField.split(',')[1]:'',
@@ -347,6 +355,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalCount
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })
@@ -357,21 +370,19 @@
   }
 </script>
 <style lang="scss">
-  .width620{
-    .el-form-item__content{
-      &>select{
-        width: 137px;
-        height: 32px;
-        line-height: 32px;
-        border: 1px solid #BFBFBF;
-        border-radius: 2px;
-        color: #606266;
-        &:nth-child(1){
-          width: 215px;
-        }
-        &+.sep{
-          width: 27px!important;
-        }
+  .width620.address{
+    select{
+      width: 137px;
+      height: 32px;
+      line-height: 32px;
+      border: 1px solid #BFBFBF;
+      border-radius: 2px;
+      color: #606266;
+      &:nth-child(1){
+        width: 215px;
+      }
+      &+.sep{
+        width: 27px!important;
       }
     }
   }

@@ -64,8 +64,8 @@ router.beforeEach((to, from, next) => {
 axios.interceptors.request.use(
   req => {
     let reqUrl = req.url;
-    if(reqUrl.includes('/oauth/token')){
-      req.url = api.baseURL + '/auth/oauth/token'
+    if(reqUrl.includes('/oauth/token') || reqUrl.includes('/auth/current')){
+      req.url = api.baseURL + reqUrl
     }
     if(reqUrl.includes('customer/renewPassword') || reqUrl.includes('/module/getMenue')){
       req.url = api.baseLgURL + reqUrl
@@ -98,7 +98,7 @@ axios.interceptors.response.use(
       if(err.response.data.error === 'invalid_token'){
         element.Message({
           type: 'error',
-          message: '登录信息已过期，请重新登录'
+          message: '登录信息已过期'
         })
       }else{
         element.Message({
@@ -108,16 +108,16 @@ axios.interceptors.response.use(
       }
       sessionStorage.removeItem('sy_rm_admin_access_token');
       sessionStorage.removeItem('sy_rm_admin_permission');
-      if(router.history.current.path !== '/login'){
+      if(router.history.current.path !== '/'){
         //外部模块，登录过期不重定向
         if(router.history.current.fullPath.includes('/pm/translatorDetail')){
           router.replace({
-            path: '/login'
+            path: '/'
           });
           return Promise.reject(err)
         }
         router.replace({
-          path: '/login',
+          path: '/',
           query: { url: router.history.current.fullPath }
         })
       }

@@ -2,10 +2,12 @@
 
 ## entry.vue 入口模版
 
-## resource - 资源单
-  ### index DTP列表
+## skill - 技能
+  ### index
 
+## resource - 用户
+  ### index
 
-## preResource - 准资源单
-  ### index 会展列表
+## preResource - 准用户
+  ### index
 

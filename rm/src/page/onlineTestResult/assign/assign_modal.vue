@@ -69,7 +69,7 @@
       }
     },
     watch: {
-      params (newVal, oldVal){
+      params (newVal){
         if(this.$store.state.showModal){
           this.assignForm.assignList = [];
           this.assignForm.assignCode = '';

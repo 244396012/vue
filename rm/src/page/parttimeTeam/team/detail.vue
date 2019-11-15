@@ -172,7 +172,7 @@
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">身份认证
-                <template v-if="accountInfo.userExtension && accountInfo.userExtension.certificatePassed !== 1">
+                <template v-if="accountInfo.userExtension && +accountInfo.userExtension.certificatePassed !== 1">
                   <template v-if="identy.show">
                     <el-button type="success" icon="el-icon-edit"
                                style="float: right"
@@ -237,7 +237,7 @@
                   <td class="name">当前结算类型</td>
                   <td colspan="5">
                     <span style="vertical-align: -6px;padding: 0"
-                          v-if="payWay.show">{{userDetail.userExtension && userDetail.userExtension.defaultSettleType !== ''?userDetail.userExtension.defaultSettleType:'默认'}}</span>
+                          v-if="payWay.show">{{accountInfo.userExtension && accountInfo.userExtension.defaultSettleType !== ''?accountInfo.userExtension.defaultSettleType:'默认'}}</span>
                     <el-select v-else v-model="payWay.type" placeholder="结算类型" style="width: 150px">
                       <el-option value="" label="默认"></el-option>
                       <el-option value="校企合作" label="校企合作"></el-option>
@@ -268,7 +268,7 @@
                 <el-table-column
                   prop="num"
                   label="#"
-                  width="40">
+                  width="50">
                 </el-table-column>
                 <el-table-column
                   show-overflow-tooltip

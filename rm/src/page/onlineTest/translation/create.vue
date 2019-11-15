@@ -7,7 +7,7 @@
           <el-form-item label="语言对：" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item prop="origin">
-                <el-select v-model="ruleForm.origin" placeholder="请选择源语言" style="width: 99%">
+                <el-select v-model="ruleForm.origin" placeholder="源语言" style="width: 99%">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -19,7 +19,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item prop="target">
-                <el-select v-model="ruleForm.target" placeholder="请选择目标语言" style="width: 100%">
+                <el-select v-model="ruleForm.target" placeholder="目标语言" style="width: 100%">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -93,13 +93,13 @@
           <el-form-item label="行业领域：">
             <el-select v-model="ruleForm.field"
                        @change="getSecondFields"
-                       placeholder="请选择一级领域">
+                       placeholder="一级领域">
               <el-option v-for="item in $store.state.fieldOptions"
                          :key="item.id"
                          :label="item.fullSpecialtyName"
                          :value="item.specialtyId"></el-option>
             </el-select>
-            <el-select v-model="ruleForm.secondField" placeholder="请选择二级领域" multiple :collapse-tags="true">
+            <el-select v-model="ruleForm.secondField" placeholder="二级领域" multiple :collapse-tags="true">
               <el-option v-for="item in formSelect.secondOptions"
                          :key="item.id"
                          :label="item.fullSpecialtyName"
@@ -143,10 +143,10 @@
         },
         rules: {
           origin: [
-            { required: true, message: '请选择原文语言', trigger: 'change' }
+            { required: true, message: '请选择源语言', trigger: 'change' }
           ],
           target: [
-            { required: true, message: '请选择译文语言', trigger: 'change' }
+            { required: true, message: '请选择目标语言', trigger: 'change' }
           ],
           originTxt: [
             { required: true, message: '请输入原文', trigger: 'blur' }
@@ -203,7 +203,7 @@
             if(this.ruleForm.origin === this.ruleForm.target){
               this.$message({
                 type: 'warning',
-                message: '原、译文语言对不能相同'
+                message: '请选择不同的语言对'
               });
               return false
             }

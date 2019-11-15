@@ -6,10 +6,10 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="译员姓名">
-                <el-input v-model="form.name" placeholder="请输入译员姓名"></el-input>
+                <el-input v-model="form.name" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="币种">
-                <el-select v-model="form.moneyType" placeholder="请选择币种">
+                <el-select v-model="form.moneyType" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.moneyType"
                     :key="item.value"
@@ -18,7 +18,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="所属公司">
-                <el-select v-model="form.company" placeholder="请选择所属公司">
+                <el-select v-model="form.company" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.companyOptions"
                     :key="item.Value"
@@ -26,9 +26,11 @@
                     :value="item.Value"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="申请时间">
+              <el-form-item label="统计时间">
                 <el-date-picker
                   v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -63,7 +65,7 @@
         <el-table-column
           prop="num"
           label="#"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -84,8 +86,10 @@
         <el-table-column
           show-overflow-tooltip
           min-width="120"
-          prop=""
           label="统计时间">
+          <template slot-scope="scope">
+            {{(scope.row.rangeTime && scope.row.rangeTime.length>0) ? scope.row.rangeTime[0] +' - '+ scope.row.rangeTime[1] : ''}}
+          </template>
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -102,7 +106,8 @@
           label="操作"
           width="150">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/finance/expenses/detail/'+scope.row.userCode)">查看</el-button>
+            <el-button type="text"
+                       @click="$router.push('/finance/expenses/detail/'+scope.row.userCode+'?range='+scope.row.rangeTime)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -126,7 +131,7 @@
           name: '',
           company: '',
           moneyType: '',
-          rangeTime: ''
+          rangeTime: []
         },
         formSelect: {
           moneyType: [
@@ -152,7 +157,26 @@
       this.$http.defaults.baseURL = domain.baseRMURL;
     },
     mounted (){
+      this.form.rangeTime = [this.getPrevMonthFirstDay, this.getPrevMonthLastDay];
       this.showTableList()
+    },
+    computed: {
+      //上月第一天
+      getPrevMonthFirstDay (){
+        const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth(),
+          day = 1;
+        return year+'-'+month+'-'+day
+      },
+      //上月最后一天
+      getPrevMonthLastDay (){
+        const date = new Date(),
+          year = date.getFullYear(),
+          month = date.getMonth(),
+          day = new Date(year, month, 0).getDate(); //day为0时，会自动判断为最后一天
+        return year+'-'+month+'-'+day
+      },
     },
     methods: {
       formatMoneyType$ (moneyName){
@@ -185,6 +209,7 @@
             const list = res.data.data.perPage.results;
             list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
+              item.rangeTime = this.form.rangeTime;
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.perPage.totalCount;
@@ -196,6 +221,11 @@
               }
             });
             this.totalCountStr = this.totalCountStr.slice(0, -1);
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false;
         })

@@ -1,20 +1,17 @@
 <template>
   <div style="display: inline-block">
     <el-form-item label="派单人">
-      <el-select v-model="form.orderCreater"
-                 filterable
-                 placeholder="请选择派单人">
+      <el-select v-model="form.orderCreater" filterable placeholder="请选择">
         <el-option
-          v-for="item in formSelect.createrList"
-          :key="item.StaffNum"
-          :label="item.ChnName"
-          :value="item.ChnName"></el-option>
+          v-for="(item, index) in formSelect.createrList"
+          :key="index"
+          :label="item.value"
+          :value="item.key"></el-option>
       </el-select>
     </el-form-item>
   </div>
 </template>
 <script>
-  import domain from '@/api/index'
   export default {
     data (){
       return {
@@ -27,15 +24,33 @@
       }
     },
     created (){
-      this.$http.defaults.baseURL = domain.baseResourceURL_r1;
-      //IsLeave 0:在职，1：离职；2：全部
-      this.$http.get('/pangu/GetStaffListByOrgID?IsLeave=2&OrgID=2762FAF6-819D-482B-B8B6-B19E8A25DBE1')
-        .then(res => {
-          if(res.data.Success){
-            this.formSelect.createrList = res.data.Data
+      let path = this.$route.path, selectType = '';
+      switch (path){
+        case '/resource/written':
+          selectType = 'translation_order';
+          break
+        case '/resource/meeting':
+          selectType = 'exhibition_order';
+          break
+        case '/resource/send':
+          selectType = 'expatriate_order';
+          break
+        case '/resource/train':
+          selectType = 'training_order';
+          break
+      }
+      this.$http.get('/resourceOrder/getOrderPersonSelect',{
+        params: {
+          name: '',
+          pageNo: 0,
+          pageSize: 999,
+          table: selectType
+        }
+      }).then(res => {
+          if(res.data.message === 'success'){
+            this.formSelect.createrList = res.data.data.results
           }
-        });
-      this.$http.defaults.baseURL = domain.baseRMURL;
+        })
     }
   }
 </script>

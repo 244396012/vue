@@ -23,6 +23,7 @@
   </div>
 </template>
 <script>
+  import domain from '@/api/index';
   import { mapMutations } from 'vuex'
   export default {
     name: 'personal-info',
@@ -43,10 +44,12 @@
     methods: {
       ...mapMutations(['setUserCode', 'setUserInfo']),
       getUserInfo (){
+        this.$http.defaults.baseURL = domain.baseRMURL;
         this.$http.get('/userExtension/getCurrentInfoAndRoles')
           .then(res => {
             if(res.data.message === 'success'){
               const _data = res.data.data;
+              this.form.account = _data.account;
               this.form.name = _data.userName;
               this.form.jobNo = _data.userCode;
               this.form.department = _data.department;

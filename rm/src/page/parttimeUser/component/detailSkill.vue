@@ -1,25 +1,23 @@
 <template>
   <div class="detail">
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">笔译技能
-      <template v-if="detail.userSource === '绿通用户'">
-        <template v-if="biyi.show">
-          <el-button type="success" icon="el-icon-edit"
-                     style="float: right"
-                     @click="biyi.show = false">修改</el-button>
-        </template>
-        <template v-else>
-          <el-button type="success"
-                     @click="modifyBiyi"
-                     :disabled="biyiBtn.disabled"
-                     style="float: right;margin-left: 10px">{{biyiBtn.txt}}</el-button>
-          <el-button @click="biyi.show = true" style="float: right;">取消</el-button>
-        </template>
+      <template v-if="biyi.show">
+        <el-button type="success" icon="el-icon-edit"
+                   style="float: right"
+                   @click="biyi.show = false">修改</el-button>
+      </template>
+      <template v-else>
+        <el-button type="success"
+                   @click="modifyBiyi"
+                   :disabled="biyiBtn.disabled"
+                   style="float: right;margin-left: 10px">{{biyiBtn.txt}}</el-button>
+        <el-button @click="biyi.show = true" style="float: right;">取消</el-button>
       </template>
     </p>
     <table class="parttime-table">
       <tr>
         <td class="name">笔译经验</td><td style="padding: 0">
-          <span v-if="biyi.show">{{detail.transYear}}</span>
+          <span v-if="biyi.show">{{skillDetail.transYear}}</span>
           <el-select v-else v-model="biyi.transYear">
             <el-option value="1年以内">1年以内</el-option>
             <el-option value="1-3年">1-3年</el-option>
@@ -28,10 +26,10 @@
             <el-option value="10年以上">10年以上</el-option>
           </el-select>
         </td>
-        <td class="name">翻译字数</td><td>{{detail.wordCount}}</td>
-        <td class="name">成为笔译时间</td><td colspan="3">{{detail.transDate}}</td>
+        <td class="name">翻译字数</td><td>{{skillDetail.wordCount}}</td>
+        <td class="name">成为笔译时间</td><td colspan="3">{{skillDetail.transDate}}</td>
       </tr>
-      <tr v-for="(item, index) of detail.userExtendList" :key="item.id">
+      <tr v-for="(item, index) of skillDetail.userExtendList" :key="item.id">
         <td class="name">语言对</td><td>{{item.sourceLanguageName}} -> {{item.targetLanguageName}}</td>
         <td class="name">专业领域</td><td>{{item.subAreaName && JSON.parse(item.subAreaName).toString()}}</td>
         <td class="name">等级</td><td>{{item.levelName}}</td>
@@ -42,19 +40,17 @@
       </tr>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">DTP技能
-      <template v-if="detail.userSource === '绿通用户'">
-        <template v-if="dtp.show">
-          <el-button type="success" icon="el-icon-edit"
-                     style="float: right"
-                     @click="dtp.show = false">修改</el-button>
-        </template>
-        <template v-else>
-          <el-button type="success"
-                     @click="modifyDtp"
-                     :disabled="dtpBtn.disabled"
-                     style="float: right;margin-left: 10px">{{dtpBtn.txt}}</el-button>
-          <el-button @click="dtp.show = true" style="float: right;">取消</el-button>
-        </template>
+      <template v-if="dtp.show">
+        <el-button type="success" icon="el-icon-edit"
+                   style="float: right"
+                   @click="dtp.show = false">修改</el-button>
+      </template>
+      <template v-else>
+        <el-button type="success"
+                   @click="modifyDtp"
+                   :disabled="dtpBtn.disabled"
+                   style="float: right;margin-left: 10px">{{dtpBtn.txt}}</el-button>
+        <el-button @click="dtp.show = true" style="float: right;">取消</el-button>
       </template>
     </p>
     <table class="parttime-table">
@@ -175,22 +171,20 @@
       </tr>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">会展技能
-      <template v-if="detail.userSource === '绿通用户'">
-        <template v-if="huizhan.show">
-          <el-button type="success" icon="el-icon-edit"
-                     style="float: right"
-                     @click="huizhan.show = false">修改</el-button>
-        </template>
-        <template v-else>
-          <el-button type="success"
-                     @click="addUnitPrice"
-                     style="float: right;margin-left: 10px">添加单价</el-button>
-          <el-button type="success"
-                     @click="modifyHuizhan"
-                     :disabled="huizhanBtn.disabled"
-                     style="float: right;margin-left: 10px">{{huizhanBtn.txt}}</el-button>
-          <el-button @click="cancelHuizhan" style="float: right;">取消</el-button>
-        </template>
+      <template v-if="huizhan.show">
+        <el-button type="success" icon="el-icon-edit"
+                   style="float: right"
+                   @click="huizhan.show = false">修改</el-button>
+      </template>
+      <template v-else>
+        <el-button type="success"
+                   @click="addUnitPrice"
+                   style="float: right;margin-left: 10px">添加单价</el-button>
+        <el-button type="success"
+                   @click="modifyHuizhan"
+                   :disabled="huizhanBtn.disabled"
+                   style="float: right;margin-left: 10px">{{huizhanBtn.txt}}</el-button>
+        <el-button @click="cancelHuizhan" style="float: right;">取消</el-button>
       </template>
     </p>
     <table class="parttime-table">
@@ -246,7 +240,7 @@
           </el-select>
         </td>
           <td class="name">擅长领域</td><td colspan="5" style="padding: 0">
-          <span v-if="huizhan.show">{{item.firstAreaName}}</span>
+          <span v-if="huizhan.show">{{item.secondAreaName}}</span>
           <template v-else>
             <el-select @change="getSecondFieldFn(huizhan.languageInfo[index].firstAreaName,huizhan.languageInfo[index])"
                        v-model="huizhan.languageInfo[index].firstAreaName"
@@ -325,19 +319,17 @@
       </template>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">外派技能
-      <template v-if="detail.userSource === '绿通用户'">
-        <template v-if="waipai.show">
-          <el-button type="success" icon="el-icon-edit"
-                     style="float: right"
-                     @click="waipai.show = false">修改</el-button>
-        </template>
-        <template v-else>
-          <el-button type="success"
-                     @click="modifyWaipai"
-                     :disabled="waipaiBtn.disabled"
-                     style="float: right;margin-left: 10px">{{waipaiBtn.txt}}</el-button>
-          <el-button @click="waipai.show = true" style="float: right;">取消</el-button>
-        </template>
+      <template v-if="waipai.show">
+        <el-button type="success" icon="el-icon-edit"
+                   style="float: right"
+                   @click="waipai.show = false">修改</el-button>
+      </template>
+      <template v-else>
+        <el-button type="success"
+                   @click="modifyWaipai"
+                   :disabled="waipaiBtn.disabled"
+                   style="float: right;margin-left: 10px">{{waipaiBtn.txt}}</el-button>
+        <el-button @click="waipai.show = true" style="float: right;">取消</el-button>
       </template>
     </p>
     <table class="parttime-table">
@@ -386,7 +378,7 @@
           </el-select>
         </td>
           <td class="name">擅长领域</td><td colspan="3" style="padding: 0">
-          <span v-if="waipai.show">{{item.firstAreaName}}</span>
+          <span v-if="waipai.show">{{item.secondAreaName}}</span>
           <template v-else>
             <el-select @change="getSecondFieldFn(waipai.languageInfo[index].firstAreaName,waipai.languageInfo[index])"
                        v-model="waipai.languageInfo[index].firstAreaName"
@@ -410,19 +402,17 @@
       </template>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">培训技能
-      <template v-if="detail.userSource === '绿通用户'">
-        <template v-if="peixun.show">
-          <el-button type="success" icon="el-icon-edit"
-                     style="float: right"
-                     @click="peixun.show = false">修改</el-button>
-        </template>
-        <template v-else>
-          <el-button type="success"
-                     @click="modifyPeixun"
-                     :disabled="peixunBtn.disabled"
-                     style="float: right;margin-left: 10px">{{peixunBtn.txt}}</el-button>
-          <el-button @click="peixun.show = true" style="float: right;">取消</el-button>
-        </template>
+      <template v-if="peixun.show">
+        <el-button type="success" icon="el-icon-edit"
+                   style="float: right"
+                   @click="peixun.show = false">修改</el-button>
+      </template>
+      <template v-else>
+        <el-button type="success"
+                   @click="modifyPeixun"
+                   :disabled="peixunBtn.disabled"
+                   style="float: right;margin-left: 10px">{{peixunBtn.txt}}</el-button>
+        <el-button @click="peixun.show = true" style="float: right;">取消</el-button>
       </template>
     </p>
     <table class="parttime-table">
@@ -495,7 +485,7 @@
           </el-select>
         </td>
           <td class="name">擅长领域</td><td colspan="3" style="padding: 0">
-          <span v-if="peixun.show">{{item.firstAreaName}}</span>
+          <span v-if="peixun.show">{{item.secondAreaName}}</span>
           <template v-else>
             <el-select @change="getSecondFieldFn(peixun.languageInfo[index].firstAreaName,peixun.languageInfo[index])"
                        v-model="peixun.languageInfo[index].firstAreaName"
@@ -523,7 +513,7 @@
 <script>
   import '@/common/area';
   export default {
-    props: ['detail', 'callback'],
+    props: ['skillDetail', 'callback'],
     data (){
       return {
         biyi: {//笔译
@@ -657,10 +647,10 @@
       //获取笔译详情
       showBiyiDetail (){
         //填充原始数据
-        if(this.detail){
-          this.biyi.transYear = this.detail.transYear;
-          if(typeof(this.detail.userExtendList) === 'object'){
-            this.biyi.lanPair = this.detail.userExtendList.map(item => {
+        if(this.skillDetail){
+          this.biyi.transYear = this.skillDetail.transYear;
+          if(typeof(this.skillDetail.userExtendList) === 'object'){
+            this.biyi.lanPair = this.skillDetail.userExtendList.map(item => {
               return { id: item.id, unitPrice: item.unitPrice }
             })
           }
@@ -796,13 +786,6 @@
       },
       //修改笔译
       modifyBiyi (){
-        if(!this.biyi.lanPair.every(item => item.unitPrice)){
-          this.$message({
-            type: 'warning',
-            message: '请填写相关信息'
-          });
-          return false;
-        }
         const partTimeStaffDetailParam = {
           "translatorYears": this.biyi.transYear,
           "unitPriceLst": this.biyi.lanPair,
@@ -873,30 +856,6 @@
       },
       //修改会展
       modifyHuizhan (){
-        if(!this.huizhan.province
-          || this.huizhan.interpretationTypes.length < 1
-          || this.huizhan.languageInfo.some(item => { return item.secondAreaName.length < 1 })
-        ){
-          this.$message({
-            type: 'warning',
-            message: '请填写相关信息'
-          });
-          return false
-        }
-        for(let i = 0, len = this.huizhan.unitPrice.length; i<len; i++){
-          const item = this.huizhan.unitPrice[i];
-          for(let key in item){
-            if(item[key].length < 1){
-              this.$message({
-                type: 'warning',
-                message: '请填写单价信息'
-              });
-              return false
-            }
-          }
-        }
-        this.huizhanBtn.disabled = true;
-        this.huizhanBtn.txt = '保存中';
         const lanArr = this.huizhan.languageInfo.map(item => {
           const findCode = [];
           for(let i = 0, len = item.secondAreaName.length; i<len; i++){
@@ -928,6 +887,8 @@
           "unitPrice": JSON.stringify(this.huizhan.unitPrice),
           "userId": this.$route.params.id
         };
+        this.huizhanBtn.disabled = true;
+        this.huizhanBtn.txt = '保存中';
         this.$http.post('/newSkillController/updateSkillIntepretationBack', newSkillIntepretationParam)
           .then(res => {
             if(res.data.message === 'success'){
@@ -964,17 +925,6 @@
       },
       //修改外派
       modifyWaipai (){
-        if(this.waipai.expertise.length < 1 ||
-           this.waipai.languageInfo.some(item => { return item.secondAreaName.length < 1 })
-        ){
-          this.$message({
-            type: 'warning',
-            message: '请填写相关信息'
-          });
-          return false
-        }
-        this.waipaiBtn.disabled = true;
-        this.waipaiBtn.txt = '保存中';
         const lanArr = this.waipai.languageInfo.map(item => {
           const findCode = [];
           for(let i = 0, len = item.secondAreaName.length; i<len; i++){
@@ -1002,6 +952,8 @@
           "expatriateExpertise": this.waipai.expertise,
           "languageInfo": lanArr
         };
+        this.waipaiBtn.disabled = true;
+        this.waipaiBtn.txt = '保存中';
         this.$http.post('/newSkillController/udateNewSkillExpatriate', newSkillExpatriateParam)
           .then(res => {
             if(res.data.message === 'success'){
@@ -1023,18 +975,6 @@
       },
       //修改培训
       modifyPeixun (){
-        if(this.peixun.softSkills.length < 1 ||
-          this.peixun.trainerTraining.length < 1 ||
-          this.peixun.languageInfo.some(item => { return item.secondAreaName.length < 1 })
-        ){
-          this.$message({
-            type: 'warning',
-            message: '请填写相关信息'
-          });
-          return false
-        }
-        this.peixunBtn.disabled = true;
-        this.peixunBtn.txt = '保存中';
         const lanArr = this.peixun.languageInfo.map(item => {
           const findCode = [];
           for(let i = 0, len = item.secondAreaName.length; i<len; i++){
@@ -1065,6 +1005,8 @@
           "trainerTraining": this.peixun.trainerTraining,
           "languageInfo": lanArr
         };
+        this.peixunBtn.disabled = true;
+        this.peixunBtn.txt = '保存中';
         this.$http.post('/newSkillController/updateNewSkillTrainBack', newSkillTrainParam)
           .then(res => {
             if(res.data.message === 'success'){

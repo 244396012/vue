@@ -6,11 +6,10 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="96px">
               <el-form-item label="项目编号">
-                <el-input v-model="form.projectNum" placeholder="请输入项目编号"></el-input>
+                <el-input v-model="form.projectNum" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="完成状态">
-                <el-select
-                  v-model="form.resourceProStatus" placeholder="请选择完成状态">
+                <el-select v-model="form.resourceProStatus" placeholder="请选择">
                   <el-option
                     v-for="item in resourceProStatusOptions"
                     :key="item.value"
@@ -20,8 +19,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="客户项目状态">
-                <el-select
-                  v-model="form.resourceCusStatus" placeholder="请选择客户项目状态">
+                <el-select v-model="form.resourceCusStatus" placeholder="请选择">
                   <el-option
                     v-for="item in resourceCusStatusOptions"
                     :key="item.value"
@@ -31,7 +29,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="专业领域">
-                <el-select v-model="form.field" placeholder="请选择专业领域">
+                <el-select v-model="form.field" placeholder="请选择">
                   <el-option label="基础语言类" value="基础语言类"></el-option>
                   <el-option label="商务语言类" value="商务语言类"></el-option>
                   <el-option label="专业语言类" value="专业语言类"></el-option>
@@ -44,9 +42,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="语言类型">
-                <el-select
-                  v-model="form.languageType"
-                  placeholder="请选择语言类型" >
+                <el-select v-model="form.languageType" placeholder="请选择">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
@@ -58,6 +54,8 @@
               <el-form-item label="项目日期">
                 <el-date-picker
                   v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -65,7 +63,7 @@
                   end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
-              <order-creater ref="orderCreater" ></order-creater>
+              <order-creater ref="orderCreater"></order-creater>
             </el-form>
           </div>
         </el-col>
@@ -77,7 +75,8 @@
         </el-col>
       </el-row>
     </div>
-    <div class="default-style">
+    <div class="default-style"
+         v-if="$store.state.secondPermission['/resourceOrder/addTrainingOrder'] !== undefined">
       <el-row>
         <el-col :span="24">
           <el-button type="success" icon="el-icon-circle-plus-outline" @click="$router.push('/resource/train/create')">新建订单</el-button>
@@ -92,9 +91,10 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -127,7 +127,7 @@
           label="客户名称">
         </el-table-column>
         <el-table-column
-          width="110"
+          min-width="110"
           prop="workContent"
           label="工作内容">
         </el-table-column>
@@ -150,28 +150,32 @@
           label="具体时间">
         </el-table-column>
         <el-table-column
-          width="90"
+          min-width="90"
           label="状态">
           <template slot-scope="scope">{{scope.row.projectStatus | formatResourceProStatus}}</template>
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           prop="pm"
           label="PM">
         </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
-          width="160">
+          width="200">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/resource/train/detail/'+scope.row.id+'?t=4&p='+scope.row.projectNo)">查看</el-button>
-            <el-button type="text" @click="$router.push('/resource/train/modify/'+scope.row.id)">修改</el-button>
+            <router-link :to="{path: '/resource/train/detail/'+scope.row.id+'?t=4&p='+scope.row.projectNo}"
+                         class="blank"
+                         target="_blank">查看</router-link>
             <el-button type="text"
-                       v-if="userInfo.roles.includes('ROLE_res_manager')"
-                       @click="$router.push('/resource/train/assign-pm/'+scope.row.id+'?t=4&n='+scope.row.projectNo)">分配PM</el-button>
-            <template v-if="scope.row.pm.includes(userInfo.name)">
-              <el-button type="text" @click="showSetModal(scope.row.id)">设置完成</el-button>
-            </template>
+                       v-if="$store.state.secondPermission['/resourceOrder/editTrainingOrder'] !== undefined"
+                       @click="$router.push('/resource/train/modify/'+scope.row.id)">修改</el-button>
+            <el-button type="text"
+                       v-if="$store.state.secondPermission['/resourceOrder/distributePm'] !== undefined"
+                       @click="$router.push('/resource/train/assign-pm/'+scope.row.id+'?t=4&p='+scope.row.projectNo)">分配PM</el-button>
+            <el-button type="text"
+                       v-if="$store.state.secondPermission['/resourceOrder/distributeTrainingInterpreter'] !== undefined"
+                       @click="showSetModal(scope.row.id)">设置完成</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -258,6 +262,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

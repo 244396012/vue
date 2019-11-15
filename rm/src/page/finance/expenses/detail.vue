@@ -20,6 +20,8 @@
               <el-form-item label="实际完成时间">
                 <el-date-picker
                   v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -48,7 +50,7 @@
         <el-table-column
           prop="num"
           label="#"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -148,7 +150,7 @@
         form: {
           taskNo: '',
           company: '',
-          rangeTime: ''
+          rangeTime: []
         },
         formSelect: {
           moneyType: [
@@ -173,6 +175,9 @@
       this.$http.defaults.baseURL = domain.baseRMURL;
     },
     mounted (){
+      if(this.$route.query.range && this.$route.query.range.includes(',')){
+        this.form.rangeTime = this.$route.query.range.split(',');
+      }
       this.showTableList()
     },
     methods: {
@@ -200,7 +205,7 @@
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.tableData.push(item)
             });
-            this.totalTableList = res.data.totalElements
+            this.totalTableList = res.data.data.totalElements;
           }
           this.loading = false;
         })

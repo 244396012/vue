@@ -2,12 +2,12 @@
 * online api
 * */
 // const domain = {
-//   platFormUrl: 'http://pm.lan-bridge.cn:3005/#/login',//前端
+//   platFormUrl: 'http://pm.lan-bridge.cn/#/login',//前端
 //   baseURL: 'http://pangu1.lan-bridge.cn:5791',
 //   baseLgURL: 'http://pangu1.lan-bridge.cn:5791/permission',
 //   baseRMURL: 'http://pangu1.lan-bridge.cn:5791/rm',
 //   baseECURL: 'http://pangu1.lan-bridge.cn:8858/ec',
-//   baseReportURL_r1: 'http://199.lan-bridge.cn:60002'
+//   baseReportURL_r1: 'http://pmr1.lan-bridge.cn'
 // };
 
 /*
@@ -19,8 +19,7 @@
 //   baseLgURL: 'http://192.168.2.203:5791/permission',
 //   baseRMURL: 'http://192.168.2.203:5791/rm',
 //   baseECURL: 'http://192.168.2.205:8858/ec',
-//   baseReportURL_r1: 'http://192.168.2.204:8002',
-//   baseResourceURL_r1: 'http://192.168.2.204:8111'
+//   baseReportURL_r1: 'http://192.168.2.204:8002'
 // };
 
 /*
@@ -31,9 +30,8 @@ const domain = {
   baseURL: 'http://192.168.2.203:5790',
   baseLgURL: 'http://192.168.2.203:5790/permission',
   baseRMURL: 'http://192.168.2.203:5790/rm',
-  baseECURL: 'http://192.168.3.41:8858/ec',
-  baseReportURL_r1: 'http://192.168.2.204:8002',
-  baseResourceURL_r1: 'http://192.168.2.204:8111'
+  baseECURL: 'http://192.168.70.219:8858/ec',
+  baseReportURL_r1: 'http://192.168.2.204:8002'
 };
 
 export default domain

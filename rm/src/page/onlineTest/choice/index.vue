@@ -8,7 +8,7 @@
             <el-form-item label="语言对" class="width620">
               <el-select
                 v-model="form.origin"
-                placeholder="请选择原文语言">
+                placeholder="源语言">
                 <el-option
                   v-for="item in $store.state.languageList"
                   :key="item.id"
@@ -19,7 +19,7 @@
               <label class="sep">-</label>
               <el-select
                 v-model="form.target"
-                placeholder="请选择译文语言">
+                placeholder="目标语言">
                 <el-option
                   v-for="item in $store.state.languageList"
                   :key="item.id"
@@ -29,12 +29,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="题号">
-              <el-input v-model="form.questionNo" placeholder="请输入题号"></el-input>
+              <el-input v-model="form.questionNo" placeholder="请输入"></el-input>
             </el-form-item>
             <el-form-item label="题目类型">
               <el-select
                 v-model="form.type"
-                placeholder="请选择题目类型">
+                placeholder="请选择">
                 <el-option value="基础题"></el-option>
                 <el-option value="专业题"></el-option>
               </el-select>
@@ -42,7 +42,7 @@
               <el-form-item label="专业领域" class="width620">
                 <el-select
                   @change="selectSecondField"
-                  v-model="form.field" placeholder="请选择一级领域">
+                  v-model="form.field" placeholder="一级领域">
                   <el-option
                     v-for="item in $store.state.fieldOptions"
                     :key="item.id"
@@ -52,7 +52,7 @@
                 </el-select>
                 <label class="sep">-</label>
                 <el-select
-                  v-model="form.secondField" placeholder="请选择二级领域">
+                  v-model="form.secondField" placeholder="二级领域">
                   <el-option
                     v-for="item in formSelect.secondOptions"
                     :key="item.id"
@@ -64,7 +64,7 @@
             <el-form-item label="难度">
               <el-select
                 v-model="form.level"
-                placeholder="请选择难度">
+                placeholder="请选择">
                 <el-option
                   v-for="item in $store.state.select.level"
                   :key="item"
@@ -76,7 +76,7 @@
             <el-form-item label="状态">
               <el-select
                 v-model="form.status"
-                placeholder="请选择状态">
+                placeholder="请选择">
                 <el-option
                   v-for="item in formSelect.statusOptions"
                   :key="item.value"
@@ -86,8 +86,9 @@
               </el-select>
             </el-form-item>
             <el-form-item label="添加时间">
-              <el-date-picker
-                v-model="form.rangeTime"
+              <el-date-picker v-model="form.rangeTime"
+                :clearable="false"
+                :unlink-panels = "true"
                 type="daterange"
                 value-format="yyyy-MM-dd"
                 range-separator="-"
@@ -113,11 +114,11 @@
           <el-button @click="batchForbidAndUse({
             multipleSelection: multipleSelection,
             url: '/choiceQuestion/disableChoice',
-            callback: showTableList})">批量禁用</el-button>
+            callback: showTableList})" icon="el-icon-circle-close">批量禁用</el-button>
           <el-button @click="batchForbidAndUse({
             multipleSelection: multipleSelection,
             url: '/choiceQuestion/enableChoice',
-            callback: showTableList})">批量启用</el-button>
+            callback: showTableList})" icon="el-icon-circle-check">批量启用</el-button>
           <el-button @click="deleteTableRows({
             multipleSelection: multipleSelection,
             url: '/choiceQuestion/deleteChoiceQuestion',
@@ -144,9 +145,10 @@
           width="40">
         </el-table-column>
         <el-table-column
+          fixed
           label="#"
           prop="num"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
           prop="questionNo"
@@ -358,6 +360,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

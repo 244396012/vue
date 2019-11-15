@@ -6,13 +6,13 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="70px">
               <el-form-item label="姓名">
-                <el-input v-model="form.name" placeholder="请输入真实姓名"></el-input>
+                <el-input v-model="form.name" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="账号">
-                <el-input v-model="form.account" placeholder="请输入账号信息"></el-input>
+                <el-input v-model="form.account" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="反馈类型">
-                <el-select v-model="form.feedbackType" placeholder="请选择反馈类型">
+                <el-select v-model="form.feedbackType" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.feedbackType"
                     :key="item.value"
@@ -21,7 +21,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="反馈等级">
-                <el-select v-model="form.feedbackLevel" placeholder="请选择反馈等级">
+                <el-select v-model="form.feedbackLevel" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.feedbackLevel"
                     :key="item.value"
@@ -48,9 +48,10 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="50">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -59,7 +60,8 @@
           label="反馈时间">
         </el-table-column>
         <el-table-column
-          width="90"
+          show-overflow-tooltip
+          min-width="90"
           prop="realName"
           label="姓名">
         </el-table-column>
@@ -71,7 +73,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="110"
           prop="account"
           label="帐号">
         </el-table-column>
@@ -82,17 +84,20 @@
           label="反馈说明">
         </el-table-column>
         <el-table-column
-          width="100"
+          show-overflow-tooltip
+          min-width="100"
           prop="feedbackType"
           label="反馈类型">
         </el-table-column>
         <el-table-column
-          width="90"
+          show-overflow-tooltip
+          min-width="90"
           prop="feedbackLevel"
           label="反馈等级">
         </el-table-column>
         <el-table-column
-          width="80"
+          show-overflow-tooltip
+          min-width="90"
           prop="operator"
           label="操作人">
         </el-table-column>
@@ -170,7 +175,7 @@
             feedBackType: this.form.feedbackType
           }
         }).then(res => {
-          if(res.data.code === '200' && res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
             const list = res.data.data.content;
             list.forEach((item, index) => {
@@ -178,6 +183,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false;
         })

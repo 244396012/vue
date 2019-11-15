@@ -6,11 +6,12 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="90px">
               <el-form-item label="团队名称">
-                <el-input v-model="form.name" placeholder="请输入团队名称"></el-input>
+                <el-input v-model="form.name" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="添加时间">
-                <el-date-picker
-                  v-model="form.rangeTime"
+                <el-date-picker v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -19,9 +20,7 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="审核状态">
-                <el-select
-                  v-model="form.status"
-                  placeholder="请选择审核状态">
+                <el-select v-model="form.status" placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.statusOptions"
                     :key="item.value"
@@ -41,7 +40,8 @@
         </el-col>
       </el-row>
     </div>
-    <div class="default-style">
+    <div class="default-style"
+         v-if="$store.state.secondPermission['/team/addTeamBackground'] !== undefined">
       <el-row>
         <el-col :span="24">
           <el-button type="success" icon="el-icon-circle-plus-outline" @click="$router.push('/parttimeTeam/preTeam/create')">添加兼职团队</el-button>
@@ -57,12 +57,14 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
-          width="100"
+          show-overflow-tooltip
+          min-width="100"
           prop="userCode"
           label="团队ID">
         </el-table-column>
@@ -73,7 +75,7 @@
           label="团队名称">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="fullTimeNumber"
           label="团队人数">
         </el-table-column>
@@ -90,7 +92,8 @@
           label="发票类型">
         </el-table-column>
         <el-table-column
-          width="95"
+          show-overflow-tooltip
+          min-width="100"
           prop="primaryContactName"
           label="主要联系人">
         </el-table-column>
@@ -101,14 +104,14 @@
           <template slot-scope="scope">{{scope.row.primaryContactMobile | hiddenAccount}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="身份认证">
-          <template slot-scope="scope">{{+scope.row.certificatePassed===1 ? '已认证':'未认证'}}</template>
+          <template slot-scope="scope">{{+scope.row.certificatePassed > 0 ? '已认证':'未认证'}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           label="账号认证">
-          <template slot-scope="scope">{{+scope.row.settleCertificatePassed===1 ? '已认证':'未认证'}}</template>
+          <template slot-scope="scope">{{+scope.row.settleCertificatePassed > 0 ? '已认证':'未认证'}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -123,13 +126,13 @@
           label="常住地址">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="isEnabled"
           label="账号状态">
           <template slot-scope="scope">{{scope.row.isEnabled | formatStatus}}</template>
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="auditPassed"
           label="审核状态">
         </el-table-column>
@@ -138,32 +141,36 @@
           label="操作"
           width="190">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/parttimeTeam/preTeam/detail/'+scope.row.userId)">查看</el-button>
-            <el-button type="text"
-                       v-if="+scope.row.isEnabled !== 1"
-                       @click="setAccountStatus({
+            <router-link :to="{path:'/parttimeTeam/preTeam/detail/'+scope.row.userId+'?code='+scope.row.userCode}"
+                         class="blank"
+                         target="_blank">查看</router-link>
+            <template v-if="$store.state.secondPermission['/userExtension/saveUserStatus'] !== undefined">
+              <el-button type="text"
+                         v-if="+scope.row.isEnabled !== 1"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 1
                        }, showTableList)">启用</el-button>
-            <el-button type="text"
-                       class="del"
-                       v-if="+scope.row.isEnabled === 1"
-                       @click="setAccountStatus({
+              <el-button type="text"
+                         class="del"
+                         v-if="+scope.row.isEnabled === 1"
+                         @click="setAccountStatus({
                         id: scope.row.userId,
                         status: 0
                        }, showTableList)">停用</el-button>
-            <template v-if="+scope.row.isEnabled === 1 && scope.row.auditPassed === '未审核'">
-              <el-button type="text"
-                         @click="setAuditStatus({
+              <template v-if="+scope.row.isEnabled === 1 && scope.row.auditPassed === '未审核'">
+                <el-button type="text"
+                           @click="setAuditStatus({
                           id: scope.row.id,
                           status: '通过'
                          }, showTableList)">通过</el-button>
-              <el-button type="text"
-                         class="del"
-                         @click="setAuditStatus({
+                <el-button type="text"
+                           class="del"
+                           @click="setAuditStatus({
                           id: scope.row.id,
                           status: '不通过'
                          }, showTableList)">不通过</el-button>
+              </template>
             </template>
           </template>
         </el-table-column>
@@ -234,6 +241,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalCount;
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

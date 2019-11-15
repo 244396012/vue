@@ -32,7 +32,7 @@
       <el-table-column
         prop="num"
         label="#"
-        width="40">
+        width="50">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip

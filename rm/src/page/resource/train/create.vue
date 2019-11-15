@@ -50,9 +50,9 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="项目周期：" :prop="'projectTime'" :rules="{ required: true, message: '请选择项目日期', trigger: 'blur' }">
-                <el-date-picker
-                  v-model="ruleForm.projectTime"
+                <el-date-picker v-model="ruleForm.projectTime"
                   type="daterange"
+                  :unlink-panels="true"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
                   start-placeholder="开始时间"
@@ -196,6 +196,7 @@
         isModify: false,
         detail: {},
         ruleForm: {
+          department: '',
           projectName: '',
           projectPlace: '',
           projectTime: '',
@@ -205,7 +206,9 @@
           trainTimeScale: '',
           certificateNeed: '',
           customerName: '',
+          customerCode: '',
           saleManager: '',
+          saleManagerCode: '',
           detailTime: '',
           needPersonNum: '',
           isOrder: 'true',
@@ -252,7 +255,9 @@
       //更新销售经理
       updateSaleMg (data){
         this.ruleForm.saleManager = data.sale;
+        this.ruleForm.saleManagerCode = data.saleCode;
         this.ruleForm.customerName = data.customer;
+        this.ruleForm.customerCode = data.customerCode;
       },
       //提交
       submitForm (formName){
@@ -261,20 +266,23 @@
             let method = 'POST',
               apiUrl = '/resourceOrder/addTrainingOrder',
               trainData = {
-                department: this.userInfo.department,
+                department: '',
                 projectName: this.ruleForm.projectName,
                 projectStatus: this.ruleForm.resourceProStatus,
                 projectCity: this.ruleForm.projectPlace,
                 certificateRequirement: this.ruleForm.certificateNeed,
                 academicDirector: this.ruleForm.teachManager,
                 customerName: this.ruleForm.customerName,
+                customerId: this.ruleForm.customerCode,
                 saleManager: this.ruleForm.saleManager,
+                saleManagerCode: this.ruleForm.saleManagerCode || '',
                 customerQuote: this.ruleForm.customerPrice,
                 startTime: this.ruleForm.projectTime.length>0 ? this.ruleForm.projectTime[0]+' 00:00:00' : '',
                 endTime: this.ruleForm.projectTime.length>0 ? this.ruleForm.projectTime[1]+' 00:00:00' : '',
                 speicalTime: this.ruleForm.detailTime ? this.ruleForm.detailTime+' 00:00:00' : '',
                 isReservation: this.ruleForm.isOrder,
                 languageType: this.ruleForm.language,
+                languageTypeCode: this.$store.state.mapLanguageListN_C[this.ruleForm.language] || '',
                 professionalDoamin: this.ruleForm.field,
                 requirePersons: this.ruleForm.needPersonNum,
                 resumeRequirement: this.ruleForm.resume,
@@ -289,7 +297,8 @@
               method = 'PUT';
               apiUrl = '/resourceOrder/editTrainingOrder';
               Object.assign(trainData, {
-                id: this.$route.params.id
+                id: this.$route.params.id,
+                department: this.ruleForm.department
               })
             }
             this.btn.disabled = true;
@@ -332,17 +341,20 @@
               projectNo: _data.projectNo
             };
             this.ruleForm = {
+              department: _data.department,
               projectName: _data.projectName,
               projectPlace: _data.projectCity,
-              projectTime: _data.startTime?[_data.startTime.split(' ')[0],_data.endTime.split(' ')[0]]: '',
+              projectTime: _data.startTime ? [_data.startTime.split(' ')[0],_data.endTime.split(' ')[0]] : '',
               teachManager: _data.academicDirector,
               field: _data.professionalDoamin,
               language: _data.languageType,
               trainTimeScale: _data.trainingDuration,
               certificateNeed: _data.certificateRequirement,
               customerName: _data.customerName,
+              customerCode: _data.customerId,
               saleManager: _data.saleManager,
-              detailTime: _data.speicalTime?_data.speicalTime.split(' ')[0]:'',
+              saleManagerCode: _data.saleManagerCode,
+              detailTime: _data.speicalTime ? _data.speicalTime.split(' ')[0] : '',
               needPersonNum: _data.requirePersons,
               isOrder: _data.isReservation.toString(),
               resourceProStatus: _data.projectStatus,

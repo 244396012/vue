@@ -68,9 +68,8 @@ const module1 = {
       {label:'会议交传',value:'会议交传'},
       {label:'商务陪同',value:'商务陪同'},
       {label:'出国口译',value:'出国口译'},
-    ],
-  },
-
+    ]
+  }
 };
 
-export default module1;
+export default module1

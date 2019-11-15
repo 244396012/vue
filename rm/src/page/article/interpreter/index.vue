@@ -6,15 +6,15 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="82px">
               <el-form-item label="发布者名称">
-                <el-input v-model="form.title" placeholder="请输入发布者名称"></el-input>
+                <el-input v-model="form.title" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="文章标题">
-                <el-input v-model="form.title" placeholder="请输入文章标题"></el-input>
+                <el-input v-model="form.title" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="文章状态">
                 <el-select
                   v-model="form.status"
-                  placeholder="请选择文章状态">
+                  placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.statusOptions"
                     :key="item.value"
@@ -26,7 +26,7 @@
               <el-form-item label="文章标签">
                 <el-select
                   v-model="form.label"
-                  placeholder="请选择文章标签">
+                  placeholder="请选择">
                   <el-option
                     v-for="item in formSelect.labelOptions"
                     :key="item.value"
@@ -36,8 +36,9 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="提交时间">
-                <el-date-picker
-                  v-model="form.confirmTime"
+                <el-date-picker v-model="form.confirmTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -46,8 +47,9 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="发布时间">
-                <el-date-picker
-                  v-model="form.releaseTime"
+                <el-date-picker v-model="form.releaseTime"
+                  :clearable="false"
+                  :unlink-panels="true"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   range-separator="-"
@@ -81,6 +83,7 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           label="#"
           width="60">
           <template slot-scope="scope">
@@ -90,7 +93,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="140"
           prop="articleTitle"
           label="文章标题">
         </el-table-column>
@@ -103,11 +106,12 @@
           </template>
         </el-table-column>
         <el-table-column
+          min-width="100"
           prop="lable"
           label="标签">
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           prop="publishUser"
           label="发布者">
         </el-table-column>
@@ -239,7 +243,7 @@
             submitEndTime: this.form.confirmTime.length>0 ? this.form.confirmTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
-          if(res.data.data.content.length >= 0){
+          if(res.data.message === 'success'){
             this.tableData = [];
             const list = res.data.data.content;
             list.forEach((item, index) => {
@@ -247,6 +251,11 @@
               this.tableData.push(item);
             });
             this.totalTableList = res.data.data.totalElements;
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false;
         })
@@ -268,7 +277,7 @@
                 type: 'success',
                 message: '撤回成功'
               });
-              this.showTableList();
+              this.doSearch(this.showTableList)
             } else {
               this.$message({
                 type: 'error',
@@ -294,7 +303,7 @@
                 type: 'success',
                 message: '设置成功'
               });
-              this.showTableList()
+              this.doSearch(this.showTableList)
             } else {
               this.$message({
                 type: 'error',

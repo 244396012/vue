@@ -19,17 +19,17 @@
             </el-col>
           </el-form-item>
           <el-form-item label="活动时间：" prop="activityTime">
-            <el-date-picker v-if="$route.query.id"
-              v-model="ruleForm.activityTime"
+            <el-date-picker v-if="$route.query.id" v-model="ruleForm.activityTime"
+              :unlink-panels="true"
               type="daterange"
               value-format="yyyy-MM-dd"
               range-separator="至"
               start-placeholder="活动开始时间"
               end-placeholder="活动结束时间">
             </el-date-picker>
-            <el-date-picker v-else
+            <el-date-picker v-else v-model="ruleForm.activityTime"
               :picker-options="pickerOptions"
-              v-model="ruleForm.activityTime"
+              :unlink-panels="true"
               type="daterange"
               value-format="yyyy-MM-dd"
               range-separator="至"
@@ -122,7 +122,7 @@
         updateData: '',
         ruleForm: {
           activityName: '',
-          activityType: '',
+          activityType: '大转盘活动',
           activityTime: '',
           activityShort: ''
         },

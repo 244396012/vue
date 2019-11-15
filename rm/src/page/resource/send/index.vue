@@ -6,11 +6,11 @@
           <div class="grid-content bg-purple dotted-border-rg">
             <el-form :inline="true" class="demo-form-inline filterForm" label-width="96px">
               <el-form-item label="项目编号">
-                <el-input v-model="form.projectNum" clearable placeholder="请输入项目编号"></el-input>
+                <el-input v-model="form.projectNum" placeholder="请输入"></el-input>
               </el-form-item>
               <el-form-item label="所需服务">
                 <el-select
-                  v-model="form.resourceService" placeholder="请选择所需服务">
+                  v-model="form.resourceService" placeholder="请选择">
                   <el-option
                     v-for="item in resourceServiceOptions"
                     :key="item.value"
@@ -21,7 +21,7 @@
               </el-form-item>
               <el-form-item label="客户项目状态">
                 <el-select
-                  v-model="form.resourceCusStatus" placeholder="请选择客户项目状态">
+                  v-model="form.resourceCusStatus" placeholder="请选择">
                   <el-option
                     v-for="item in resourceCusStatusOptions"
                     :key="item.value"
@@ -31,8 +31,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="完成状态">
-                <el-select
-                  v-model="form.resourceProStatus" placeholder="请选择完成状态">
+                <el-select v-model="form.resourceProStatus" placeholder="请选择">
                   <el-option
                     v-for="item in resourceProStatusOptions"
                     :key="item.value"
@@ -42,9 +41,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="专业领域" class="width620">
-                <el-select
-                  @change="selectSecondField"
-                  v-model="form.field" placeholder="请选择一级领域">
+                <el-select v-model="form.field" @change="selectSecondField" placeholder="一级领域">
                   <el-option
                     v-for="item in $store.state.fieldOptions"
                     :key="item.id"
@@ -53,8 +50,7 @@
                   </el-option>
                 </el-select>
                 <label class="sep">-</label>
-                <el-select
-                  v-model="form.secondField" placeholder="请选择二级领域">
+                <el-select v-model="form.secondField" placeholder="二级领域">
                   <el-option
                     v-for="item in formSelect.secondOptions"
                     :key="item.id"
@@ -64,27 +60,38 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="语言对" class="width620">
-                <el-select
-                  v-model="form.origin"
-                  placeholder="请选择原文语言">
+                <el-select v-model="form.origin" placeholder="源语言">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
                     :label="item.chineseName"
-                    :value="item.englishName">
+                    :value="item.chineseName">
                   </el-option>
                 </el-select>
                 <label class="sep">-</label>
-                <el-select
-                  v-model="form.target"
-                  placeholder="请选择译文语言">
+                <el-select v-model="form.target" placeholder="目标语言">
                   <el-option
                     v-for="item in $store.state.languageList"
                     :key="item.id"
                     :label="item.chineseName"
-                    :value="item.englishName">
+                    :value="item.chineseName">
                   </el-option>
                 </el-select>
+              </el-form-item>
+              <el-form-item label="交付日期">
+                <el-date-picker
+                  v-model="form.rangeTime"
+                  :clearable="false"
+                  :unlink-panels="true"
+                  type="daterange"
+                  value-format="yyyy-MM-dd"
+                  range-separator="-"
+                  start-placeholder="初始时间"
+                  end-placeholder="结束时间">
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item label="销售经理">
+                <el-input v-model="form.saleManager" placeholder="请输入"></el-input>
               </el-form-item>
               <order-creater ref="orderCreater" ></order-creater>
             </el-form>
@@ -98,7 +105,8 @@
         </el-col>
       </el-row>
     </div>
-    <div class="default-style">
+    <div class="default-style"
+         v-if="$store.state.secondPermission['/resourceOrder/addExpatriateOrder'] !== undefined">
       <el-row>
         <el-col :span="24">
           <el-button type="success" icon="el-icon-circle-plus-outline" @click="$router.push('/resource/send/create')">新建订单</el-button>
@@ -113,9 +121,10 @@
         v-loading="loading"
         :data="tableData">
         <el-table-column
+          fixed
           prop="num"
           label="#"
-          width="40">
+          width="60">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -154,12 +163,12 @@
           label="客户名称">
         </el-table-column>
         <el-table-column
-          width="110"
+          min-width="110"
           prop="requiredService"
           label="所需服务">
         </el-table-column>
         <el-table-column
-          width="80"
+          min-width="80"
           prop="requiredPersonNumber"
           label="所需人数">
         </el-table-column>
@@ -170,7 +179,7 @@
           <template slot-scope="scope">{{scope.row.province + scope.row.city+ scope.row.area}}</template>
         </el-table-column>
         <el-table-column
-          width="90"
+          min-width="90"
           prop="customerQuote"
           label="客户报价">
         </el-table-column>
@@ -190,7 +199,7 @@
         <el-table-column
           show-overflow-tooltip
           min-width="110"
-          prop="subDomain"
+          prop="domain"
           label="专业领域">
         </el-table-column>
         <el-table-column
@@ -216,12 +225,12 @@
           <template slot-scope="scope">{{scope.row.customerProjectStatus | formatResourceProWpStatus}}</template>
         </el-table-column>
         <el-table-column
-          width="90"
+          min-width="90"
           label="状态">
           <template slot-scope="scope">{{scope.row.projectStatus | formatResourceProStatus}}</template>
         </el-table-column>
         <el-table-column
-          width="100"
+          min-width="100"
           prop="pm"
           label="PM">
         </el-table-column>
@@ -230,14 +239,20 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push('/resource/send/detail/'+scope.row.id+'?p='+scope.row.projectNo)">查看</el-button>
-            <el-button type="text" @click="$router.push('/resource/send/modify/'+scope.row.id)">修改</el-button>
+            <router-link :to="{path: '/resource/send/detail/'+scope.row.id+'?p='+scope.row.projectNo}"
+                         class="blank"
+                         target="_blank">查看</router-link>
             <el-button type="text"
-                       v-if="userInfo.roles.includes('ROLE_res_manager')"
-                       @click="$router.push('/resource/send/assign-pm/'+scope.row.id+'?t=3&n='+scope.row.projectNo)">分配PM</el-button>
-            <template v-if="scope.row.pm.includes(userInfo.name)">
-              <el-button type="text" @click="$router.push('/resource/send/assign/'+scope.row.id+'?t=3&n='+scope.row.projectNo)">分配</el-button>
-              <el-button type="text" @click="showSetModal(scope.row.id)">设置完成</el-button>
+                       v-if="$store.state.secondPermission['/resourceOrder/editExpatriateOrder'] !== undefined"
+                       @click="$router.push('/resource/send/modify/'+scope.row.id)">修改</el-button>
+            <el-button type="text"
+                       v-if="$store.state.secondPermission['/resourceOrder/distributePm'] !== undefined"
+                       @click="$router.push('/resource/send/assign-pm/'+scope.row.id+'?t=3&p='+scope.row.projectNo)">分配PM</el-button>
+            <template v-if="$store.state.secondPermission['/resourceOrder/distributeInterpreter'] !== undefined">
+              <el-button type="text"
+                         @click="$router.push('/resource/send/assign/'+scope.row.id+'?t=3&p='+scope.row.projectNo)">分配</el-button>
+              <el-button type="text"
+                         @click="showSetModal(scope.row.id)">设置完成</el-button>
             </template>
           </template>
         </el-table-column>
@@ -268,11 +283,13 @@
         setUrl: '/resourceOrder/updateExpatriateOrderStatus',
         form: {
           projectNum: '',
+          saleManager: '',
           origin: '',
           target: '',
           person: '',
           field: '',
           secondField: '',
+          rangeTime: '',
           resourceService: '',
           resourceCusStatus: '',
           resourceProStatus: ''
@@ -331,12 +348,15 @@
             orderPerson: this.$refs.orderCreater.form.orderCreater,
             sourceLan: this.form.origin,
             targetLan: this.form.target,
+            saleManager: this.form.saleManager,
             domain: this.form.field,
             subDomain: this.form.secondField,
             customerProjectStatus: this.form.resourceCusStatus,
             projectStatus: this.form.resourceProStatus,
             requiredService: this.form.resourceService,
-            projectNo: this.form.projectNum
+            projectNo: this.form.projectNum,
+            deliveryStartTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
+            deliveryEndTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
           if(res.data.message === 'success'){
@@ -347,6 +367,11 @@
               this.tableData.push(item)
             });
             this.totalTableList = res.data.data.totalElements
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.message
+            })
           }
           this.loading = false
         })

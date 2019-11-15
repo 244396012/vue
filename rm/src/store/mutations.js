@@ -16,10 +16,16 @@ const mutations = {
     }
     state.showModal = !state.showModal
   },
-  languageList: (state, data) => {
+  mapLanguageN_C: (state, data) => {
+    state.mapLanguageListN_C = data
+  },
+  mapLanguageC_N: (state, data) => {
+    state.mapLanguageListC_N = data
+  },
+  setLanguagePair: (state, data) => {
     state.languageList = data
   },
-  fieldList: (state, data) => {
+  setFirstDomain: (state, data) => {
     state.fieldOptions = data
   },
   setUserCode: (state, data) => {
@@ -27,6 +33,9 @@ const mutations = {
   },
   setUserInfo: (state, data) => {
     state.userInfo = data
+  },
+  setSecondPermission: (state, data) => {
+    state.secondPermission = data
   },
   updateData: (state, data) => {
     state.updateData = data

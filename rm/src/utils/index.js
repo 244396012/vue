@@ -2,37 +2,41 @@
 'use strict';
 
 const utils = {
-
-  //设置面包屑
+  //面包屑
   breadcrumb: function (route) {
     const arr = [];
     for(let i = 0, len = route.matched.length; i < len; i++){
       const item = route.matched[i];
-      arr.push(item.name ? item.name : item.meta.title);
+      arr.push({
+        name: item.name ? item.name : item.meta.title,
+        path: item.path
+      })
     }
     const breadItem = [...new Set(arr)];
     const breadObj = {};
     switch (breadItem.length){
       case 1:
-        breadObj.firstItem = breadItem[0];
+        breadObj.firstItem = breadItem[0].name;
         break;
       case 2:
-        breadObj.firstItem = breadItem[0] +' / '+ breadItem[1];
+        breadObj.firstItem = breadItem[0].name +' / '+ breadItem[1].name;
         break;
       case 3:
-        breadObj.firstItem = breadItem[0] +' / '+ breadItem[1];
-        breadObj.secondItem = breadItem[2];
+        breadObj.firstItem = `<span data="${breadItem[1].path}">${breadItem[0].name}</span>` +' / '
+                           + `<span data="${breadItem[1].path}" type="2">${breadItem[1].name}</span>`
+                           + `<i class="el-breadcrumb__separator el-icon-arrow-right"></i>`;
+        breadObj.secondItem = breadItem[2].name;
         break;
     }
     return breadObj;
   },
   //滑动解锁
   slide: function () {
-    const slideBox = document.querySelector('#slide_box');
-    const slideXbox = document.querySelector('#slide_xbox');
-    const btn = document.querySelector('#slide_btn');
-    const slideBoxWidth = slideBox.offsetWidth;
-    const btnWidth = btn.offsetWidth;
+    const slideBox = document.querySelector('#slide_box'),
+      slideXbox = document.querySelector('#slide_xbox'),
+      btn = document.querySelector('#slide_btn'),
+      slideBoxWidth = slideBox.offsetWidth,
+      btnWidth = btn.offsetWidth;
     //pc端
     btn.ondragstart = function () {
       return false;
@@ -90,6 +94,40 @@ const utils = {
         fn.call(content);
       }, delay);
     }
+  },
+  //socket
+  connectSocket: function (url, callback) {
+
+    let isConnected = null;
+    let stompClient = null,
+      userId = sessionStorage.getItem('sy_rm_admin_ud');
+
+    function connect() {
+      const socket = new SockJS(url);
+      stompClient = Stomp.over(socket);
+      stompClient.connect({}, function (frame) {
+        clearInterval(isConnected);
+        stompClient.subscribe('/topic/sendMessage/'+userId, function (res) {
+          if(res.body){
+            callback(res.body);
+          }
+        });
+      }, function (err) {
+        clearInterval(isConnected);
+        isConnected = setInterval(() => {
+          connect()
+        }, 5000);
+      })
+    }
+
+    function disconnect() {
+      if (stompClient !== null) {
+        stompClient.disconnect();
+      }
+      console.log("Disconnected");
+    }
+
+    connect();
   }
 };
 

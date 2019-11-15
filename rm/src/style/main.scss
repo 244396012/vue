@@ -1,4 +1,4 @@
-$baseColor: #41CCA6;
+$baseColor: #159396;
 
 html,body,#app{
   margin: 0;
@@ -9,7 +9,7 @@ html,body,#app{
 }
 .rm-icon-two{
   display: inline-block;
-  padding-top: 25px;
+  padding-top: 24px;
   background-repeat: no-repeat;
   background-position: top center;
   background-size: 24px 24px;
@@ -48,7 +48,7 @@ html,body,#app{
     color: #999;
     &:hover{
       cursor: pointer;
-      color: $baseColor;
+      color: #41CCA6;
     }
   }
   .rm-icon-two.work{
@@ -78,6 +78,9 @@ html,body,#app{
     overflow-y: auto;
     overflow-x: hidden;
   }
+}
+.el-header+.el-container{
+  height: calc(100% - 130px);
 }
 //aside
 .el-scrollbar.aside{
@@ -158,11 +161,56 @@ html,body,#app{
 .el-breadcrumb{
   padding-bottom: 10px;
   background: #F2F3F7;
-  .extra .el-breadcrumb__inner{
-    color: #999;
+  .el-breadcrumb__item{
+    &.extra{
+      .el-breadcrumb__inner{
+        color: #999;
+      }
+      &+span{
+        color: #606266;
+        &>span:hover{
+          cursor: pointer;
+          opacity: .85;
+        }
+      }
+    }
   }
 }
+
 .el-button--success.is-disabled{
   background: #bfbfbf!important;
   border-color: #bfbfbf!important;
+}
+
+::-webkit-scrollbar
+{
+  width: 6px;
+  height: 8px;
+  background-color: rgba(144,147,153,.2);
+}
+::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: #FFF;
+}
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: rgba(144,147,153,.2);
+  &:hover{
+    background-color: rgba(144,147,153,.5);
+  }
+}
+
+a.beian{
+  padding: 0 5px;
+  text-decoration: none;
+  &:active,
+  &:link,
+  &:focus,
+  &:visited{
+    color: #159396;
+  }
 }
