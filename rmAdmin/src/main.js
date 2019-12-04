@@ -39,6 +39,7 @@ Vue.prototype.getEle = function (str) {
   }
   return str
 };
+//重置form参数
 Vue.prototype.resetForm = function (params) {
   if(typeof params === 'undefined' || params === null){
     return params;
