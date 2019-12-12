@@ -49,19 +49,19 @@
         <div style="height: 15px"></div>
       </el-scrollbar>
       <el-main>
-        <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item class="extra">资源管理系统</el-breadcrumb-item>
-          <el-breadcrumb-item
-            v-if="breadcrumb.firstItem"
-            v-html="breadcrumb.firstItem"
-            @click.native="breadRouter"></el-breadcrumb-item>
-          <el-breadcrumb-item
-            v-if="breadcrumb.secondItem">{{breadcrumb.secondItem}}</el-breadcrumb-item>
-        </el-breadcrumb>
+        <!--<el-breadcrumb separator-class="el-icon-arrow-right">-->
+          <!--<el-breadcrumb-item class="extra">资源管理系统</el-breadcrumb-item>-->
+          <!--<el-breadcrumb-item-->
+            <!--v-if="breadcrumb.firstItem"-->
+            <!--v-html="breadcrumb.firstItem"-->
+            <!--@click.native="breadRouter"></el-breadcrumb-item>-->
+          <!--<el-breadcrumb-item-->
+            <!--v-if="breadcrumb.secondItem">{{breadcrumb.secondItem}}</el-breadcrumb-item>-->
+        <!--</el-breadcrumb>-->
         <keep-alive>
-          <router-view v-if="$route.meta.keepAlive" :key="breadKey"></router-view>
+          <router-view v-if="$route.meta.keepAlive && $route.meta.isBack" :key="breadKey"></router-view>
         </keep-alive>
-        <router-view v-if="!$route.meta.keepAlive" :key="breadKey"></router-view>
+        <router-view v-if="!($route.meta.keepAlive && $route.meta.isBack)" :key="breadKey"></router-view>
       </el-main>
     </el-container>
     <personal-info></personal-info>

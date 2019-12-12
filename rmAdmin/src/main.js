@@ -40,7 +40,7 @@ Vue.prototype.getEle = function (str) {
   return str
 };
 //重置form参数
-Vue.prototype.resetForm = function (params) {
+Vue.prototype.resetForm = function (params, callback) {
   if(typeof params === 'undefined' || params === null){
     return params;
   }
@@ -55,7 +55,8 @@ Vue.prototype.resetForm = function (params) {
       }
     }
   }
-  store.state.resetSearchState = true
+  store.state.resetSearchState = true;
+  callback()
 };
 
 /*
@@ -78,15 +79,20 @@ router.beforeEach((to, from, next) => {
   next()
 });
 
-//keep-alive，某些列表页面，添加状态缓存，进入详情页返回后，保持原状态
+/*
+* keep-alive，部分列表页面添加状态缓存，进入详情页返回时保持原状态
+* 跳转到其他列表页后，恢复初始状态
+* */
 Vue.mixin({
   beforeRouteLeave: function(to, from, next) {
     if(to.meta['keepAlive'] !== undefined){
-      if(from.path.includes(to.path) && to.path !== from.path){
-        to.meta.keepAlive = true;
+      //进入详情后，返回缓存，isBack设为true（默认为false）
+      if(from.path.includes(to.path) && to.path !== from.path && from.meta.title.includes('详情')){
+        to.meta.isBack = true
       }else{
-        if(this.form && typeof(this.form) === 'Object'){
-          this.resetForm(this.form)
+        to.meta.isBack = false;
+        if(this.form && typeof(this.form) === 'object'){
+          this.resetForm(this.form, this.resetKeepAliveSearch)
         }
       }
     }

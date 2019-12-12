@@ -14,7 +14,7 @@ const routes = [
         children: [
           {
             path: '/onlineTest/choice',
-            meta: { title: '选择题管理', keepAlive: true },
+            meta: { title: '选择题管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/onlineTest/choice/index')), 'onlineTest')
           },
           {
@@ -41,7 +41,7 @@ const routes = [
         children: [
           {
             path: '/onlineTest/trans',
-            meta: { title: '翻译题管理', keepAlive: true },
+            meta: { title: '翻译题管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/onlineTest/translation/index')), 'onlineTest')
           },
           {
@@ -76,7 +76,7 @@ const routes = [
         children: [
           {
             path: '/onlineTestResult/choice',
-            meta: { title: '选择题评估', keepAlive: true },
+            meta: { title: '选择题评估', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/onlineTestResult/choice/index')), 'onlineTestResult')
           },
           {
@@ -93,7 +93,7 @@ const routes = [
         children: [
           {
             path: '/onlineTestResult/trans',
-            meta: { title: '翻译题评估', keepAlive: true },
+            meta: { title: '翻译题评估', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/onlineTestResult/translation/index')), 'onlineTestResult')
           },
           {
@@ -115,7 +115,7 @@ const routes = [
         children: [
           {
             path: '/onlineTestResult/assign',
-            meta: { title: '分配审核人', keepAlive: true },
+            meta: { title: '分配审核人', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/onlineTestResult/assign/index')), 'onlineTestResult')
           },
           {
@@ -157,7 +157,7 @@ const routes = [
         children: [
           {
             path: '/parttimeUser/preResource',
-            meta: { title: '准用户列表', keepAlive: true },
+            meta: { title: '准用户列表', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/preResource/index')), 'parttimeUser')
           },
           {
@@ -231,7 +231,7 @@ const routes = [
         children: [
           {
             path: '/parttimeTeam/preTeam',
-            meta: { title: '准团队列表', keepAlive: true },
+            meta: { title: '准团队列表', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/parttimeTeam/team/preIndex')), 'parttimeTeam')
           },
           {
@@ -261,7 +261,7 @@ const routes = [
         children: [
           {
             path: '/resource/written',
-            meta: { title: '笔译列表', keepAlive: true },
+            meta: { title: '笔译列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/resource/written/index')), 'resource')
           },
           {
@@ -298,7 +298,7 @@ const routes = [
         children: [
           {
             path: '/resource/meeting',
-            meta: { title: '会展列表', keepAlive: true },
+            meta: { title: '会展列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/resource/meeting/index')), 'resource')
           },
           {
@@ -335,7 +335,7 @@ const routes = [
         children: [
           {
             path: '/resource/send',
-            meta: { title: '外派列表', keepAlive: true },
+            meta: { title: '外派列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/resource/send/index')), 'resource')
           },
           {
@@ -372,7 +372,7 @@ const routes = [
         children: [
           {
             path: '/resource/train',
-            meta: { title: '培训列表', keepAlive: true },
+            meta: { title: '培训列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/resource/train/index')), 'resource')
           },
           {
@@ -412,7 +412,7 @@ const routes = [
         children: [
           {
             path: '/article/interpreter',
-            meta: { title: '译员文章管理', keepAlive: true },
+            meta: { title: '译员文章管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/article/interpreter/index')), 'article')
           },
           {
@@ -439,7 +439,7 @@ const routes = [
         children: [
           {
             path: '/article/official',
-            meta: { title: '官方文章管理', keepAlive: true },
+            meta: { title: '官方文章管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/article/official/index')), 'article')
           },
           {
@@ -466,7 +466,7 @@ const routes = [
         children: [
           {
             path: '/article/message',
-            meta: { title: '系统消息管理', keepAlive: true },
+            meta: { title: '系统消息管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/article/message/index')), 'article')
           },
           {
@@ -501,7 +501,7 @@ const routes = [
         children: [
           {
             path: '/operation/activity',
-            meta: { title: '活动管理', keepAlive: true },
+            meta: { title: '活动管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/operation/activity/index')), 'operation')
           },
           {
@@ -523,7 +523,7 @@ const routes = [
         children: [
           {
             path: '/operation/advice',
-            meta: { title: '意见反馈', keepAlive: true },
+            meta: { title: '意见反馈', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/operation/advice/index')), 'operation')
           },
           {
@@ -548,7 +548,7 @@ const routes = [
         children: [
           {
             path: '/finance/settlement',
-            meta: { title: '译员结算管理', keepAlive: true },
+            meta: { title: '译员结算管理', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/index')), 'finance')
           },
           {
@@ -565,7 +565,7 @@ const routes = [
         children: [
           {
             path: '/finance/expenses',
-            meta: { title: '兼职费用', keepAlive: true },
+            meta: { title: '兼职费用', keepAlive: true, isBack: false },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/expenses/index')), 'finance')
           },
           {

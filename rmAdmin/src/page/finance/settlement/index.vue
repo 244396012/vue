@@ -42,7 +42,7 @@
                           end-placeholder="结束时间">
           </el-date-picker>
           <el-button type="success" @click="extraSearch">查 询</el-button>
-          <el-button class="reset" @click="extraResearch">重 置</el-button>
+          <el-button class="reset" @click="resetKeepAliveSearch">重 置</el-button>
         </div>
         <div class="button"
              v-if="$store.state.secondPermission['/financeNew/batchSubmit'] !== undefined">
@@ -280,7 +280,7 @@
         this.showProvide = false;
         this.doSearch(this.showTableList)
       },
-      extraResearch (){
+      resetKeepAliveSearch (){
         this.showLock = false;
         this.showSettle = false;
         this.showProvide = false;

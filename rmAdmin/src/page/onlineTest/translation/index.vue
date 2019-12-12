@@ -66,7 +66,7 @@
             </el-option>
           </el-select>
           <el-button type="success" @click="doSearch(showTableList)">查 询</el-button>
-          <el-button class="reset" @click="doExtraSearch">重 置</el-button>
+          <el-button class="reset" @click="resetKeepAliveSearch">重 置</el-button>
         </div>
         <div class="button">
           <el-button type="success" @click.native="$router.push('/onlineTest/trans/create')">新建试题</el-button>
@@ -232,7 +232,7 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
-      doExtraSearch (){
+      resetKeepAliveSearch (){
         this.formSelect.secondOptions = [];
         this.resetSearch(this.form, this.showTableList)
       },

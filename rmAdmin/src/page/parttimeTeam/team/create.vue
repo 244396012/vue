@@ -957,8 +957,8 @@
             if(this.ruleForm.partTimeType.includes('搭建')){
               Object.assign(build, {
                 "buildProvince": this.ruleForm.buildPair.province,
-                "buildCity": this.ruleForm.buildPair.city,
-                "buildCounty": this.ruleForm.buildPair.area,
+                "buildCity": this.ruleForm.buildPair.city || '',
+                "buildCounty": this.ruleForm.buildPair.area || '',
                 "buildEquipInfo": this.ruleForm.buildPair.languagePair,
                 "buildRemark": this.ruleForm.buildPair.remark
               });
@@ -982,7 +982,7 @@
               "fullTimeNumber": this.ruleForm.memberNum,
               "idNo": this.ruleForm.identyNo,
               "invoiceType": this.ruleForm.paperType,
-              "location": this.ruleForm.province+' '+this.ruleForm.city+' '+this.ruleForm.area,
+              "location": this.ruleForm.province+' '+ (this.ruleForm.city || '') +' '+ (this.ruleForm.area || ''),
               "partTimeType": this.ruleForm.partTimeType.toString(),
               "primaryContactEmail": this.ruleForm.primaryEmail,
               "primaryContactMobile": this.ruleForm.primaryPhone,

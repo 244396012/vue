@@ -4,7 +4,7 @@
       <div class="detail" style="padding-bottom: 5px">
         <el-row class="exact">
           <el-col :span="6"><div class="grid-content bg-purple"><b style="font-size: 18px;">
-            {{userDetail.userName}}</b>{{userDetail.userCode && '（'+userDetail.userCode+'）'}}</div></el-col>
+            {{userDetail.userName}}</b>{{'（'+$route.query.code+'）'}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>译员状态：</b>{{userDetail.userExtension && userDetail.userExtension.translatorIdleStatus}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>兼职类型：</b>{{userDetail.userExtension && userDetail.userExtension.skills}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple"></div><b>译侠值：</b>{{userDetail.yxTotalScore?userDetail.yxTotalScore:'--'}}分</el-col>
@@ -25,7 +25,7 @@
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">基本信息</p>
               <table class="parttime-table">
                 <tr>
-                  <td class="name">译员编号</td><td>{{userDetail.userCode}}</td>
+                  <td class="name">译员编号</td><td>{{$route.query.code}}</td>
                   <td class="name">译员昵称</td><td>{{userDetail.nickName}}</td>
                   <td class="name">真实姓名</td><td>{{userDetail.userName}}</td>
                   <td class="name">性别</td><td>{{userDetail.sex}}</td>
@@ -56,6 +56,9 @@
                   <td class="name">座机</td><td>{{baseinfo.contactObj['座机']}}</td>
                   <td class="name">Skype</td><td>{{baseinfo.contactObj['Skype']}}</td>
                 </tr>
+                <tr>
+                  <td class="name">备注</td><td colspan="7">{{userDetail.userExtension && userDetail.userExtension.remark}}</td>
+                </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">账号信息</p>
               <table class="parttime-table">
@@ -73,18 +76,7 @@
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">简历信息</p>
               <table class="parttime-table">
-                <template v-if="userDetail.userExtension && userDetail.userExtension.userSource === '绿通用户'">
-                  <tr>
-                    <td class="name" rowspan="2">学历信息</td>
-                    <td class="name">毕业院校</td><td>{{userDetail.educationList[0].graduatedSchoolName}}（{{userDetail.educationList[0].schoolType}}）</td>
-                    <td class="name">专业</td><td>{{userDetail.educationList[0].major}}</td>
-                    <td class="name">学历</td><td>{{userDetail.educationList[0].degree}}</td>
-                  </tr>
-                  <tr>
-                    <td class="name">毕业时间</td><td colspan="5">{{userDetail.educationList[0].graduatedDate.slice(0,7)}}</td>
-                  </tr>
-                </template>
-                <template v-else>
+                <template>
                   <template v-for="(item,index) in userDetail.educationList">
                     <tr>
                       <td class="name"
@@ -92,7 +84,7 @@
                           v-if="index === 0"
                           :rowspan="userDetail.educationList.length*2">学历信息</td>
                       <td class="name">毕业院校</td><td style="padding: 0;">
-                        <span>{{item.graduatedSchoolName}}（{{item.schoolType}}）</span>
+                        <span>{{item.graduatedSchoolName}} {{item.schoolType}}</span>
                       </td>
                         <td class="name">专业</td><td style="padding: 0;">
                         <span>{{item.major}}</span>
@@ -405,7 +397,6 @@
             this.baseinfo.email = _data.email;
             this.baseinfo.sex = _data.sex;
             if(_data.userExtension){
-              this.skillDetail.userSource = _data.userExtension && _data.userExtension.userSource || '';
               this.skillDetail.userExtendList = _data.userExtendList;
               this.skillDetail.transYear = _data.userExtension.translateYear;
               this.skillDetail.transDate = _data.userExtension.translatorDate;

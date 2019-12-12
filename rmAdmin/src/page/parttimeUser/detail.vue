@@ -140,72 +140,27 @@
                 </template>
               </p>
               <table class="parttime-table">
-                <template v-if="userDetail.userExtension && userDetail.userExtension.userSource === '绿通用户' && userDetail.educationList.length>0">
+                <template v-for="(item,index) in userDetail.educationList">
                   <tr>
-                    <td class="name" rowspan="2">学历信息</td>
-                    <td class="name">毕业院校</td>
-                    <td style="padding: 0;">
-                      <span v-if="resumeinfo.show">
-                        {{userDetail.educationList[0].graduatedSchoolName}}（{{userDetail.educationList[0].schoolType}}）
-                      </span>
-                      <template v-else>
-                        <input v-model="resumeinfo.school" type="text" style="width: 51%">
-                        <el-select v-model="resumeinfo.schoolType" style="width: 45%">
-                          <el-option value="国内">国内</el-option>
-                          <el-option value="国外">国外</el-option>
-                        </el-select>
-                      </template>
-                    </td>
+                    <td class="name"
+                        style="font-size: 14px"
+                        v-if="index === 0"
+                        :rowspan="userDetail.educationList.length*2">学历信息</td>
+                    <td class="name">毕业院校</td><td style="padding: 0;">
+                    <span>{{item.graduatedSchoolName}} {{item.schoolType}}</span>
+                  </td>
                     <td class="name">专业</td><td style="padding: 0;">
-                      <span v-if="resumeinfo.show">{{userDetail.educationList[0].major}}</span>
-                      <input v-else v-model="resumeinfo.profession" type="text">
-                    </td>
+                    <span>{{item.major}}</span>
+                  </td>
                     <td class="name">学历</td><td style="padding: 0;">
-                      <span v-if="resumeinfo.show">{{userDetail.educationList[0].degree}}</span>
-                      <el-select v-else v-model="resumeinfo.record" placeholder="学历">
-                        <el-option
-                          v-for="item in recordOptions"
-                          :key="item"
-                          :label="item"
-                          :value="item"></el-option>
-                      </el-select>
-                    </td>
+                    <span>{{item.degree}}</span>
+                  </td>
                   </tr>
                   <tr>
                     <td class="name">毕业时间</td><td colspan="5" style="padding: 0;">
-                    <span v-if="resumeinfo.show">{{userDetail.educationList[0].graduatedDate.slice(0,7)}}</span>
-                    <el-date-picker v-else
-                                    v-model="resumeinfo.graduateTime"
-                                    type="month"
-                                    value-format="yyyy-MM"
-                                    placeholder="毕业时间">
-                    </el-date-picker>
+                    <span>{{item.graduatedDate.slice(0,7)}}</span>
                   </td>
                   </tr>
-                </template>
-                <template v-else>
-                  <template v-for="(item,index) in userDetail.educationList">
-                    <tr>
-                      <td class="name"
-                          style="font-size: 14px"
-                          v-if="index === 0"
-                          :rowspan="userDetail.educationList.length*2">学历信息</td>
-                      <td class="name">毕业院校</td><td style="padding: 0;">
-                        <span>{{item.graduatedSchoolName}}（{{item.schoolType}}）</span>
-                      </td>
-                        <td class="name">专业</td><td style="padding: 0;">
-                        <span>{{item.major}}</span>
-                      </td>
-                        <td class="name">学历</td><td style="padding: 0;">
-                        <span>{{item.degree}}</span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="name">毕业时间</td><td colspan="5" style="padding: 0;">
-                        <span>{{item.graduatedDate.slice(0,7)}}</span>
-                      </td>
-                    </tr>
-                  </template>
                 </template>
                 <tr>
                   <td class="name">技能证书</td>

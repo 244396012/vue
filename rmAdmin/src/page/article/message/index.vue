@@ -19,7 +19,7 @@
             end-placeholder="结束时间">
           </el-date-picker>
           <el-button type="success" @click="doSearch(showTableList)">查 询</el-button>
-          <el-button class="reset" @click="resetSearch(form,showTableList)">重 置</el-button>
+          <el-button class="reset" @click="resetKeepAliveSearch">重 置</el-button>
         </div>
         <div class="button">
           <el-button type="success"
@@ -118,6 +118,9 @@
       this.showTableList()
     },
     methods: {
+      resetKeepAliveSearch (){
+        this.resetSearch(this.form, this.showTableList)
+      },
       //展示表格数据
       showTableList (config){
         config = config || {};

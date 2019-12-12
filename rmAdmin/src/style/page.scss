@@ -258,6 +258,7 @@ $baseFontSize: 12px;
     background: #eee;
     color: #000;
     border-bottom: 1px solid $baseColor!important;
+    user-select: text!important;
   }
   .el-table td{
     padding: 5px 0 4px;

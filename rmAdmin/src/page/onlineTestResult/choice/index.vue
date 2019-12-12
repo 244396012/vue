@@ -48,7 +48,7 @@
             </el-option>
           </el-select>
           <el-button type="success" @click="doSearch(showTableList)">查 询</el-button>
-          <el-button class="reset" @click="resetSearch(form,showTableList)">重 置</el-button>
+          <el-button class="reset" @click="resetKeepAliveSearch">重 置</el-button>
         </div>
         <div class="button"></div>
       </div>
@@ -148,6 +148,9 @@
       this.showTableList()
     },
     methods: {
+      resetKeepAliveSearch (){
+        this.resetSearch(this.form, this.showTableList)
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val
       },

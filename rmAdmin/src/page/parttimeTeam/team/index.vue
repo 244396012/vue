@@ -214,7 +214,6 @@
         <pagination :callback="showTableList" :total="totalTableList"></pagination>
       </template>
     </div>
-    <import-modal :callback="showTableList"></import-modal>
     <reset-pwd :callback="getResetPermission" :userId="userId" :permission="btnPermission"></reset-pwd>
   </div>
 </template>
@@ -223,7 +222,6 @@
   import pagination from '@/components/pagination';
   import parttimType from '../component/parttimeType';
   import resetPwd from '@/page/parttimeUser/component/resetPwd';
-  import importModal from './modal_import';
   import { mapState } from 'vuex';
   import { setAccountStatus } from "@/common/operate";
   import { formatAccountStatus, hiddenAccount } from '@/common/filter';
@@ -231,7 +229,6 @@
     components: {
       pagination,
       'parttime-type': parttimType,
-      'import-modal': importModal,
       'reset-pwd': resetPwd
     },
     data (){

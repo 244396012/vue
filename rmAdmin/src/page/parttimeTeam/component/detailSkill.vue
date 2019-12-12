@@ -255,7 +255,7 @@
       </template></p>
     <table class="parttime-table">
       <tr>
-        <td class="name">{{huizhanDetail.auditTime?'成为DTP时间':'申请技能时间'}}</td>
+        <td class="name">{{huizhanDetail.auditTime?'成为会展时间':'申请技能时间'}}</td>
         <td colspan="3">{{huizhanDetail.auditTime?huizhanDetail.auditTime:huizhanDetail.gmtCreate}}</td>
         <td class="name">口译类型</td><td style="padding: 0">
         <span v-if="huizhan.show">{{huizhanDetail.interpretationTypes&&JSON.parse(huizhanDetail.interpretationTypes).toString()}}</span>
@@ -402,7 +402,7 @@
       </template></p>
     <table class="parttime-table">
       <tr>
-        <td class="name">{{shebeiDetail.auditTime?'成为DTP时间':'申请技能时间'}}</td>
+        <td class="name">{{shebeiDetail.auditTime?'成为设备时间':'申请技能时间'}}</td>
         <td>{{shebeiDetail.auditTime?shebeiDetail.auditTime:shebeiDetail.gmtCreate}}</td>
         <td class="name">备注</td><td colspan="2" style="padding: 0">
         <span v-if="shebei.show">{{shebeiDetail.remark}}</span>
