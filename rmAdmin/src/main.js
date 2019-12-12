@@ -91,7 +91,7 @@ Vue.mixin({
         to.meta.isBack = true
       }else{
         to.meta.isBack = false;
-        if(this.form && typeof(this.form) === 'object'){
+        if(this.form && typeof(this.form) === 'object' && typeof(this.resetKeepAliveSearch) === 'function'){
           this.resetForm(this.form, this.resetKeepAliveSearch)
         }
       }
