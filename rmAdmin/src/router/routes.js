@@ -157,7 +157,7 @@ const routes = [
         children: [
           {
             path: '/parttimeUser/preResource',
-            meta: { title: '准用户列表', keepAlive: true, isBack: false },
+            meta: { title: '准用户列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/parttimeUser/preResource/index')), 'parttimeUser')
           },
           {
@@ -231,7 +231,7 @@ const routes = [
         children: [
           {
             path: '/parttimeTeam/preTeam',
-            meta: { title: '准团队列表', keepAlive: true, isBack: false },
+            meta: { title: '准团队列表' },
             component: resolve => require.ensure([], () => resolve(require('@/page/parttimeTeam/team/preIndex')), 'parttimeTeam')
           },
           {
