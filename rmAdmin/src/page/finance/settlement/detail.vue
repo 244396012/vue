@@ -8,7 +8,7 @@
           <el-col :span="6"><div class="grid-content bg-purple"><b>登录账号：</b>{{account.account}}</div></el-col>
         </el-row>
         <el-row class="exact mg-b-0">
-          <el-col :span="18">
+          <el-col :span="15">
             <table class="parttime-table"
                    v-if="accountAmount.cNY_TotalIncome || accountAmount.uSD_TotalIncome || accountAmount.eUR_TotalIncome || accountAmount.gBP_TotalIncome">
               <thead>
@@ -210,7 +210,13 @@
                 show-overflow-tooltip
                 min-width="80"
                 prop="taskType"
-                label="任务类型">
+                label="兼职类型">
+              </el-table-column>
+              <el-table-column
+                show-overflow-tooltip
+                min-width="80"
+                prop="businessType"
+                label="业务类型">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -235,9 +241,21 @@
                 </template>
               </el-table-column>
               <el-table-column
+                show-overflow-tooltip
+                min-width="110"
+                label="支付金额">
+                <template slot-scope="scope">{{scope.row.last | formatLast}}</template>
+              </el-table-column>
+              <el-table-column
                 min-width="80"
                 prop="currencyName"
                 label="币种">
+              </el-table-column>
+              <el-table-column
+                show-overflow-tooltip
+                min-width="100"
+                prop="settleYearMonth"
+                label="结算时间">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
@@ -302,31 +320,37 @@
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="90"
                 prop="exchangeType"
                 label="变动类型">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="90"
                 prop="payType"
                 label="结算方式">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="120"
                 prop="taskNo"
-                label="任务编号">
+                label="订单/任务编号">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="100"
+                min-width="120"
                 prop="settleNo"
                 label="结算编号">
               </el-table-column>
               <el-table-column
                 show-overflow-tooltip
-                min-width="110"
+                min-width="100"
+                prop="settleYearMonth"
+                label="结算时间">
+              </el-table-column>
+              <el-table-column
+                show-overflow-tooltip
+                min-width="100"
                 prop="bank"
                 label="银行名称">
               </el-table-column>
@@ -386,7 +410,16 @@
     },
     filters: {
       formatPayStatus: formatPayStatus,
-      formatMoneyType: formatMoneyType
+      formatMoneyType: formatMoneyType,
+      formatLast (last){
+        if(last === null){
+          return '--';
+        }else if(last === '0.00'){
+          return '已支付';
+        }else {
+          return '待支付' + last;
+        }
+      }
     },
     watch: {
       taskNo (newVal){
@@ -491,12 +524,12 @@
         }).then(res => {
           if(res.data.message === 'success'){
             this.accountDetail.tableData = [];
-            const list = res.data.data.results;
+            const list = res.data.data.pageResults.results;
             list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               this.accountDetail.tableData.push(item)
             });
-            this.accountDetail.total = res.data.data.totalCount
+            this.accountDetail.total = res.data.data.pageResults.totalCount
           }
           this.loading = false;
         })

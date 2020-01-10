@@ -67,7 +67,7 @@
               </el-table-column>
             </el-table>
             <template v-if="data_rm.totalTableList > 0">
-              <pagination :callback="showTableList_rm" :total="data_rm.totalTableList"></pagination>
+              <pagination :callback="showTableList_total" :total="data_rm.totalTableList"></pagination>
             </template>
           </div>
         </el-tab-pane>

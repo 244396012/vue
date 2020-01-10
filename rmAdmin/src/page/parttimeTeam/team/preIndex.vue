@@ -3,6 +3,7 @@
     <div class="default-style default-form">
       <div class="filter-row">
         <div class="search">
+          <el-input v-model="form.userCode" placeholder="团队ID"></el-input>
           <el-input v-model="form.name" placeholder="团队名称"></el-input>
           <el-select v-model="form.status" placeholder="审核状态">
             <el-option
@@ -27,7 +28,7 @@
         <div class="button"
              v-if="$store.state.secondPermission['/team/addTeamBackground'] !== undefined">
           <el-button type="success" @click="$router.push('/parttimeTeam/preTeam/create')">添加兼职团队</el-button>
-          <el-button @click="$store.commit('showModal')">批量添加团队</el-button>
+          <!--<el-button @click="$store.commit('showModal')">批量添加团队</el-button>-->
         </div>
       </div>
     </div>
@@ -46,13 +47,13 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="90"
           prop="userCode"
           label="团队ID">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="120"
           prop="teamName"
           label="团队名称">
         </el-table-column>
@@ -75,15 +76,9 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="100"
+          min-width="110"
           prop="primaryContactName"
           label="主要联系人">
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          min-width="120"
-          label="联系方式">
-          <template slot-scope="scope">{{scope.row.primaryContactMobile | hiddenAccount}}</template>
         </el-table-column>
         <el-table-column
           min-width="80"
@@ -168,7 +163,7 @@
   import pagination from '@/components/pagination';
   import importModal from './modal_import';
   import { setAuditStatus, setAccountStatus } from "@/common/operate";
-  import { formatAccountStatus,hiddenAccount } from '@/common/filter';
+  import { formatAccountStatus } from '@/common/filter';
   export default {
     components: {
       pagination,
@@ -177,6 +172,7 @@
     data (){
       return {
         form: {
+          userCode: '',
           name: '',
           status: '',
           rangeTime: ''
@@ -195,8 +191,7 @@
       this.showTableList()
     },
     filters: {
-      formatStatus: formatAccountStatus,
-      hiddenAccount: hiddenAccount
+      formatStatus: formatAccountStatus
     },
     methods: {
       //加载表格数据
@@ -210,6 +205,7 @@
             page: config.pageNo-1,
             limit: config.pageSize,
             teamName: this.form.name,
+            teamId: this.form.userCode,
             auditStatus: this.form.status,
             dateTimeStart: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
             dateTimeEnd: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''

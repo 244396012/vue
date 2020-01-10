@@ -1,15 +1,18 @@
 <template>
   <div class="page">
     <div class="default-style">
-      <div class="detail" style="padding-bottom: 5px">
-        <el-row class="exact">
-          <el-col :span="6"><div class="grid-content bg-purple"><b style="font-size: 18px;">
-            {{userDetail.userName}}</b>{{'（'+$route.query.code+'）'}}</div></el-col>
+      <div class="detail" style="padding-bottom: 15px;padding-top: 15px">
+        <el-row class="exact" style="margin-bottom: 10px">
+          <el-col :span="6">
+            <div class="grid-content bg-purple">
+              <b style="font-size: 18px;">{{userDetail.userName}}</b>{{'（'+$route.query.code+'）'}}
+            </div>
+          </el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>译员状态：</b>{{userDetail.userExtension && userDetail.userExtension.translatorIdleStatus}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>兼职类型：</b>{{userDetail.userExtension && userDetail.userExtension.skills}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple"></div><b>译侠值：</b>{{userDetail.yxTotalScore?userDetail.yxTotalScore:'--'}}分</el-col>
         </el-row>
-        <el-row class="exact">
+        <el-row class="exact" style="margin-bottom: 0px">
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>接单数：</b>{{accountDetail.receiptCount}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple"><b>翻译字数：</b>{{accountDetail.wordCount?accountDetail.wordCount:'--'}}字</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>任务平均分：</b>{{accountDetail.orderAverageScore?accountDetail.orderAverageScore:'--'}}分</div></el-col>
@@ -23,18 +26,20 @@
           <el-tab-pane label="译员信息" name="first">
             <div class="detail">
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">基本信息
-                <template v-if="userDetail.userExtension && userDetail.userExtension.userSource === '绿通用户'">
-                  <template v-if="baseinfo.show">
-                    <el-button type="success" icon="el-icon-edit"
-                               style="float: right"
-                               @click="modifyBaseInit">修改</el-button>
-                  </template>
-                  <template v-else>
-                    <el-button type="success"
-                               @click="modifyBase"
-                               :disabled="baseBtn.disabled"
-                               style="float: right;margin-left: 10px">保存</el-button>
-                    <el-button @click="baseinfo.show = true" style="float: right;">取消</el-button>
+                <template v-if="$store.state.secondPermission['/userExtension/addBasicInfo'] !== undefined">
+                  <template v-if="userDetail.userExtension && userDetail.userExtension.userSource === '绿通用户'">
+                    <template v-if="baseinfo.show">
+                      <el-button type="success" icon="el-icon-edit"
+                                 style="float: right"
+                                 @click="modifyBaseInit">修改</el-button>
+                    </template>
+                    <template v-else>
+                      <el-button type="success"
+                                 @click="modifyBase"
+                                 :disabled="baseBtn.disabled"
+                                 style="float: right;margin-left: 10px">保存</el-button>
+                      <el-button @click="baseinfo.show = true" style="float: right;">取消</el-button>
+                    </template>
                   </template>
                 </template>
               </p>
@@ -92,21 +97,22 @@
                   </td>
                 </tr>
                 <tr>
-                  <td class="name">手机</td><td>{{userDetail.telephone}}</td>
-                  <td class="name">邮箱</td><td>{{userDetail.email}}</td>
+                  <td class="name">手机帐号</td><td>{{userDetail.telephone}}</td>
+                  <td class="name">邮箱帐号</td><td>{{userDetail.email}}</td>
                   <td class="name">常住地址</td>
                   <td colspan="3" style="padding: 0">
                     <span>{{userDetail.userExtension && userDetail.userExtension.permanentAddress}}</span>
                   </td>
                 </tr>
                 <tr>
+                  <td class="name">手机号</td><td>{{baseinfo.contactObj['手机号']}}</td>
                   <td class="name">微信</td><td>{{baseinfo.contactObj['微信']}}</td>
                   <td class="name">QQ</td><td>{{baseinfo.contactObj['QQ']}}</td>
                   <td class="name">座机</td><td>{{baseinfo.contactObj['座机']}}</td>
-                  <td class="name">Skype</td><td>{{baseinfo.contactObj['Skype']}}</td>
                 </tr>
                 <tr>
-                  <td class="name">备注</td><td colspan="7">{{userDetail.userExtension && userDetail.userExtension.remark}}</td>
+                  <td class="name">Skype</td><td>{{baseinfo.contactObj['Skype']}}</td>
+                  <td class="name">备注</td><td colspan="5">{{userDetail.userExtension && userDetail.userExtension.remark}}</td>
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">账号信息</p>
@@ -123,22 +129,7 @@
                   <td class="name">绑定邮箱</td><td colspan="3">{{userDetail.email}}</td>
                 </tr>
               </table>
-              <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">简历信息
-                <template v-if="userDetail.userExtension && userDetail.userExtension.userSource === '绿通用户'">
-                  <template v-if="resumeinfo.show">
-                    <el-button type="success" icon="el-icon-edit"
-                               style="float: right"
-                               @click="resumeinfo.show = false">修改</el-button>
-                  </template>
-                  <template v-else>
-                    <el-button type="success"
-                               @click="modifyResume"
-                               :disabled="resumeBtn.disabled"
-                               style="float: right;margin-left: 10px">保存</el-button>
-                    <el-button @click="resumeinfo.show = true" style="float: right;">取消</el-button>
-                  </template>
-                </template>
-              </p>
+              <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">简历信息</p>
               <table class="parttime-table">
                 <template v-for="(item,index) in userDetail.educationList">
                   <tr>
@@ -212,21 +203,23 @@
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">身份认证
-                <template v-if="identy.show">
-                  <el-button type="success" icon="el-icon-edit"
-                             style="float: right"
-                             @click="identy.show = false">帮助认证</el-button>
+                <template v-if="$store.state.secondPermission['/userExtension/identityUser'] !== undefined">
+                  <template v-if="identy.show">
+                    <el-button type="success" icon="el-icon-edit"
+                               style="float: right"
+                               @click="identy.show = false">帮助认证</el-button>
+                  </template>
+                  <template v-else>
+                    <el-button type="success"
+                               @click="modifyIdenty"
+                               :disabled="identyBtn.disabled"
+                               style="float: right;margin-left: 10px">保存</el-button>
+                    <el-button @click="identy.show = true" style="float: right;">取消</el-button>
+                  </template>
+                  <el-button type="success" icon="el-icon-camera"
+                             style="float: right;margin-right: 10px"
+                             @click="$store.commit('showModal')">免认证</el-button>
                 </template>
-                <template v-else>
-                  <el-button type="success"
-                             @click="modifyIdenty"
-                             :disabled="identyBtn.disabled"
-                             style="float: right;margin-left: 10px">保存</el-button>
-                  <el-button @click="identy.show = true" style="float: right;">取消</el-button>
-                </template>
-                <el-button type="success" icon="el-icon-camera"
-                           style="float: right;margin-right: 10px"
-                           @click="$store.commit('showModal')">免认证</el-button>
               </p>
               <table class="parttime-table">
                 <tr>
@@ -265,8 +258,8 @@
                     <tr>
                       <td class="name" rowspan="2" style="font-size: 14px">银行卡结算</td>
                       <td class="name">真实姓名</td><td>{{item.realName}}</td>
-                      <td class="name">证件号码</td><td>{{userDetail.userExtension.certificateNumFuzzy}}</td>
-                      <td class="name">银行卡号</td><td>{{item.settleAccountFuzzy}}</td>
+                      <td class="name">证件号码</td><td>{{userDetail.userExtension.certificateNum}}</td>
+                      <td class="name">银行卡号</td><td>{{item.settleAccount}}</td>
                     </tr>
                     <tr>
                       <td class="name">开户银行</td><td>{{item.bankDeposit}}</td>
@@ -277,8 +270,8 @@
                     <tr>
                       <td class="name" rowspan="1" style="font-size: 14px">{{item.selttleName}}结算</td>
                       <td class="name">真实姓名</td><td>{{item.realName}}</td>
-                      <td class="name">证件号码</td><td>{{userDetail.userExtension.certificateNumFuzzy}}</td>
-                      <td class="name">{{item.selttleName}}账号</td><td>{{item.settleAccountFuzzy}}</td>
+                      <td class="name">证件号码</td><td>{{userDetail.userExtension.certificateNum}}</td>
+                      <td class="name">{{item.selttleName}}账号</td><td>{{item.settleAccount}}</td>
                     </tr>
                   </template>
                 </template>
@@ -286,23 +279,28 @@
                   <td class="name">当前结算类型</td>
                   <td colspan="6">
                      <span style="vertical-align: -6px;padding: 0"
-                           v-if="payWay.show">{{userDetail.userExtension && userDetail.userExtension.defaultSettleType !== ''?userDetail.userExtension.defaultSettleType:'默认'}}</span>
+                           v-if="payWay.show">{{userDetail.userExtension && userDetail.userExtension.defaultSettleType !== ''?userDetail.userExtension.defaultSettleType:'系统流程'}}</span>
                     <el-select v-else v-model="payWay.type" placeholder="结算类型" style="width: 150px">
-                      <el-option value="" label="默认"></el-option>
+                      <el-option value="" label="系统流程"></el-option>
+                      <el-option value="云账户" label="云账户"></el-option>
+                      <el-option value="社保51" label="社保51"></el-option>
+                      <el-option value="PayPal" label="PayPal"></el-option>
                       <el-option value="校企合作" label="校企合作"></el-option>
                       <el-option value="非全日制" label="非全日制"></el-option>
                     </el-select>
-                    <template v-if="payWay.show">
-                      <el-button type="success" icon="el-icon-edit"
-                                 style="float: right"
-                                 @click="payWay.show = false">修改</el-button>
-                    </template>
-                    <template v-else>
-                      <el-button type="success"
-                                 @click="modifyPayWay"
-                                 :disabled="payWayBtn.disabled"
-                                 style="float: right;margin-left: 10px">保存</el-button>
-                      <el-button @click="payWay.show = true" style="float: right;">取消</el-button>
+                    <template v-if="$store.state.secondPermission['/financeNew/setDefaultSettleType'] !== undefined">
+                      <template v-if="payWay.show">
+                        <el-button type="success" icon="el-icon-edit"
+                                   style="float: right"
+                                   @click="payWay.show = false">修改</el-button>
+                      </template>
+                      <template v-else>
+                        <el-button type="success"
+                                   @click="modifyPayWay"
+                                   :disabled="payWayBtn.disabled"
+                                   style="float: right;margin-left: 10px">保存</el-button>
+                        <el-button @click="payWay.show = true" style="float: right;">取消</el-button>
+                      </template>
                     </template>
                   </td>
                 </tr>
@@ -311,8 +309,8 @@
               <el-table
                 border
                 stripe
-                :max-height="$store.state.tableHeight"
                 v-loading="loading"
+                :max-height="$store.state.tableHeight"
                 :data="testDetail.tableData">
                 <el-table-column
                   prop="num"
@@ -440,15 +438,6 @@
           language: [],
           contactObj: {}
         },
-        resumeinfo: {
-          show: true,
-          id: '',
-          school: '',
-          schoolType: '',
-          profession: '',
-          record: '',
-          graduateTime: ''
-        },
         identy: {
           show: true,
           userName: '',
@@ -513,6 +502,7 @@
           this.$refs.comment.showLabels();
           this.$refs.comment.showTableList()
         }else if(tab.label === '账户记录'){
+          this.$refs.account.showAmount();
           this.$refs.account.showTableList()
         }else if(tab.label === '积分与签到'){
           this.$refs.score.showScoreDetail();
@@ -566,14 +556,6 @@
               this.baseinfo.nationArr = _data.userExtension.nationality.split(' ') || [];
               this.certiImg = _data.userExtension.certificateImg && JSON.parse(_data.userExtension.certificateImg) || [];
             }
-            if(_data.educationList && _data.educationList.length > 0){
-              this.resumeinfo.id = _data.educationList[0].id;
-              this.resumeinfo.school = _data.educationList[0].graduatedSchoolName;
-              this.resumeinfo.schoolType = _data.educationList[0].schoolType;
-              this.resumeinfo.profession = _data.educationList[0].major;
-              this.resumeinfo.record = _data.educationList[0].degree;
-              this.resumeinfo.graduateTime = _data.educationList[0].graduatedDate.slice(0,7);
-            }
           }
         })
       },
@@ -621,43 +603,6 @@
             })
           }
           this.baseBtn.disabled = false;
-        })
-      },
-      //修改简历信息
-      modifyResume (){
-        for(let prop in this.resumeinfo){
-          if(prop !== 'show' && this.resumeinfo[prop].trim() === ''){
-            this.$message({
-              type: 'warning',
-              message: '请输入相关信息'
-            });
-            return false;
-          }
-        }
-        this.resumeBtn.disabled = true;
-        this.$http.post('/userExtension/addEducationInfo', this.$qs.stringify({
-          schoolType: this.resumeinfo.schoolType,
-          major: this.resumeinfo.profession,
-          graduatedSchoolName: this.resumeinfo.school,
-          graduatedDate: this.resumeinfo.graduateTime,
-          degree: this.resumeinfo.record,
-          id: this.resumeinfo.id,
-          userId: this.$route.params.id
-        })).then(res => {
-          if(res.data.message === 'success'){
-            this.$message({
-              type: 'success',
-              message: '修改成功'
-            });
-            this.resumeinfo.show = true;
-            this.showDetail()
-          }else{
-            this.$message({
-              type: 'error',
-              message: res.data.message
-            })
-          }
-          this.resumeBtn.disabled = false;
         })
       },
       //修改身份认证

@@ -27,6 +27,7 @@ import api from './api'
 Vue.use(common);
 Vue.use(element);
 
+
 /*
 * Vue全局设置
 * */

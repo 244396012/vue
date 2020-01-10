@@ -2,7 +2,7 @@
   <div class="page">
     <div class="default-style">
       <div class="detail form">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="130px" class="demo-ruleForm green-form-p">
           <el-form-item label="用户帐号：" required class="small-line" style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item prop="phone">
@@ -14,7 +14,7 @@
           <el-form-item label="真实姓名：" required class="small-line" style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item :prop="'realName'"
-                            :rules="{ required: true, message: '请输入译员真实姓名', trigger: 'blur' }">
+                            :rules="{ required: true, message: '请输入真实姓名', trigger: 'blur' }">
                 <el-input v-model="ruleForm.realName" clearable placeholder="请输入译员真实姓名"></el-input>
               </el-form-item>
             </el-col>
@@ -22,7 +22,8 @@
           <el-form-item label="兼职类型：" required class="small-line" style="margin-bottom: 0px">
             <el-col :span="20">
               <el-form-item prop="partTimeType"
-                            :rules="{ type: 'array',required: true, message: '请选择兼职类型', trigger: 'change' }">
+                            :rules="{ type: 'array',required: true, message: '请选择兼职类型', trigger: 'change' }"
+                            style="margin-bottom: 6px">
                 <el-checkbox-group v-model="ruleForm.partTimeType">
                   <el-checkbox label="笔译">笔译</el-checkbox>
                   <el-checkbox label="DTP">DTP</el-checkbox>
@@ -281,7 +282,7 @@
                   </el-select>
                 </el-col>
               </el-form-item>
-              <el-form-item label="外派特长：" required  class="small-line" style="margin-bottom: 0px">
+              <el-form-item label="外派特长：" required class="small-line" style="margin-bottom: 0px">
                 <el-col :span="24">
                   <el-checkbox-group v-model="ruleForm.sendPair.skill">
                     <el-checkbox label="普通翻译（内勤、后勤、采购等）">普通翻译（内勤、后勤、采购等）</el-checkbox>
@@ -501,9 +502,9 @@
               </el-row>
             </div>
           </template>
-          <el-form-item label="基本信息（选填）" style="margin-bottom: 0px"></el-form-item>
+          <el-form-item label="基本信息（必填）" style="margin-bottom: 0px"></el-form-item>
           <div class="in-item">
-            <el-form-item label="译员昵称：" required style="margin-bottom: 0px">
+            <el-form-item label="译员昵称：" class="small-line" required style="margin-bottom: 0px">
               <el-col :span="12">
                 <el-input v-model="ruleForm.baseInfo.nickName" clearable placeholder="请设置译员昵称"></el-input>
               </el-col>
@@ -524,7 +525,7 @@
                 </div>
               </el-col>
             </el-form-item>
-            <el-form-item label="母语：" required style="margin-bottom: 0px">
+            <el-form-item label="母语：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-select class="exact" v-model="ruleForm.baseInfo.language" multiple clearable placeholder="请选择母语">
                   <el-option
@@ -536,7 +537,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="翻译年限：" required style="margin-bottom: 0px">
+            <el-form-item label="翻译年限：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-select class="exact" v-model="ruleForm.baseInfo.transYear" clearable placeholder="请选择翻译年限">
                   <el-option
@@ -548,7 +549,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="币种：" required style="margin-bottom: 0px">
+            <el-form-item label="币种：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-select class="exact" v-model="ruleForm.baseInfo.currency" clearable placeholder="请选择币种">
                   <el-option
@@ -559,7 +560,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="常住地址：" required style="margin-bottom: 0px">
+            <el-form-item label="常住地址：" class="small-line" required style="margin-bottom: 0px">
               <el-col :span="24">
                 <div class="areaPicker">
                   <select v-model="ruleForm.baseInfo.province"
@@ -576,9 +577,9 @@
               </el-col>
             </el-form-item>
           </div>
-          <el-form-item label="学历信息（选填）" style="margin-bottom: 0px"></el-form-item>
+          <el-form-item label="学历信息（必填）" style="margin-bottom: 0px"></el-form-item>
           <div class="xl-item">
-            <el-form-item label="毕业院校：" required style="margin-bottom: 0px">
+            <el-form-item label="毕业院校：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-input v-model="ruleForm.recordInfo.school" clearable placeholder="请输入译员毕业院校"></el-input>
               </el-col>
@@ -589,12 +590,12 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="专业：" required style="margin-bottom: 0px">
+            <el-form-item label="专业：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-input v-model="ruleForm.recordInfo.major" clearable placeholder="请输入译员专业"></el-input>
               </el-col>
             </el-form-item>
-            <el-form-item label="学历：" required style="margin-bottom: 0px">
+            <el-form-item label="学历：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-select class="exact" v-model="ruleForm.recordInfo.record" clearable placeholder="请选择学历">
                   <el-option
@@ -606,7 +607,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="毕业时间：" required style="margin-bottom: 0px">
+            <el-form-item label="毕业时间：" class="small-line" required style="margin-bottom: 0px">
               <el-col :span="12">
                 <el-date-picker
                   style="width: 100%"
@@ -618,14 +619,14 @@
               </el-col>
             </el-form-item>
           </div>
-          <el-form-item label="身份认证（选填）" style="margin-bottom: 0px"></el-form-item>
+          <el-form-item label="身份信息（必填）" style="margin-bottom: 0px"></el-form-item>
           <div class="sf-item">
-            <el-form-item label="真实姓名：" required style="margin-bottom: 0px">
+            <el-form-item label="真实姓名：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-input v-model="ruleForm.realName" disabled></el-input>
               </el-col>
             </el-form-item>
-            <el-form-item label="证件类型：" required style="margin-bottom: 0px">
+            <el-form-item label="证件类型：" class="small-line" required style="margin-bottom: 5px">
               <el-col :span="12">
                 <el-select class="exact" v-model="ruleForm.identyInfo.identyType" clearable placeholder="请选择证件类型">
                   <el-option
@@ -637,7 +638,7 @@
                 </el-select>
               </el-col>
             </el-form-item>
-            <el-form-item label="证件号码：" required style="margin-bottom: 0px">
+            <el-form-item label="证件号码：" class="small-line" required style="margin-bottom: 0px">
               <el-col :span="12">
                 <el-input v-model="ruleForm.identyInfo.identyNo" clearable placeholder="请输入译员证件号码"></el-input>
               </el-col>
@@ -658,7 +659,6 @@
   </div>
 </template>
 <script>
-  import { isAllFill } from '@/common/filter';
   import { mapState } from 'vuex';
   import '@/common/area';
   export default {
@@ -761,8 +761,8 @@
           currencyOptions: [
             {label: '人民币', value: 'CNY'},
             {label: '美元', value: 'USD'},
-            {label: '欧元', value: 'Euro'},
-            {label: '英镑', value: 'Pound'}
+            {label: '欧元', value: 'EUR'},
+            {label: '英镑', value: 'GBP'}
           ],
           cardOptions: ['身份证'],
           transYearOptions:['1年以内','1-3年','3-5年','5年-10年','10年以上'],
@@ -810,7 +810,6 @@
         });
     },
     methods: {
-      isAllFill: isAllFill,
       resetProvince (address){
         address.city = '';
         address.area = '';
@@ -1088,36 +1087,26 @@
                 }
               }
             }
-            const tempBaseInfo = {
-              name: this.ruleForm.baseInfo.nickName,
-              year: this.ruleForm.baseInfo.transYear,
-              currency: this.ruleForm.baseInfo.currency,
-              province: this.ruleForm.baseInfo.province || '',
-              city: this.ruleForm.baseInfo.city || '',
-              area: this.ruleForm.baseInfo.area || ''
-            };
-            const tempRecordInfo = {...this.ruleForm.recordInfo};
-            delete tempRecordInfo.schoolType;
-            if(!this.isAllFill(tempBaseInfo)){
-              this.$message({
-                type: 'warning',
-                message: '请完善基本信息'
-              });
-              return false;
+            for(let key in this.ruleForm.baseInfo){
+              const val = this.ruleForm.baseInfo[key];
+              if(key !== 'area' && val.length < 1){
+                this.$message.warning('请完善基本信息');
+                return false
+              }
             }
-            if(!this.isAllFill(tempRecordInfo)){
-              this.$message({
-                type: 'warning',
-                message: '请完善学历信息'
-              });
-              return false;
+            for(let key in this.ruleForm.recordInfo){
+              const val = this.ruleForm.recordInfo[key];
+              if(val.length < 1){
+                this.$message.warning('请完善学历信息');
+                return false
+              }
             }
-            if(!this.isAllFill(this.ruleForm.identyInfo)){
-              this.$message({
-                type: 'warning',
-                message: '请完善身份信息'
-              });
-              return false;
+            for(let key in this.ruleForm.identyInfo){
+              const val = this.ruleForm.identyInfo[key];
+              if(val.length < 1){
+                this.$message.warning('请完善身份信息');
+                return false
+              }
             }
             this.btn.disabled = true;
             const greenChannelParam = {
@@ -1165,6 +1154,8 @@
                 }
                 this.btn.disabled = false;
               });
+          }else{
+            this.$message.warning('请完善用户帐号信息')
           }
         })
       }
@@ -1172,13 +1163,21 @@
   }
 </script>
 <style lang="scss">
-  .el-form-item.exact.field{
-    margin-bottom: 15px!important;
-  }
-  .small-line{
-    .el-form-item__label,
-    .el-form-item__content{
-      line-height: 24px;
+  .green-form-p{
+    .el-form-item.exact.field{
+      margin-bottom: 15px!important;
+    }
+    .small-line{
+      .el-form-item__label,
+      .el-form-item__content{
+        line-height: 24px;
+      }
+    }
+    .el-checkbox{
+      margin-right: 15px;
+    }
+    .el-checkbox__label{
+      padding-left: 2px;
     }
   }
 </style>

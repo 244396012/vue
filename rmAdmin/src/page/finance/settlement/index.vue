@@ -3,7 +3,9 @@
     <div class="default-style default-form">
       <div class="filter-row">
         <div class="search">
-          <el-input v-model="form.name" placeholder="译员姓名"></el-input>
+          <el-input v-model="form.realName" placeholder="到账姓名"></el-input>
+          <el-input v-model="form.userCode" placeholder="兼职编号"></el-input>
+          <el-input v-model="form.userName" placeholder="兼职姓名"></el-input>
           <el-select v-model="form.moneyType" placeholder="币种">
             <el-option
               v-for="item in formSelect.moneyType"
@@ -42,7 +44,7 @@
                           end-placeholder="结束时间">
           </el-date-picker>
           <el-button type="success" @click="extraSearch">查 询</el-button>
-          <el-button class="reset" @click="resetKeepAliveSearch">重 置</el-button>
+          <el-button class="reset" @click="extraResetSearch">重 置</el-button>
         </div>
         <div class="button"
              v-if="$store.state.secondPermission['/financeNew/batchSubmit'] !== undefined">
@@ -96,33 +98,45 @@
           show-overflow-tooltip
           min-width="70"
           prop="applyerRealName"
-          label="姓名">
+          label="到账姓名">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="80"
+          prop="applyerUserCode"
+          label="兼职编号">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="70"
+          prop="userExtension.realName"
+          label="兼职姓名">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="110"
           prop="applyDateTime"
           label="申请时间">
         </el-table-column>
         <el-table-column
-          min-width="70"
+          min-width="65"
           prop="currencyName"
           label="币种">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="80"
+          min-width="70"
           prop="applyMoney"
           label="申请金额">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="80"
+          min-width="70"
           prop="settleType"
           label="结算类型">
         </el-table-column>
         <el-table-column
-          min-width="80"
+          min-width="70"
           prop="payType"
           label="付款方式">
         </el-table-column>
@@ -145,19 +159,19 @@
           label="银行账号">
         </el-table-column>
         <el-table-column
-          min-width="80"
+          min-width="70"
           label="支付状态">
           <template slot-scope="scope">{{scope.row.payState | formatPayStatus}}</template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="110"
           prop="payDateTime"
           label="支付时间">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="70"
+          min-width="65"
           prop="payPersonRealName"
           label="操作人">
         </el-table-column>
@@ -172,8 +186,9 @@
           label="操作"
           width="210">
           <template slot-scope="scope">
-            <el-button type="text"
-                       @click="$router.push('/finance/settlement/detail/'+scope.row.applyerUserCode)">查看</el-button>
+            <router-link :to="{path:'/finance/settlement/detail/'+scope.row.applyerUserCode}"
+                         class="blank"
+                         target="_blank">查看</router-link>
             <template v-if="$store.state.secondPermission['/financeNew/batchSubmit'] !== undefined">
               <el-button type="text"
                          v-if="scope.row.payState === 0 && (scope.row.settleType === '社保51' || scope.row.settleType === '云账户')"
@@ -215,7 +230,9 @@
         showProvide: false,
         form: {
           id: '',
-          name: '',
+          realName: '',
+          userName: '',
+          userCode: '',
           moneyType: '',
           settleType: '',
           payType: '',
@@ -280,7 +297,7 @@
         this.showProvide = false;
         this.doSearch(this.showTableList)
       },
-      resetKeepAliveSearch (){
+      extraResetSearch (){
         this.showLock = false;
         this.showSettle = false;
         this.showProvide = false;
@@ -361,7 +378,9 @@
           params: {
             page: config.pageNo-1,
             size: config.pageSize,
-            realName: this.form.name,
+            realName: this.form.realName,
+            userName: this.form.userName,
+            userCode: this.form.userCode,
             currencyName: this.form.moneyType,
             payStatus: this.form.payStatus,
             payType: this.form.payType,

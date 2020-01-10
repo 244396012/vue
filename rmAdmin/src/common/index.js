@@ -1,6 +1,7 @@
 /*
 * 模块：Vue注册全局函数
 * */
+import router from '../router'
 import axios from 'axios'
 import qs from 'qs'
 import element from 'element-ui'
@@ -10,7 +11,10 @@ export default {
     //搜索
     Vue.prototype.doSearch = (callback) => {
       store.state.resetSearchState = true;
-      callback();
+      callback({
+        //设置pageSize后，搜索时按照设置传参
+        pageSize: router.app._route.query.pgSize || 20
+      });
     };
     //重置搜索
     Vue.prototype.resetSearch = (params, callback) => {
@@ -143,15 +147,6 @@ export default {
               type: 'error',
               message: res.data.message
             })
-          }
-        })
-    };
-    //获取一级领域
-    Vue.prototype.getFirstField = async () => {
-      return await axios.get('/domain/listDomain')
-        .then(res =>{
-          if(res.data.message === 'success'){
-            return res.data.data;
           }
         })
     };

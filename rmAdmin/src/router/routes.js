@@ -548,7 +548,7 @@ const routes = [
         children: [
           {
             path: '/finance/settlement',
-            meta: { title: '译员结算管理', keepAlive: true, isBack: false },
+            meta: { title: '译员结算管理' },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/settlement/index')), 'finance')
           },
           {
@@ -565,11 +565,21 @@ const routes = [
         children: [
           {
             path: '/finance/expenses',
-            meta: { title: '兼职费用', keepAlive: true, isBack: false },
+            meta: { title: '应付费用' },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/expenses/index')), 'finance')
           },
           {
             path: '/finance/expenses/detail/:id',
+            meta: { title: '详情' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/finance/expenses/detail')), 'finance')
+          },
+          {
+            path: '/finance/expenses/actual',
+            meta: { title: '实付费用' },
+            component: resolve => require.ensure([], () => resolve(require('@/page/finance/expenses/actualIndex')), 'finance')
+          },
+          {
+            path: '/finance/expenses/actual/detail/:id',
             meta: { title: '详情' },
             component: resolve => require.ensure([], () => resolve(require('@/page/finance/expenses/detail')), 'finance')
           }

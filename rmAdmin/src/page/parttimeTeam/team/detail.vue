@@ -1,24 +1,22 @@
 <template>
   <div class="page">
     <div class="default-style">
-      <div class="detail" style="padding-bottom: 5px">
-        <el-row class="exact">
-          <el-col :span="24">
+      <div class="detail" style="padding-bottom: 15px;padding-top: 15px">
+        <el-row class="exact" style="margin-bottom: 10px">
+          <el-col :span="6">
             <div class="grid-content bg-purple">
               <b style="font-size: 18px;">{{detail.teamName}}</b>{{'（'+$route.query.code+'）'}}
             </div>
           </el-col>
-        </el-row>
-        <el-row class="exact">
-          <el-col :span="6"><div class="grid-content bg-purple"><b>翻译字数：</b>{{detail.wordCount?detail.wordCount:'--'}}字</div></el-col>
-          <el-col :span="6"><div class="grid-content bg-purple-light"><b>接单数：</b>{{detail.orderNum}}</div></el-col>
-          <el-col :span="6"><div class="grid-content bg-purple"></div><b>投诉次数：</b>{{detail.complain}}</el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>团队状态：</b>{{detail.teamStatus}}</div></el-col>
-        </el-row>
-        <el-row class="exact">
-          <el-col :span="6"><div class="grid-content bg-purple"></div><b>订单平均分：</b>{{detail.orderAveg?detail.orderAveg:'--'}}分</el-col>
+          <el-col :span="6"><div class="grid-content bg-purple-light"><b>兼职类型：</b>{{detail.interType}}</div></el-col>
           <el-col :span="6"><div class="grid-content bg-purple-light"><b>译侠值：</b>{{detail.totalScore?detail.totalScore:'--'}}分</div></el-col>
-          <el-col :span="12"><div class="grid-content bg-purple-light"><b>兼职类型：</b>{{detail.interType}}</div></el-col>
+        </el-row>
+        <el-row class="exact" style="margin-bottom: 0px">
+          <el-col :span="6"><div class="grid-content bg-purple-light"><b>接单数：</b>{{detail.orderNum}}</div></el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"><b>翻译字数：</b>{{detail.wordCount?detail.wordCount:'--'}}字</div></el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"></div><b>订单平均分：</b>{{detail.orderAveg?detail.orderAveg:'--'}}分</el-col>
+          <el-col :span="6"><div class="grid-content bg-purple"></div><b>投诉次数：</b>{{detail.complain}}</el-col>
         </el-row>
       </div>
     </div>
@@ -28,17 +26,19 @@
           <el-tab-pane label="团队信息" name="first">
             <div class="detail">
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">团队基本信息
-                <el-button v-if="baseinfo.show"
-                           type="success"
-                           icon="el-icon-edit"
-                           style="float: right"
-                           @click="baseinfo.show = false">修改</el-button>
-                <template v-else>
-                  <el-button type="success"
-                             @click="modifyTeamBase"
-                             :disabled="baseBtn.disabled"
-                             style="float: right;margin-left: 10px">保存</el-button>
-                  <el-button @click="baseinfo.show = true" style="float: right;">取消</el-button>
+                <template v-if="$store.state.secondPermission['/team/addTeamBasicInfo'] !== undefined">
+                  <el-button v-if="baseinfo.show"
+                             type="success"
+                             icon="el-icon-edit"
+                             style="float: right"
+                             @click="baseinfo.show = false">修改</el-button>
+                  <template v-else>
+                    <el-button type="success"
+                               @click="modifyTeamBase"
+                               :disabled="baseBtn.disabled"
+                               style="float: right;margin-left: 10px">保存</el-button>
+                    <el-button @click="baseinfo.show = true" style="float: right;">取消</el-button>
+                  </template>
                 </template>
               </p>
               <table class="parttime-table">
@@ -180,21 +180,23 @@
                 </tr>
               </table>
               <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">身份认证
-                <template v-if="identy.show">
-                  <el-button type="success" icon="el-icon-edit"
-                             style="float: right"
-                             @click="identy.show = false">帮助认证</el-button>
+                <template v-if="$store.state.secondPermission['/userExtension/identityUser'] !== undefined">
+                  <template v-if="identy.show">
+                    <el-button type="success" icon="el-icon-edit"
+                               style="float: right"
+                               @click="identy.show = false">帮助认证</el-button>
+                  </template>
+                  <template v-else>
+                    <el-button type="success"
+                               @click="modifyIdenty"
+                               :disabled="identyBtn.disabled"
+                               style="float: right;margin-left: 10px">保存</el-button>
+                    <el-button @click="identy.show = true" style="float: right;">取消</el-button>
+                  </template>
+                  <el-button type="success" icon="el-icon-camera"
+                             style="float: right;margin-right: 10px"
+                             @click="$store.commit('showModal')">免认证</el-button>
                 </template>
-                <template v-else>
-                  <el-button type="success"
-                             @click="modifyIdenty"
-                             :disabled="identyBtn.disabled"
-                             style="float: right;margin-left: 10px">保存</el-button>
-                  <el-button @click="identy.show = true" style="float: right;">取消</el-button>
-                </template>
-                <el-button type="success" icon="el-icon-camera"
-                           style="float: right;margin-right: 10px"
-                           @click="$store.commit('showModal')">免认证</el-button>
               </p>
               <table class="parttime-table">
                 <tr>
@@ -233,20 +235,21 @@
                     <tr>
                       <td class="name" rowspan="2" style="font-size: 14px">银行卡结算</td>
                       <td class="name">真实姓名</td><td>{{item.realName}}</td>
-                      <td class="name">证件号码</td><td>{{accountInfo.userExtension.certificateNumFuzzy}}</td>
-                      <td class="name">银行卡号</td><td>{{item.settleAccountFuzzy}}</td>
+                      <td class="name">证件号码</td><td>{{accountInfo.userExtension.certificateNum}}</td>
+                      <td class="name">证件类别</td><td>{{accountInfo.userExtension.certificateType}}</td>
                     </tr>
                     <tr>
+                      <td class="name">银行卡号</td><td>{{item.settleAccount}}</td>
                       <td class="name">开户银行</td><td>{{item.bankDeposit}}</td>
-                      <td class="name">开户支行</td><td colspan="3">{{item.bankBranch}}</td>
+                      <td class="name">开户支行</td><td>{{item.bankBranch}}</td>
                     </tr>
                   </template>
                   <template v-else>
                     <tr>
                       <td class="name" rowspan="1" style="font-size: 14px">{{item.selttleName}}结算</td>
                       <td class="name">真实姓名</td><td>{{item.realName}}</td>
-                      <td class="name">证件号码</td><td>{{accountInfo.userExtension.certificateNumFuzzy}}</td>
-                      <td class="name">{{item.selttleName}}账号</td><td>{{item.settleAccountFuzzy}}</td>
+                      <td class="name">证件号码</td><td>{{accountInfo.userExtension.certificateNum}}</td>
+                      <td class="name">{{item.selttleName}}账号</td><td>{{item.settleAccount}}</td>
                     </tr>
                   </template>
                 </template>
@@ -254,23 +257,28 @@
                   <td class="name">当前结算类型</td>
                   <td colspan="6">
                     <span style="vertical-align: -6px;padding: 0"
-                          v-if="payWay.show">{{accountInfo.userExtension && accountInfo.userExtension.defaultSettleType !== ''?accountInfo.userExtension.defaultSettleType:'默认'}}</span>
+                          v-if="payWay.show">{{accountInfo.userExtension && accountInfo.userExtension.defaultSettleType !== ''?accountInfo.userExtension.defaultSettleType:'系统流程'}}</span>
                     <el-select v-else v-model="payWay.type" placeholder="结算类型" style="width: 150px">
-                      <el-option value="" label="默认"></el-option>
+                      <el-option value="" label="系统流程"></el-option>
+                      <el-option value="云账户" label="云账户"></el-option>
+                      <el-option value="社保51" label="社保51"></el-option>
+                      <el-option value="PayPal" label="PayPal"></el-option>
                       <el-option value="校企合作" label="校企合作"></el-option>
                       <el-option value="非全日制" label="非全日制"></el-option>
                     </el-select>
-                    <template v-if="payWay.show">
-                      <el-button type="success" icon="el-icon-edit"
-                                 style="float: right"
-                                 @click="payWay.show = false">修改</el-button>
-                    </template>
-                    <template v-else>
-                      <el-button type="success"
-                                 @click="modifyPayWay"
-                                 :disabled="payWayBtn.disabled"
-                                 style="float: right;margin-left: 10px">保存</el-button>
-                      <el-button @click="payWay.show = true" style="float: right;">取消</el-button>
+                    <template v-if="$store.state.secondPermission['/financeNew/setDefaultSettleType'] !== undefined">
+                      <template v-if="payWay.show">
+                        <el-button type="success" icon="el-icon-edit"
+                                   style="float: right"
+                                   @click="payWay.show = false">修改</el-button>
+                      </template>
+                      <template v-else>
+                        <el-button type="success"
+                                   @click="modifyPayWay"
+                                   :disabled="payWayBtn.disabled"
+                                   style="float: right;margin-left: 10px">保存</el-button>
+                        <el-button @click="payWay.show = true" style="float: right;">取消</el-button>
+                      </template>
                     </template>
                   </td>
                 </tr>
@@ -574,8 +582,8 @@
         switch (this.baseinfo.currencyName){
           case '人民币': this.baseinfo.currencyCode = 'CNY';break;
           case '美元': this.baseinfo.currencyCode = 'USD';break;
-          case '欧元': this.baseinfo.currencyCode = 'Euro';break;
-          case '英镑': this.baseinfo.currencyCode = 'Pound';break;
+          case '欧元': this.baseinfo.currencyCode = 'EUR';break;
+          case '英镑': this.baseinfo.currencyCode = 'GBP';break;
         }
         let priInfo = [], othInfo = [];
         for(let key in this.baseinfo.primaryObj){

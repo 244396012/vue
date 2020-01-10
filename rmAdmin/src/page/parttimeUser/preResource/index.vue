@@ -19,7 +19,7 @@
         <div class="button"
              v-if="$store.state.secondPermission['/greenChannel/savePartTimeStaffByGreenChannel'] !== undefined">
           <el-button type="success" @click="$router.push('/parttimeUser/preResource/create')">新增用户</el-button>
-          <el-button @click="$store.commit('showModal')">批量添加</el-button>
+          <!--<el-button @click="$store.commit('showModal')">批量添加</el-button>-->
         </div>
       </div>
     </div>
@@ -41,12 +41,6 @@
           min-width="100"
           prop="userCode"
           label="用户ID">
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          min-width="120"
-          label="用户账号">
-          <template slot-scope="scope">{{scope.row.userAccount | hiddenAccount}}</template>
         </el-table-column>
         <el-table-column
           min-width="100"
@@ -123,7 +117,7 @@
 <script>
   import pagination from '@/components/pagination';
   import importModal from './modal_import';
-  import { formatAccountStatus, hiddenAccount } from '@/common/filter';
+  import { formatAccountStatus } from '@/common/filter';
   import { setAccountStatus } from "@/common/operate";
   import { mapState } from 'vuex';
   export default {
@@ -161,8 +155,7 @@
           return str;
         }
       },
-      formatStatus: formatAccountStatus,
-      hiddenAccount: hiddenAccount
+      formatStatus: formatAccountStatus
     },
     created (){
       this.showTableList();

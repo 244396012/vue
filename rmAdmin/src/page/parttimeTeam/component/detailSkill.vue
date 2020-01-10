@@ -1,20 +1,22 @@
 <template>
   <div class="detail">
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">笔译技能
-      <template v-if="biyi.show">
-        <el-button type="success" icon="el-icon-edit"
-                   style="float: right"
-                   @click="biyi.show = false">修改</el-button>
-      </template>
-      <template v-else>
-        <el-button type="success"
-                   @click="addLanPair"
-                   style="float: right;margin-left: 10px">添加语言对</el-button>
-        <el-button type="success"
-                   @click="modifyBiyi"
-                   :disabled="biyiBtn.disabled"
-                   style="float: right;margin-left: 10px">保存</el-button>
-        <el-button @click="cancelBiyi" style="float: right;">取消</el-button>
+      <template v-if="$store.state.secondPermission['/newSkillController/updateTranslatorSkillBack'] !== undefined">
+        <template v-if="biyi.show">
+          <el-button type="success" icon="el-icon-edit"
+                     style="float: right"
+                     @click="biyi.show = false">修改</el-button>
+        </template>
+        <template v-else>
+          <el-button type="success"
+                     @click="addLanPair"
+                     style="float: right;margin-left: 10px">添加语言对</el-button>
+          <el-button type="success"
+                     @click="modifyBiyi"
+                     :disabled="biyiBtn.disabled"
+                     style="float: right;margin-left: 10px">保存</el-button>
+          <el-button @click="cancelBiyi" style="float: right;">取消</el-button>
+        </template>
       </template>
     </p>
     <table class="parttime-table">
@@ -108,18 +110,21 @@
       </template>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">DTP技能
-      <template v-if="dtp.show">
-        <el-button type="success" icon="el-icon-edit"
-                   style="float: right"
-                   @click="dtp.show = false">修改</el-button>
+      <template v-if="$store.state.secondPermission['/newSkillController/updateSkillDtpBack'] !== undefined">
+        <template v-if="dtp.show">
+          <el-button type="success" icon="el-icon-edit"
+                     style="float: right"
+                     @click="dtp.show = false">修改</el-button>
+        </template>
+        <template v-else>
+          <el-button type="success"
+                     @click="modifyDtp"
+                     :disabled="dtpBtn.disabled"
+                     style="float: right;margin-left: 10px">保存</el-button>
+          <el-button @click="dtp.show = true" style="float: right;">取消</el-button>
+        </template>
       </template>
-      <template v-else>
-        <el-button type="success"
-                   @click="modifyDtp"
-                   :disabled="dtpBtn.disabled"
-                   style="float: right;margin-left: 10px">保存</el-button>
-        <el-button @click="dtp.show = true" style="float: right;">取消</el-button>
-      </template></p>
+    </p>
     <table class="parttime-table">
       <tr>
         <td class="name">DTP经验</td><td style="padding: 0">
@@ -238,21 +243,24 @@
       </tr>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">会展技能
-      <template v-if="huizhan.show">
-        <el-button type="success" icon="el-icon-edit"
-                   style="float: right"
-                   @click="huizhan.show = false">修改</el-button>
+      <template v-if="$store.state.secondPermission['/newSkillController/updateSkillIntepretationBack'] !== undefined">
+        <template v-if="huizhan.show">
+          <el-button type="success" icon="el-icon-edit"
+                     style="float: right"
+                     @click="huizhan.show = false">修改</el-button>
+        </template>
+        <template v-else>
+          <el-button type="success"
+                     @click="addUnitPrice"
+                     style="float: right;margin-left: 10px">添加单价</el-button>
+          <el-button type="success"
+                     @click="modifyHuizhan"
+                     :disabled="huizhanBtn.disabled"
+                     style="float: right;margin-left: 10px">保存</el-button>
+          <el-button @click="cancelHuizhan" style="float: right;">取消</el-button>
+        </template>
       </template>
-      <template v-else>
-        <el-button type="success"
-                   @click="addUnitPrice"
-                   style="float: right;margin-left: 10px">添加单价</el-button>
-        <el-button type="success"
-                   @click="modifyHuizhan"
-                   :disabled="huizhanBtn.disabled"
-                   style="float: right;margin-left: 10px">保存</el-button>
-        <el-button @click="cancelHuizhan" style="float: right;">取消</el-button>
-      </template></p>
+    </p>
     <table class="parttime-table">
       <tr>
         <td class="name">{{huizhanDetail.auditTime?'成为会展时间':'申请技能时间'}}</td>
@@ -385,21 +393,24 @@
       </template>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">设备
-      <template v-if="shebei.show">
-        <el-button type="success" icon="el-icon-edit"
-                   style="float: right"
-                   @click="shebei.show = false">修改</el-button>
+      <template v-if="$store.state.secondPermission['/newSkillController/updateNewSkillEquipBack'] !== undefined">
+        <template v-if="shebei.show">
+          <el-button type="success" icon="el-icon-edit"
+                     style="float: right"
+                     @click="shebei.show = false">修改</el-button>
+        </template>
+        <template v-else>
+          <el-button type="success"
+                     @click="addDevice(shebei.equipmentInfo)"
+                     style="float: right;margin-left: 10px">添加设备</el-button>
+          <el-button type="success"
+                     @click="modifyShebei"
+                     :disabled="shebeiBtn.disabled"
+                     style="float: right;margin-left: 10px">保存</el-button>
+          <el-button @click="cancelDevice" style="float: right;">取消</el-button>
+        </template>
       </template>
-      <template v-else>
-        <el-button type="success"
-                   @click="addDevice(shebei.equipmentInfo)"
-                   style="float: right;margin-left: 10px">添加设备</el-button>
-        <el-button type="success"
-                   @click="modifyShebei"
-                   :disabled="shebeiBtn.disabled"
-                   style="float: right;margin-left: 10px">保存</el-button>
-        <el-button @click="cancelDevice" style="float: right;">取消</el-button>
-      </template></p>
+    </p>
     <table class="parttime-table">
       <tr>
         <td class="name">{{shebeiDetail.auditTime?'成为设备时间':'申请技能时间'}}</td>
@@ -455,21 +466,24 @@
       </template>
     </table>
     <p class="sy-bold sy-title" style="overflow: auto;line-height: 32px">搭建
-      <template v-if="dajian.show">
-        <el-button type="success" icon="el-icon-edit"
-                   style="float: right"
-                   @click="dajian.show = false">修改</el-button>
+      <template v-if="$store.state.secondPermission['/newSkillController/updateNewSkillBuildBack'] !== undefined">
+        <template v-if="dajian.show">
+          <el-button type="success" icon="el-icon-edit"
+                     style="float: right"
+                     @click="dajian.show = false">修改</el-button>
+        </template>
+        <template v-else>
+          <el-button type="success"
+                     @click="addDevice(dajian.buildInfo)"
+                     style="float: right;margin-left: 10px">添加搭建</el-button>
+          <el-button type="success"
+                     @click="modifyDajian"
+                     :disabled="dajianBtn.disabled"
+                     style="float: right;margin-left: 10px">保存</el-button>
+          <el-button @click="cancelDajian" style="float: right;">取消</el-button>
+        </template>
       </template>
-      <template v-else>
-        <el-button type="success"
-                   @click="addDevice(dajian.buildInfo)"
-                   style="float: right;margin-left: 10px">添加搭建</el-button>
-        <el-button type="success"
-                   @click="modifyDajian"
-                   :disabled="dajianBtn.disabled"
-                   style="float: right;margin-left: 10px">保存</el-button>
-        <el-button @click="cancelDajian" style="float: right;">取消</el-button>
-      </template></p>
+    </p>
     <table class="parttime-table">
       <tr>
         <td class="name">{{dajianDetail.auditTime?'成为搭建时间':'申请技能时间'}}</td>

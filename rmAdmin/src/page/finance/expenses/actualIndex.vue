@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <el-menu default-active="1" class="el-menu-demo filter-menu" mode="horizontal">
+    <el-menu default-active="2" class="el-menu-demo filter-menu" mode="horizontal">
       <el-menu-item index="1" @click.native="$router.push('/finance/expenses')">应付费用</el-menu-item>
       <el-menu-item index="2" @click.native="$router.push('/finance/expenses/actual')">实付费用</el-menu-item>
     </el-menu>
@@ -21,7 +21,7 @@
               v-for="item in formSelect.companyOptions"
               :key="item.Value"
               :label="item.Text"
-              :value="item.Value"></el-option>
+              :value="item.Text"></el-option>
           </el-select>
           <el-date-picker
             v-model="form.rangeTime"
@@ -30,7 +30,7 @@
             type="daterange"
             value-format="yyyy-MM-dd"
             range-separator="-"
-            start-placeholder="统计时间"
+            start-placeholder="申请时间"
             end-placeholder="结束时间">
           </el-date-picker>
           <el-button type="success" @click="doSearch(showTableList)">查 询</el-button>
@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="default-style default-form"
-         v-if="totalCountStr && totalCountStr !== '兼职费用总额'">
+         v-if="totalCountStr && totalCountStr !== '兼职申请费用总额'">
       <el-row>
         <el-col :span="24" style="line-height: 32px;font-size: 13px;">{{totalCountStr}}</el-col>
       </el-row>
@@ -59,44 +59,59 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
+          min-width="140"
+          prop="payCode"
+          label="结算编号">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
           min-width="100"
-          prop="userCode"
+          prop="partTimeNo"
           label="兼职编号">
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           min-width="100"
-          prop="userRealName"
+          prop="partTimeName"
           label="兼职姓名">
         </el-table-column>
         <el-table-column
           min-width="100"
-          prop="orgName"
+          prop="company"
           label="所属公司">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="160"
-          label="统计时间">
-          <template slot-scope="scope">
-            {{(scope.row.rangeTime && scope.row.rangeTime.length>0) ? scope.row.rangeTime[0] +' - '+ scope.row.rangeTime[1] : ''}}
-          </template>
+          min-width="150"
+          prop="applyTime"
+          label="申请时间">
         </el-table-column>
         <el-table-column
           min-width="100"
-          prop="settleAmount"
-          label="兼职金额">
+          prop="applyMoney"
+          label="申请金额">
         </el-table-column>
         <el-table-column
-          min-width="100"
-          prop="currencyName"
+          min-width="80"
+          prop="payType"
+          label="结算类型">
+        </el-table-column>
+        <el-table-column
+          min-width="80"
           label="币种">
+          <template slot-scope="scope">{{scope.row.currentCode | formatMoneyType}}</template>
+        </el-table-column>
+        <el-table-column
+          min-width="100"
+          prop="sumFee"
+          label="申请总费用">
         </el-table-column>
         <el-table-column
           fixed="right"
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <router-link :to="{path:'/finance/expenses/detail/'+scope.row.userCode+'?range='+scope.row.rangeTime}"
+            <router-link :to="{path:'/finance/expenses/detail/'+scope.row.partTimeNo+'?range='+scope.row.rangeTime}"
                          class="blank"
                          target="_blank">查看</router-link>
           </template>
@@ -111,7 +126,7 @@
 <script>
   import domain from '@/api/index';
   import pagination from '@/components/pagination';
-  import { formatMoneyTypeEn } from '@/common/filter';
+  import { formatMoneyType, formatMoneyTypeEn$ } from '@/common/filter';
   export default {
     components: {
       pagination
@@ -127,10 +142,10 @@
         },
         formSelect: {
           moneyType: [
-            {label: '人民币', value: '人民币'},
-            {label: '美元', value: '美元'},
-            {label: '欧元', value: '欧元'},
-            {label: '英镑', value: '英镑'}
+            {label: '人民币', value: 'CNY'},
+            {label: '美元', value: 'USD'},
+            {label: '欧元', value: 'EUR'},
+            {label: '英镑', value: 'GBP'}
           ],
           companyOptions: [],
         },
@@ -139,6 +154,9 @@
         tableData: [],
         totalCountStr: ''
       }
+    },
+    filters: {
+      formatMoneyType: formatMoneyType
     },
     created (){
       this.$http.defaults.baseURL = domain.baseReportURL_r1;
@@ -185,42 +203,34 @@
       }
     },
     methods: {
-      formatMoneyTypeEn: formatMoneyTypeEn,
+      formatMoneyTypeEn$: formatMoneyTypeEn$,
       //展示表格数据
       showTableList (config){
         config = config || {};
         config.pageNo = config.pageNo || 1;
         config.pageSize = config.pageSize || 20;
         this.loading = true;
-        this.$http.get('/financeTask/listFinaceOverview', {
+        this.$http.get('/financeTask/getFianceActual', {
           params: {
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
-            userName: this.form.userName,
-            userCode: this.form.userCode,
-            currencyName: this.form.moneyType,
-            orgId: this.form.company,
+            partTimeName: this.form.userName,
+            partTimeNo: this.form.userCode,
+            currentCode: this.form.moneyType,
+            company: this.form.company,
             startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
             endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
           }
         }).then(res => {
           if(res.data.message === 'success'){
             this.tableData = [];
-            const list = res.data.data.perPage.results;
+            const list = res.data.data.results;
             list.forEach((item, index) => {
               item.num = (index + 1) + (config.pageNo-1)*config.pageSize;
               item.rangeTime = this.form.rangeTime;
               this.tableData.push(item)
             });
-            this.totalTableList = res.data.data.perPage.totalCount;
-            const totalList = res.data.data.total;
-            this.totalCountStr = '兼职费用总额：';
-            totalList.forEach(item => {
-              if(item.currencyName && item.settleAmount){
-                this.totalCountStr += this.formatMoneyTypeEn(item.currencyName) + item.settleAmount+ '，';
-              }
-            });
-            this.totalCountStr = this.totalCountStr.slice(0, -1);
+            this.totalTableList = res.data.data.totalCount;
           }else{
             this.$message({
               type: 'error',
@@ -228,8 +238,24 @@
             })
           }
           this.loading = false;
+        });
+        //总费用
+        this.$http.get('/financeTask/getActualSum', {
+          params: {
+            startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
+            endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
+          }
+        }).then(res => {
+          if(res.data.message === 'success'){
+            this.totalCountStr = '兼职申请费用总额：';
+            res.data.data.forEach(item => {
+              this.totalCountStr += this.formatMoneyTypeEn$(item.key) + item.value + '，';
+            });
+            this.totalCountStr = this.totalCountStr.slice(0, -1);
+          }
         })
       }
     }
   }
+
 </script>

@@ -4,7 +4,7 @@
       <div class="filter-row">
         <div class="search">
           <el-input v-model="form.taskNo" placeholder="任务编号"></el-input>
-          <el-select v-model="form.company" placeholder="所属公司">
+          <el-select v-model="form.company" class="width110" placeholder="所属公司">
             <el-option
               v-for="item in formSelect.companyOptions"
               :key="item.Value"
@@ -12,6 +12,7 @@
               :value="item.Value"></el-option>
           </el-select>
           <el-date-picker
+            style="width: 240px"
             v-model="form.rangeTime"
             :clearable="false"
             :unlink-panels="true"
@@ -22,7 +23,7 @@
             end-placeholder="结束时间">
           </el-date-picker>
           <el-button type="success" @click="doSearch(showTableList)">查 询</el-button>
-          <el-button class="reset" @click="resetSearch(form,showTableList)">重 置</el-button>
+          <el-button class="reset" @click="resetSearch(form, showTableList)">重 置</el-button>
         </div>
         <div class="button"></div>
       </div>
@@ -41,19 +42,31 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
+          min-width="90"
+          prop="userCode"
+          label="编号">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="70"
+          prop="userRealName"
+          label="姓名">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
           min-width="110"
           prop="taskNo"
           label="任务编号">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="90"
+          min-width="80"
           prop="orgName"
           label="所属公司">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="110"
+          min-width="100"
           prop="taskName"
           label="任务名称">
         </el-table-column>
@@ -65,50 +78,72 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="110"
           prop="languagePair"
           label="语言对">
         </el-table-column>
         <el-table-column
-          min-width="80"
+          show-overflow-tooltip
+          min-width="75"
           prop="taskType"
-          label="任务类型">
+          label="兼职类型">
         </el-table-column>
         <el-table-column
-          wmin-idth="80"
+          min-width="75"
+          prop="businessType"
+          label="业务类型">
+        </el-table-column>
+        <el-table-column
+          min-width="70"
           prop="taskNumber"
           label="任务数量">
         </el-table-column>
         <el-table-column
-          min-width="90"
-          prop="taskAmount"
-          label="任务金额">
-        </el-table-column>
-        <el-table-column
-          min-width="90"
-          prop="settleAmount"
-          label="结算金额">
-        </el-table-column>
-        <el-table-column
-          min-width="80"
+          min-width="60"
           prop="currencyName"
           label="币种">
         </el-table-column>
         <el-table-column
+          min-width="80"
+          prop="taskAmount"
+          label="任务金额">
+        </el-table-column>
+        <el-table-column
+          min-width="80"
+          prop="settleAmount"
+          label="结算金额">
+          <template slot-scope="scope" >
+            <span v-if="scope.row.taskAmount !== scope.row.settleAmount" style="color: orangered">{{scope.row.settleAmount}}</span>
+            <span v-else>{{scope.row.settleAmount}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="110"
+          label="支付金额">
+          <template slot-scope="scope">{{scope.row.last | formatLast}}</template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="110"
           prop="requireCompleteTime"
           label="要求完成时间">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="110"
           prop="actualCompleteTime"
           label="实际完成时间">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="120"
+          min-width="80"
+          prop="settleYearMonth"
+          label="结算时间">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="80"
           prop="domain"
           label="专业领域">
         </el-table-column>
@@ -153,6 +188,17 @@
         tableData: []
       }
     },
+    filters: {
+      formatLast (last){
+        if(last === null){
+          return '--';
+        }else if(last === '0.00'){
+          return '已支付';
+        }else {
+          return '待支付' + last;
+        }
+      }
+    },
     created (){
       this.$http.defaults.baseURL = domain.baseReportURL_r1;
       this.$http.get('/pangu/GetFreelancerFeeOrg')
@@ -178,7 +224,7 @@
           params: {
             userCode: this.$route.params.id,
             taskNo: this.form.taskNo,
-            orgName: this.form.company,
+            orgId: this.form.company,
             pageNo: config.pageNo-1,
             pageSize: config.pageSize,
             startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',

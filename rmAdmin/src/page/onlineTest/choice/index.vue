@@ -87,7 +87,7 @@
             url: '/choiceQuestion/deleteChoiceQuestion',
             callback: showTableList})">批量删除</el-button>
           <el-button @click="$store.commit('showModal')">批量导入</el-button>
-          <el-button @click="downLoad(downloadUrl)" type="text">选择题模版下载</el-button>
+          <el-button @click="downLoad(downloadUrl)" type="text">模版下载</el-button>
         </div>
       </div>
     </div>
@@ -112,9 +112,10 @@
           width="60">
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="questionNo"
           label="题号"
-          width="90">
+          width="75">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -129,7 +130,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="110"
+          min-width="120"
           label="专业领域">
           <template slot-scope="scope">{{scope.row.domains | formatDomain}}</template>
         </el-table-column>
@@ -181,7 +182,7 @@
         </el-table-column>
         <el-table-column
           label="状态"
-          width="60">
+          width="50">
           <template slot-scope="scope">{{scope.row.status ? '启用':'禁用'}}</template>
         </el-table-column>
         <el-table-column
@@ -198,7 +199,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="70"
+          min-width="60"
           prop="correctRate"
           label="正确率">
         </el-table-column>

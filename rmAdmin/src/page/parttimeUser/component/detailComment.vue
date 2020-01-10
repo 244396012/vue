@@ -1,13 +1,15 @@
 <template>
   <div class="page">
-    <div class="detail" style="padding-bottom: 5px;margin-bottom: 10px">
+    <div class="detail" style="padding-bottom: 5px;padding-top: 10px;margin-bottom: 10px;">
       <el-row class="exact">
-        <el-col :span="4"><div class="grid-content bg-purple">
-          <div class="average">
-            <span>{{orderInfo.orderAverageScore?orderInfo.orderAverageScore:'--'}}</span>
-            <p>订单平均分</p>
+        <el-col :span="4" style="margin-bottom: 10px">
+          <div class="grid-content bg-purple">
+            <div class="average">
+              <span>{{orderInfo.orderAverageScore?orderInfo.orderAverageScore:'--'}}</span>
+              <p>订单平均分</p>
+            </div>
           </div>
-        </div></el-col>
+        </el-col>
         <el-col :span="6">
           <div class="grid-content bg-purple">
             <div class="score">质量平均分：{{orderInfo.qualityScore?orderInfo.qualityScore:'--'}}分</div>
@@ -36,13 +38,13 @@
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
-        min-width="100"
+        min-width="110"
         prop="orderId"
         label="订单编号">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
-        min-width="100"
+        min-width="90"
         prop="orderName"
         label="订单名称">
       </el-table-column>
@@ -53,38 +55,33 @@
         label="语言对">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="partTimeType"
         label="兼职类型">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="businessType"
         label="业务类型">
       </el-table-column>
       <el-table-column
         show-overflow-tooltip
-        min-width="110"
+        min-width="100"
         prop="domain"
         label="专业领域">
       </el-table-column>
       <el-table-column
-        min-width="90"
+        min-width="80"
         prop="qualityLevel"
         label="质量等级">
       </el-table-column>
       <el-table-column
         min-width="90"
-        prop="orderType"
-        label="订单类别">
-      </el-table-column>
-      <el-table-column
-        min-width="100"
         prop="orderMoney"
         label="订单金额">
       </el-table-column>
       <el-table-column
-        min-width="100"
+        min-width="90"
         prop="settleMoney"
         label="结算金额">
       </el-table-column>
@@ -101,22 +98,22 @@
         label="实际完成时间">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="orderStatus"
         label="订单状态">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="qualityScore"
         label="质量评分">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="attitudeScore"
         label="态度评分">
       </el-table-column>
       <el-table-column
-        min-width="80"
+        min-width="70"
         prop="speedScore"
         label="速度评分">
       </el-table-column>
@@ -195,7 +192,7 @@
         this.$http.post('/orderAndComment/getOrderAndComment', this.$qs.stringify({
           pageNo: config.pageNo-1,
           pageSize: config.pageSize,
-          userId: this.$route.params.id
+          userId: this.$route.query.code
         })).then(res => {
           if(res.status === 200){
             this.tableData = [];

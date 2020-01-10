@@ -54,7 +54,13 @@ export const setUserAuditStatus = (params, callback) => {
 
 //设置账号禁用、启用、冻结
 export const setAccountStatus = (params, callback) => {
-  msgBox.confirm('是否确认此操作', '提示', {
+  let type = '启用账号确认',
+    typeMsg = '启用后将恢复该用户在平台的所有操作权限，确定要继续吗？';
+  if(params.status !== 1){ //停用
+    type = '停用账号确认';
+    typeMsg = '停用后该用户只可登录平台进行结算，其余活动将受限制，确定要继续吗？';
+  }
+  msgBox.confirm(typeMsg, type, {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'

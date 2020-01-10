@@ -3,7 +3,7 @@
     <div class="default-style">
       <div class="detail form">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm green-form">
-          <el-form-item label="团队名称：" required style="margin-bottom: 0px">
+          <el-form-item label="团队名称：" class="small-item" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item :prop="'teamName'"
                             :rules="{ required: true, message: '请输入团队名称', trigger: 'blur' }">
@@ -11,7 +11,7 @@
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="专职人数：" required style="margin-bottom: 0px">
+          <el-form-item label="专职人数：" class="small-item" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item :prop="'memberNum'"
                             :rules="{ required: true, message: '请输入专职人数', trigger: 'blur' }">
@@ -19,7 +19,7 @@
               </el-form-item>
             </el-col>
           </el-form-item>
-          <el-form-item label="统一社会信用代码：" required style="margin-bottom: 0px">
+          <el-form-item label="统一社会信用代码：" class="small-item" required style="margin-bottom: 0px">
             <el-col :span="12">
               <el-form-item :prop="'socialCode'"
                             :rules="{ required: true, message: '请输入统一社会信用代码', trigger: 'blur' }">
@@ -87,7 +87,8 @@
           <el-form-item label="兼职类型" required style="margin-bottom: 0px">
             <el-col :span="20">
               <el-form-item prop="partTimeType"
-                            :rules="{ type: 'array',required: true, message: '请选择兼职类型', trigger: 'change' }">
+                            :rules="{ type: 'array',required: true, message: '请选择兼职类型', trigger: 'change' }"
+                            style="margin-bottom: 5px">
                 <el-checkbox-group v-model="ruleForm.partTimeType">
                   <el-checkbox label="笔译">笔译</el-checkbox>
                   <el-checkbox label="DTP">DTP</el-checkbox>
@@ -334,7 +335,7 @@
           <div v-show="ruleForm.partTimeType.includes('设备')">
             <div style="line-height: 40px;font-weight: 700">设备技能信息（必填）</div>
             <div class="lan-item">
-              <el-form-item label="服务地区：" required style="margin-bottom: 0px">
+              <el-form-item label="服务地区：" required style="margin-bottom: 5px">
                 <el-col :span="24">
                   <div class="areaPicker">
                     <select v-model="ruleForm.devicePair.province"
@@ -350,7 +351,7 @@
                   </div>
                 </el-col>
               </el-form-item>
-              <el-form-item label="设备信息：" required>
+              <el-form-item label="设备信息：" required style="margin-bottom: 5px">
                 <el-col :span="5">
                   <el-select class="exact" v-model="ruleForm.devicePair.device" placeholder="选择设备">
                     <el-option value="同传套件" label="同传套件"></el-option>
@@ -433,7 +434,7 @@
           <div v-show="ruleForm.partTimeType.includes('搭建')">
             <div style="line-height: 40px;font-weight: 700">搭建技能信息（必填）</div>
             <div class="lan-item">
-              <el-form-item label="服务地区：" required style="margin-bottom: 0px">
+              <el-form-item label="服务地区：" required style="margin-bottom: 5px">
                 <el-col :span="24">
                   <div class="areaPicker green">
                     <select v-model="ruleForm.buildPair.province"
@@ -449,7 +450,7 @@
                   </div>
                 </el-col>
               </el-form-item>
-              <el-form-item label="搭建信息：" required>
+              <el-form-item label="搭建信息：" required style="margin-bottom: 5px">
                 <el-col :span="5">
                   <el-select class="exact" v-model="ruleForm.buildPair.device" placeholder="选择搭建">
                     <el-option label="投影机" value="投影机"></el-option>
@@ -530,7 +531,7 @@
           </div>
           <el-form-item label="联系方式（必填）" style="margin-bottom: 5px"></el-form-item>
           <div class="in-item">
-            <el-form-item label="主要联系人姓名：" required style="margin-bottom: 0px">
+            <el-form-item label="主要联系人姓名：" class="small-item" required style="margin-bottom: 0px">
               <el-col :span="12">
                 <el-form-item  :prop="'primaryPeople'"
                                :rules="{ required: true, message: '请输入联系人姓名', trigger: 'blur' }">
@@ -538,14 +539,14 @@
                 </el-form-item>
               </el-col>
             </el-form-item>
-            <el-form-item label="手机号码：" required style="margin-bottom: 0px">
+            <el-form-item label="手机号码：" class="small-item" required style="margin-bottom: 0px">
               <el-col :span="12">
                 <el-form-item prop="primaryPhone">
                   <el-input v-model="ruleForm.primaryPhone" clearable placeholder="请输入手机号码"></el-input>
                 </el-form-item>
               </el-col>
             </el-form-item>
-            <el-form-item label="邮箱：" required style="margin-bottom: -10px">
+            <el-form-item label="邮箱：" class="small-item" required style="margin-bottom: -10px">
               <el-col :span="12">
                 <el-form-item prop="primaryEmail">
                   <el-input v-model="ruleForm.primaryEmail" clearable placeholder="请输入邮箱"></el-input>
@@ -553,7 +554,7 @@
               </el-col>
             </el-form-item>
           </div>
-          <el-form-item label="身份认证（选填）" style="margin: 5px 0"></el-form-item>
+          <el-form-item label="身份信息（必填）" style="margin: 5px 0"></el-form-item>
           <div class="sf-item">
             <el-form-item label="真实姓名：" required style="margin-bottom: 8px">
               <el-col :span="12">
@@ -969,12 +970,8 @@
                 }
               }
             }
-            if((this.ruleForm.identyType === '' && this.ruleForm.identyNo !== '') ||
-              this.ruleForm.identyType !== '' && this.ruleForm.identyNo === ''){
-              this.$message({
-                type: 'warning',
-                message: '请完善身份信息'
-              });
+            if(this.ruleForm.identyType === '' || this.ruleForm.identyNo === ''){
+              this.$message.warning('请完善身份信息');
               return false;
             }
             const teamGreenChannelParam = {
@@ -1014,6 +1011,8 @@
                 }
                 this.btn.disabled = false
               })
+          }else{
+            this.$message.warning('请完善团队基本信息')
           }
         })
       }
@@ -1031,7 +1030,7 @@
     .lan-item{
       .el-form-item__label,
       .el-form-item__content{
-        line-height: 40px!important;
+        line-height: 30px!important;
       }
       .el-textarea__inner{
         height: 80px;
@@ -1042,11 +1041,25 @@
     }
     .small-item{
       .el-form-item{
-        margin-bottom: 8px;
+        margin-bottom: 5px;
+      }
+      .el-textarea__inner{
+        height: 100px;
       }
     }
     .areaPicker{
       margin-bottom: -4px;
+    }
+    .el-checkbox{
+      margin-right: 15px;
+    }
+    .el-checkbox__label{
+      padding-left: 2px;
+    }
+    .el-form-item__error{
+      width: 200px;
+      left: 300px;
+      bottom: 10px!important;
     }
   }
 </style>

@@ -1,4 +1,4 @@
-$baseColor: #159396;
+$baseColor: #509692;
 
 html,body,#app{
   margin: 0;
@@ -103,7 +103,9 @@ html,body,#app{
     padding-left: 20px!important;
   }
   .el-submenu .el-menu-item{
-    padding-left: 40px!important;
+    min-width: auto;
+    padding: 0;
+    padding-left: 36px!important;
     height: 36px;
     line-height: 36px;
     font-size: 14px;
@@ -175,6 +177,28 @@ html,body,#app{
 .el-button--success.is-disabled{
   background: #bfbfbf!important;
   border-color: #bfbfbf!important;
+}
+
+.el-date-table td.in-range div,
+.el-date-table td.in-range div:hover,
+.el-date-table.is-week-mode
+.el-date-table__row.current div,
+.el-date-table.is-week-mode
+.el-date-table__row:hover div {
+  background-color: #c5dcd7;
+}
+.el-date-table td{
+  font-size: 14px;
+}
+.el-date-table td.today span{
+  background-color: #EC6941;
+  color: #fff;
+}
+.el-date-table td.end-date span,
+.el-date-table td.start-date span,
+.el-date-table td:hover span{
+  background-color: $baseColor;
+  color: #fff;
 }
 
 ::-webkit-scrollbar

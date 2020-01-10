@@ -27,10 +27,7 @@ $baseFontSize: 12px;
   overflow: hidden;
   margin-top: -10px;
   .el-button+.el-button{
-    margin-left: 3px;
-  }
-  .el-button.reset{
-    display: none;
+    margin-left: 0px;
   }
   div.button,
   div.search{
@@ -303,8 +300,8 @@ $baseFontSize: 12px;
     margin-bottom: 0px!important;
   }
   .download{
-    color: #409eff;
-    font-size: 14px;
+    color: $baseColor;
+    font-size: 12px;
     text-decoration: none;
     &.mg-r{
       margin-right: 10px;

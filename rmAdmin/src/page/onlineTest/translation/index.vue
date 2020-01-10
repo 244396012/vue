@@ -83,7 +83,7 @@
             url: '/translationQuestion/deleteTranslationQuestion',
             callback: showTableList})">批量删除</el-button>
           <el-button @click="$store.commit('showModal')">批量导入</el-button>
-          <el-button @click="downLoad(downloadUrl)" type="text">翻译题模版下载</el-button>
+          <el-button @click="downLoad(downloadUrl)" type="text">模版下载</el-button>
         </div>
       </div>
     </div>

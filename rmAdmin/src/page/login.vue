@@ -14,7 +14,7 @@
             </el-form-item>
             <el-form-item>
               <el-input v-model="form.password"
-                        type="password"
+                        show-password
                         clearable
                         autocomplete="off"
                         placeholder="请输入密码"></el-input>
@@ -69,7 +69,6 @@
           _this.login()
         }
       }
-      //9 33 62 63 69 96 25 97
     },
     methods: {
       //发起登录请求

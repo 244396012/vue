@@ -93,21 +93,6 @@ export const hiddenAccount = (str) => {
   return str.replace(/(\d{3})(\d{4})/, '$1****')
 };
 
-//判断对象每项为''
-export const isAllFill = (obj) => {
-  let tempArr = [];
-  for(let key in obj){
-    tempArr.push(obj[key]);
-  }
-  if(tempArr.indexOf('') > -1){
-    let flag = tempArr.every(item => {
-      return item === '';
-    });
-    return flag;
-  }
-  return true;
-};
-
 //财务：支付状态
 export const formatPayStatus = (status) => {
   switch (String(status)){
@@ -126,6 +111,24 @@ export const formatMoneyType = (code = '') => {
     case 'usd': return '美元';
     case 'eur': return '欧元';
     case 'gbp': return '英镑';
+    default: return code
+  }
+};
+export const formatMoneyTypeEn = (code = '') => {
+  switch (code.toLowerCase()){
+    case '人民币': return '￥';
+    case '美元': return '＄';
+    case '欧元': return '€';
+    case '英镑': return '￡';
+    default: return code
+  }
+};
+export const formatMoneyTypeEn$ = (code = '') => {
+  switch (code.toLowerCase()){
+    case 'cny': return '￥';
+    case 'usd': return '＄';
+    case 'eur': return '€';
+    case 'gbp': return '￡';
     default: return code
   }
 };

@@ -3,6 +3,7 @@
     <div class="default-style default-form">
       <div class="filter-row">
         <div class="search">
+          <el-input v-model="form.userCode" placeholder="团队ID"></el-input>
           <el-input v-model="form.teamName" placeholder="团队名称"></el-input>
           <div class="el-button-2">
             <el-input v-model="form.rangeNoStart" type="number" class="width60" placeholder="团队人数"></el-input> -
@@ -75,7 +76,7 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="80"
+          min-width="90"
           prop="skills"
           label="兼职类型">
         </el-table-column>
@@ -92,30 +93,10 @@
           label="主要联系人">
         </el-table-column>
         <el-table-column
-          show-overflow-tooltip
-          min-width="100"
-          label="联系方式">
-          <template slot-scope="scope">{{scope.row.primaryContactMobile | hiddenAccount}}</template>
-        </el-table-column>
-        <el-table-column
           min-width="70"
           prop="fullTimeNumber"
           label="团队人数">
         </el-table-column>
-        <!--<el-table-column-->
-          <!--show-overflow-tooltip-->
-          <!--min-width="100"-->
-          <!--label="语言对/语种">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--show-overflow-tooltip-->
-          <!--min-width="80"-->
-          <!--label="擅长领域">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column-->
-          <!--min-width="55"-->
-          <!--label="等级">-->
-        <!--</el-table-column>-->
         <el-table-column
           min-width="70"
           label="身份认证">
@@ -176,7 +157,7 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="160">
+          width="140">
           <template slot-scope="scope">
             <router-link :to="{path:'/parttimeTeam/team/detail/'+scope.row.userId+'?code='+scope.row.userCode}"
                          class="blank"
@@ -195,13 +176,6 @@
                         id: scope.row.userId,
                         status: 0
                        }, showTableList)">停用</el-button>
-              <el-button type="text"
-                         class="del2"
-                         v-if="+scope.row.isEnabled === 1"
-                         @click="setAccountStatus({
-                        id: scope.row.userId,
-                        status: -1
-                       }, showTableList)">冻结</el-button>
             </template>
             <el-button type="text"
                        v-if="$store.state.secondPermission['/adminManager/resetUserPassword'] !== undefined"
@@ -224,7 +198,7 @@
   import resetPwd from '@/page/parttimeUser/component/resetPwd';
   import { mapState } from 'vuex';
   import { setAccountStatus } from "@/common/operate";
-  import { formatAccountStatus, hiddenAccount } from '@/common/filter';
+  import { formatAccountStatus } from '@/common/filter';
   export default {
     components: {
       pagination,
@@ -236,6 +210,7 @@
         btnPermission: {},
         userId: '',
         form: {
+          userCode: '',
           teamName: '',
           rangeNoStart: '',
           rangeNoEnd: '',
@@ -261,8 +236,7 @@
       }),
     },
     filters: {
-      formatStatus: formatAccountStatus,
-      hiddenAccount: hiddenAccount
+      formatStatus: formatAccountStatus
     },
     created (){
       this.getResetPermission()
@@ -288,6 +262,7 @@
           params: {
             page: config.pageNo-1,
             limit: config.pageSize,
+            teamId: this.form.userCode,
             teamName: this.form.teamName,
             fullTimeNumberMin: this.form.rangeNoStart,
             fullTimeNumberMax : this.form.rangeNoEnd,

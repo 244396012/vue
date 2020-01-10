@@ -4,7 +4,6 @@
       <div class="filter-row">
         <div class="search">
           <el-input v-model="form.userId" placeholder="用户ID"></el-input>
-          <el-input v-model="form.account" placeholder="用户账号"></el-input>
           <el-input v-model="form.userName" placeholder="用户姓名" class="width90"></el-input>
           <el-select v-model="form.accountState" placeholder="账号状态" class="width90">
             <el-option
@@ -76,12 +75,6 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          min-width="110"
-          label="用户账号">
-          <template slot-scope="scope">{{scope.row.account | hiddenAccount}}</template>
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
           min-width="80"
           prop="userName"
           label="用户姓名">
@@ -91,6 +84,12 @@
           min-width="80"
           prop="userType"
           label="用户类型">
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          min-width="110"
+          prop="gmtCreate"
+          label="用户注册时间">
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -173,7 +172,7 @@
         <el-table-column
           fixed="right"
           label="操作"
-          width="160">
+          width="140">
           <template slot-scope="scope">
             <router-link :to="{path:'/parttimeUser/resource/detail/'+scope.row.id+'?code='+scope.row.userCode}"
                          class="blank"
@@ -192,13 +191,6 @@
                         id: scope.row.id,
                         status: 0
                        }, showTableList)">停用</el-button>
-              <el-button type="text"
-                         class="del2"
-                         v-if="+scope.row.isEnabled === 1"
-                         @click="setAccountStatus({
-                        id: scope.row.id,
-                        status: -1
-                       }, showTableList)">冻结</el-button>
             </template>
             <el-button type="text"
                        v-if="$store.state.secondPermission['/adminManager/resetUserPassword'] !== undefined"
@@ -219,7 +211,7 @@
   import pagination from '@/components/pagination';
   import parttimType from './component/parttimeType';
   import resetPwd from '../component/resetPwd';
-  import { formatAccountStatus, formatDomainsStr, hiddenAccount } from '@/common/filter';
+  import { formatAccountStatus, formatDomainsStr } from '@/common/filter';
   import { setAuditStatus, setAccountStatus } from "@/common/operate";
   import { mapState } from 'vuex';
   import '@/common/area';
@@ -235,7 +227,6 @@
         userId: '',
         form: {
           userId: '',
-          account: '',
           userName: '',
           motherTogue: '',
           firstField: '',
@@ -268,8 +259,7 @@
         }
       },
       formatStatus: formatAccountStatus,
-      formatDomain: formatDomainsStr,
-      hiddenAccount: hiddenAccount
+      formatDomain: formatDomainsStr
     },
     created (){
       this.getResetPermission()
@@ -317,7 +307,6 @@
           "taskDomain": this.form.firstField.split(',')[1],
           "taskSubDomain": this.form.secondField,
           "userId": this.form.userId,
-          "account": this.form.account,
           "userName": this.form.userName,
           "waiPaiAndPeiXun": {
             "domain": childForm.waiAndpei.firstField?childForm.waiAndpei.firstField.split(',')[1]:'',

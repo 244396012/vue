@@ -37,10 +37,11 @@
       handleSizeChange(size) {
         this.currentPage = 1;
         this.pageSize = size;
+        this.$route.query.pgSize = size;
         this.callback({
           pageNo: this.currentPage,
           pageSize: this.pageSize
-        })
+        });
       },
       handleCurrentChange(curr) {
         this.currentPage = curr;

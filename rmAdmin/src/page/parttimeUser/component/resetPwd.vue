@@ -9,7 +9,7 @@
         <el-form-item label="登录密码："
                       style="margin-bottom: 15px"
                       :prop="'password'" :rules="{ required: true, message: '请输入登录密码', trigger: 'blur' }">
-          <el-input type="password" v-model="form.password" placeholder="请输入登录密码" style="width: 210px"></el-input>
+          <el-input show-password v-model="form.password" placeholder="请输入登录密码" style="width: 210px"></el-input>
         </el-form-item>
         <div style="padding: 10px 0 15px; font-size: 12px">
           请输入该操作账号的登录密码，十五分钟之内操作有效 <br>
@@ -60,10 +60,10 @@
                     this.$message.success('操作成功');
                     this.callback();
                     this.$store.commit('showModal', false);
-                    this.form.password = '';
                   }else{
                     this.$message.error(res.data.message)
                   }
+                  this.form.password = '';
                 });
                 this.$http.defaults.baseURL = domain.baseRMURL
               }else{
