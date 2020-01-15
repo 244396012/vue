@@ -28,6 +28,12 @@
         <div class="button"></div>
       </div>
     </div>
+    <div class="default-style default-form"
+         v-if="totalCountStr && totalCountStr !== '兼职费用总额'">
+      <el-row>
+        <el-col :span="24" style="line-height: 32px;font-size: 13px;">{{totalCountStr}}</el-col>
+      </el-row>
+    </div>
     <div class="default-style">
       <el-table
         border
@@ -162,7 +168,7 @@
 <script>
   import domain from '@/api/index';
   import pagination from '@/components/pagination';
-  import { formatMoneyType$ } from '@/common/filter';
+  import { formatMoneyTypeEn$ } from '@/common/filter';
   export default {
     components: {
       pagination
@@ -185,7 +191,8 @@
         },
         loading: false,
         totalTableList: 0,
-        tableData: []
+        tableData: [],
+        totalCountStr: ''
       }
     },
     filters: {
@@ -214,6 +221,7 @@
       this.showTableList()
     },
     methods: {
+      formatMoneyTypeEn$: formatMoneyTypeEn$,
       //展示表格数据
       showTableList (config){
         config = config || {};
@@ -241,6 +249,24 @@
             this.totalTableList = res.data.data.totalElements;
           }
           this.loading = false;
+        });
+      //总费用
+        this.$http.get('/financeTask/getOrderSum', {
+          params: {
+            userCode: this.$route.params.id,
+            taskNo: this.form.taskNo,
+            company: this.form.company,
+            startTime: this.form.rangeTime.length>0 ? this.form.rangeTime[0]+' 00:00:00' : '',
+            endTime: this.form.rangeTime.length>0 ? this.form.rangeTime[1]+' 23:55:55' : ''
+          }
+        }).then(res => {
+          if(res.data.message === 'success'){
+            this.totalCountStr = '兼职费用总额：';
+            res.data.data.forEach(item => {
+              this.totalCountStr += this.formatMoneyTypeEn$(item.key) + item.value + '，';
+            });
+            this.totalCountStr = this.totalCountStr.slice(0, -1);
+          }
         })
       }
     }
